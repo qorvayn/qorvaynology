@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import {
   ArrowUpRight,
   Calendar,
-  Check,
   ChevronLeft,
   ChevronRight,
   Globe,
-  Mail,
   Minus,
-  Phone,
   Plus,
   X,
 } from "lucide-react";
@@ -35,6 +39,8 @@ import {
 import { ProjectArtwork } from "@/components/ProjectArtwork";
 import { CaseStudyDrawer } from "@/components/CaseStudyDrawer";
 import { ContactModal, InsightModal } from "@/components/StudioModals";
+
+const EASE_EDITORIAL: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function QorvaynologyHomePage() {
   // Interactive state
@@ -68,6 +74,36 @@ export default function QorvaynologyHomePage() {
   const [footerName, setFooterName] = useState("");
   const [footerEmail, setFooterEmail] = useState("");
   const [footerSent, setFooterSent] = useState(false);
+
+  // Scroll-linked refs & transforms (Hero + Pricing Lunar Rise)
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress: heroScroll } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const smoothHeroScroll = useSpring(heroScroll, {
+    stiffness: 120,
+    damping: 28,
+    mass: 0.4,
+  });
+
+  const arcX = useTransform(smoothHeroScroll, [0, 1], ["0%", "-8%"]);
+  const arcScale = useTransform(smoothHeroScroll, [0, 1], [1, 1.06]);
+  const sphereY = useTransform(smoothHeroScroll, [0, 1], [0, -75]);
+  const wordmarkY = useTransform(smoothHeroScroll, [0, 1], [0, 48]);
+
+  const pricingRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress: pricingScroll } = useScroll({
+    target: pricingRef,
+    offset: ["start end", "center center"],
+  });
+  const smoothPricingScroll = useSpring(pricingScroll, {
+    stiffness: 100,
+    damping: 26,
+  });
+  const moonY = useTransform(smoothPricingScroll, [0, 1], [90, 0]);
+  const moonScale = useTransform(smoothPricingScroll, [0, 1], [0.78, 1]);
+  const moonOpacity = useTransform(smoothPricingScroll, [0, 0.6, 1], [0.25, 0.9, 1]);
 
   const openContactWith = (subject = "") => {
     setContactSubject(subject);
@@ -111,7 +147,12 @@ export default function QorvaynologyHomePage() {
       {/* =====================================================================
           FLOATING ARCHITECTURAL HEADER (Matches Astra top bar 1:1)
       ===================================================================== */}
-      <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
+      <motion.header
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE_EDITORIAL }}
+        className="fixed top-0 left-0 right-0 z-40 pointer-events-none"
+      >
         <div className="max-w-[1440px] mx-auto px-5 sm:px-10 py-5 flex items-center justify-between">
           {/* Left: Celestial cross + Continuum studio mark */}
           <a
@@ -131,7 +172,9 @@ export default function QorvaynologyHomePage() {
 
           {/* Right: Pill Contact Trigger + Three-Dot Menu Trigger */}
           <div className="pointer-events-auto flex items-center gap-3 sm:gap-5">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => openContactWith("Discovery Call — Header CTA")}
               className="group inline-flex items-center gap-3 sm:gap-6 pl-1.5 pr-4 py-1.5 rounded-full bg-[#07090D]/80 backdrop-blur-md border border-white/20 hover:border-white/45 transition-all cursor-pointer"
             >
@@ -150,9 +193,11 @@ export default function QorvaynologyHomePage() {
                 <span className="w-1 h-1 rounded-full bg-white/45 group-hover:bg-[#F5B83D] transition-colors" />
                 <span className="w-1.5 h-1.5 rounded-full bg-white group-hover:scale-125 transition-transform" />
               </span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
               onClick={() => setMenuOpen(true)}
               aria-label="Open navigation menu"
               className="w-10 h-10 rounded-full bg-[#07090D]/80 backdrop-blur-md border border-white/15 flex items-center justify-center gap-1 hover:border-white/40 transition-colors cursor-pointer"
@@ -160,167 +205,218 @@ export default function QorvaynologyHomePage() {
               <span className="w-1 h-1 rounded-full bg-white" />
               <span className="w-1 h-1 rounded-full bg-white" />
               <span className="w-1 h-1 rounded-full bg-white" />
-            </button>
+            </motion.button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* =====================================================================
-          FULL-SCREEN NAVIGATION OVERLAY (Triggered by ••• button)
+          FULL-SCREEN NAVIGATION OVERLAY (Framer Motion AnimatePresence)
       ===================================================================== */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-50 cosmos-surface starfield-overlay text-[#F4F3EE] flex flex-col justify-between p-6 sm:p-12">
-          <div className="max-w-[1400px] w-full mx-auto flex items-center justify-between border-b border-white/12 pb-6">
-            <div className="flex items-center gap-3">
-              <ContinuumMark className="w-7 h-7" strokeColor="#FFFFFF" accentColor="#F5B83D" />
-              <span className="font-mono-tech text-[11px] text-white/60">
-                QORVAYNOLOGY® NAVIGATION INDEX
-              </span>
-            </div>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-xs hover:bg-white hover:text-black transition-colors cursor-pointer"
-            >
-              <span>Close</span>
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 my-auto py-8">
-            <nav className="md:col-span-7 flex flex-col gap-2 sm:gap-3">
-              {[
-                { idx: "01", label: "Home", href: "#top" },
-                { idx: "02", label: "Studio & Facts", href: "#studio" },
-                { idx: "03", label: "Services", href: "#services" },
-                { idx: "04", label: "Projects", href: "#projects" },
-                { idx: "05", label: "Pricing", href: "#pricing" },
-                { idx: "06", label: "The Method", href: "#method" },
-                { idx: "07", label: "Team", href: "#team" },
-                { idx: "08", label: "Insights", href: "#insights" },
-                { idx: "09", label: "FAQ", href: "#faq" },
-              ].map((item) => (
-                <a
-                  key={item.idx}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="group flex items-baseline gap-4 py-1 text-2xl sm:text-4xl font-display font-semibold tracking-tight text-white/80 hover:text-white transition-colors"
-                >
-                  <span className="font-mono-tech text-[11px] text-[#F5B83D] opacity-70 group-hover:opacity-100">
-                    /{item.idx}
-                  </span>
-                  <span className="group-hover:translate-x-2 transition-transform">
-                    {item.label}
-                  </span>
-                </a>
-              ))}
-            </nav>
-
-            <div className="md:col-span-5 flex flex-col justify-between border-t md:border-t-0 md:border-l border-white/12 pt-6 md:pt-0 md:pl-10">
-              <div>
-                <div className="font-mono-tech text-[11px] text-[#F5B83D] mb-2">
-                  DIRECT STUDIO CONTACT
-                </div>
-                <p className="font-display text-xl font-medium text-white">
-                  The QORVAYN way of building, applied to your business.
-                </p>
-                <div className="mt-4 space-y-1.5 text-xs text-white/70">
-                  <div>Kushtia & Dhaka, Bangladesh · Remote Worldwide</div>
-                  <div>
-                    <a href="mailto:qorvaynology@gmail.com" className="underline hover:text-white">
-                      qorvaynology@gmail.com
-                    </a>
-                  </div>
-                  <div>+880 1410-831205</div>
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href="https://cal.com/qorvaynology"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#F5B83D] text-[#07090D] px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-white transition-colors"
-                  >
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Book Discovery Call</span>
-                  </a>
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      openContactWith("Project Brief from Menu");
-                    }}
-                    className="inline-flex items-center gap-2 border border-white/25 px-5 py-2.5 rounded-full text-xs font-medium hover:bg-white hover:text-black transition-colors cursor-pointer"
-                  >
-                    <span>Send Project Brief</span>
-                  </button>
-                </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="nav-overlay"
+            initial={{ opacity: 0, y: "-4%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "-4%" }}
+            transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
+            className="fixed inset-0 z-50 cosmos-surface starfield-overlay text-[#F4F3EE] flex flex-col justify-between p-6 sm:p-12 overflow-y-auto"
+          >
+            <div className="max-w-[1400px] w-full mx-auto flex items-center justify-between border-b border-white/12 pb-6">
+              <div className="flex items-center gap-3">
+                <ContinuumMark
+                  className="w-7 h-7"
+                  strokeColor="#FFFFFF"
+                  accentColor="#F5B83D"
+                />
+                <span className="font-mono-tech text-[11px] text-white/60">
+                  QORVAYNOLOGY® NAVIGATION INDEX
+                </span>
               </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-xs hover:bg-white hover:text-black transition-colors cursor-pointer"
+              >
+                <span>Close</span>
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-              <div className="mt-8 pt-6 border-t border-white/12">
-                <div className="font-mono-tech text-[10px] text-white/45 mb-3">
-                  VERIFIED PLATFORMS
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/70">
-                  {VERIFIED_SOCIALS.slice(0, 8).map((s) => (
+            <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 my-auto py-8">
+              <nav className="md:col-span-7 flex flex-col gap-2 sm:gap-3">
+                {[
+                  { idx: "01", label: "Home", href: "#top" },
+                  { idx: "02", label: "Studio & Facts", href: "#studio" },
+                  { idx: "03", label: "Services", href: "#services" },
+                  { idx: "04", label: "Projects", href: "#projects" },
+                  { idx: "05", label: "Pricing", href: "#pricing" },
+                  { idx: "06", label: "The Method", href: "#method" },
+                  { idx: "07", label: "Team", href: "#team" },
+                  { idx: "08", label: "Insights", href: "#insights" },
+                  { idx: "09", label: "FAQ", href: "#faq" },
+                ].map((item, i) => (
+                  <motion.a
+                    key={item.idx}
+                    href={item.href}
+                    initial={{ opacity: 0, x: -24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: 0.05 + i * 0.04,
+                      duration: 0.45,
+                      ease: EASE_EDITORIAL,
+                    }}
+                    onClick={() => setMenuOpen(false)}
+                    className="group flex items-baseline gap-4 py-1 text-2xl sm:text-4xl font-display font-semibold tracking-tight text-white/80 hover:text-white transition-colors"
+                  >
+                    <span className="font-mono-tech text-[11px] text-[#F5B83D] opacity-70 group-hover:opacity-100">
+                      /{item.idx}
+                    </span>
+                    <span className="group-hover:translate-x-2 transition-transform">
+                      {item.label}
+                    </span>
+                  </motion.a>
+                ))}
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5, ease: EASE_EDITORIAL }}
+                className="md:col-span-5 flex flex-col justify-between border-t md:border-t-0 md:border-l border-white/12 pt-6 md:pt-0 md:pl-10"
+              >
+                <div>
+                  <div className="font-mono-tech text-[11px] text-[#F5B83D] mb-2">
+                    DIRECT STUDIO CONTACT
+                  </div>
+                  <p className="font-display text-xl font-medium text-white">
+                    The QORVAYN way of building, applied to your business.
+                  </p>
+                  <div className="mt-4 space-y-1.5 text-xs text-white/70">
+                    <div>Kushtia &amp; Dhaka, Bangladesh · Remote Worldwide</div>
+                    <div>
+                      <a
+                        href="mailto:qorvaynology@gmail.com"
+                        className="underline hover:text-white"
+                      >
+                        qorvaynology@gmail.com
+                      </a>
+                    </div>
+                    <div>+880 1410-831205</div>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
                     <a
-                      key={s.label}
-                      href={s.url}
+                      href="https://cal.com/qorvaynology"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#F5B83D] transition-colors"
+                      className="inline-flex items-center gap-2 bg-[#F5B83D] text-[#07090D] px-5 py-2.5 rounded-full text-xs font-semibold hover:bg-white transition-colors"
                     >
-                      {s.label}
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Book Discovery Call</span>
                     </a>
-                  ))}
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openContactWith("Project Brief from Menu");
+                      }}
+                      className="inline-flex items-center gap-2 border border-white/25 px-5 py-2.5 rounded-full text-xs font-medium hover:bg-white hover:text-black transition-colors cursor-pointer"
+                    >
+                      <span>Send Project Brief</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <div className="max-w-[1400px] w-full mx-auto flex items-center justify-between text-[11px] font-mono-tech text-white/45 pt-4 border-t border-white/12">
-            <span>QORVAYNOLOGY® · EST. 2026</span>
-            <span>BUILT BY THE TEAM BEHIND QORVAYN</span>
-          </div>
-        </div>
-      )}
+                <div className="mt-8 pt-6 border-t border-white/12">
+                  <div className="font-mono-tech text-[10px] text-white/45 mb-3">
+                    VERIFIED PLATFORMS
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/70">
+                    {VERIFIED_SOCIALS.slice(0, 8).map((s) => (
+                      <a
+                        key={s.label}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-[#F5B83D] transition-colors"
+                      >
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="max-w-[1400px] w-full mx-auto flex items-center justify-between text-[11px] font-mono-tech text-white/45 pt-4 border-t border-white/12">
+              <span>QORVAYNOLOGY® · EST. 2026</span>
+              <span>BUILT BY THE TEAM BEHIND QORVAYN</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* =====================================================================
-          SECTION 01: SPLIT ECLIPSE HERO (Matches download.avif 1:1)
+          SECTION 01: SPLIT ECLIPSE HERO (Framer Motion Scroll + Entrance)
       ===================================================================== */}
       <section
+        ref={heroRef}
         id="top"
         className="relative min-h-[96vh] lg:min-h-screen w-full cosmos-surface starfield-overlay overflow-hidden flex flex-col justify-between"
       >
-        {/* Left Celestial Warm-Paper Eclipse Arc */}
-        <div
+        {/* Left Celestial Warm-Paper Eclipse Arc with scroll-linked parallax */}
+        <motion.div
           aria-hidden="true"
+          style={{ x: arcX, scale: arcScale }}
+          initial={{ x: "-18%", opacity: 0 }}
+          animate={{ x: "0%", opacity: 1 }}
+          transition={{ duration: 1.1, ease: EASE_EDITORIAL }}
           className="pointer-events-none absolute top-[-18%] bottom-[-18%] left-[-38%] sm:left-[-22%] lg:left-[-12%] w-[88vw] sm:w-[68vw] lg:w-[56vw] rounded-r-full bg-gradient-to-r from-[#D8D6CE] via-[#EAE8E1] to-[#F7F6F1] shadow-[30px_0_90px_rgba(255,255,255,0.12)]"
         />
 
-        {/* Horizontal Architectural Ink Horizon Bar cutting across the left arc (from download.avif) */}
-        <div
+        {/* Horizontal Architectural Ink Horizon Bar cutting across the left arc */}
+        <motion.div
           aria-hidden="true"
+          initial={{ scaleX: 0, originX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 0.25, duration: 0.9, ease: EASE_EDITORIAL }}
           className="pointer-events-none absolute top-[43%] left-0 w-[48vw] h-[18px] sm:h-[22px] bg-gradient-to-r from-[#07090D] via-[#07090D] to-transparent z-10"
         />
 
-        {/* Black Eclipse Sphere + Orbiting Satellite Dot on the light arc (from download.avif) */}
-        <div
+        {/* Black Eclipse Sphere + Orbiting Satellite Dot on the light arc */}
+        <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute top-[31%] left-[30%] sm:left-[34%] lg:left-[36%] z-10 flex items-start gap-1.5 animate-slow-orbit"
+          style={{ y: sphereY }}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.35, duration: 0.85, ease: EASE_EDITORIAL }}
+          className="pointer-events-none absolute top-[31%] left-[30%] sm:left-[34%] lg:left-[36%] z-10 flex items-start gap-1.5"
         >
           <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#07090D] shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.14)]" />
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#07090D] mt-0.5" />
-        </div>
+          <motion.div
+            animate={{ y: [0, -5, 0], x: [0, 3, 0] }}
+            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#07090D] mt-0.5"
+          />
+        </motion.div>
 
-        {/* Right-edge celestial star coordinate (from download.avif) */}
-        <div
+        {/* Right-edge celestial star coordinate */}
+        <motion.div
           aria-hidden="true"
+          animate={{ rotate: [0, 90, 0], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="pointer-events-none hidden lg:block absolute top-[56%] right-10 z-10 text-white/80"
         >
           <CelestialCross className="w-3.5 h-3.5" />
-        </div>
+        </motion.div>
 
         {/* Top Spacer + Sub-caption under the Contact pill */}
-        <div className="relative z-20 max-w-[1440px] w-full mx-auto px-5 sm:px-10 pt-24 sm:pt-28 flex justify-end">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6, ease: EASE_EDITORIAL }}
+          className="relative z-20 max-w-[1440px] w-full mx-auto px-5 sm:px-10 pt-24 sm:pt-28 flex justify-end"
+        >
           <div className="w-56 sm:w-64 text-left">
             <p className="text-[11px] sm:text-xs text-white/65 leading-snug">
               Reach out to start
@@ -328,12 +424,17 @@ export default function QorvaynologyHomePage() {
               your project
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Middle & Lower Hero Content */}
         <div className="relative z-20 max-w-[1440px] w-full mx-auto px-5 sm:px-10 mt-auto pb-12 sm:pb-16">
           {/* Right-side lead-in above the monumental title */}
-          <div className="flex justify-end mb-2 sm:mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.7, ease: EASE_EDITORIAL }}
+            className="flex justify-end mb-2 sm:mb-4"
+          >
             <div className="w-full sm:w-[44%] lg:w-[38%]">
               <p className="font-display text-lg sm:text-2xl font-medium tracking-tight text-white/95 leading-snug">
                 The QORVAYN Way
@@ -341,12 +442,17 @@ export default function QorvaynologyHomePage() {
                 of Building
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom Grid: Left 4 Service Lines on Paper Arc + Center/Right Monumental Wordmark */}
           <div className="grid grid-cols-1 lg:grid-cols-12 items-end gap-8">
             {/* Left 4 Service Index Lines sitting over the Warm Paper Eclipse Arc */}
-            <div className="lg:col-span-4 pb-2 sm:pb-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.45, duration: 0.7, ease: EASE_EDITORIAL }}
+              className="lg:col-span-4 pb-2 sm:pb-4"
+            >
               <div className="max-w-[260px] space-y-2.5 bg-[#F4F3EE]/85 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none p-4 lg:p-0 border border-black/10 lg:border-0">
                 {HERO_SERVICES.map((srv) => {
                   const isActive = activeHeroService === srv.id;
@@ -367,8 +473,9 @@ export default function QorvaynologyHomePage() {
                       >
                         {srv.label}
                       </span>
-                      <span
-                        className={`h-[1.5px] transition-all duration-300 ${
+                      <motion.span
+                        layout
+                        className={`h-[1.5px] ${
                           isActive
                             ? "w-4 bg-[#07090D]"
                             : "w-2.5 bg-[#0B1020]/30 group-hover:w-3.5 group-hover:bg-[#07090D]"
@@ -378,10 +485,16 @@ export default function QorvaynologyHomePage() {
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
 
             {/* Monumental Dual-Polarity Wordmark spanning the Eclipse boundary */}
-            <div className="lg:col-span-8 flex flex-col items-start lg:items-start">
+            <motion.div
+              style={{ y: wordmarkY }}
+              initial={{ opacity: 0, y: 42, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 0.18, duration: 0.95, ease: EASE_EDITORIAL }}
+              className="lg:col-span-8 flex flex-col items-start"
+            >
               <div className="relative inline-flex items-start select-none mix-blend-difference">
                 <h1 className="font-display font-semibold text-white text-[clamp(3.3rem,10.2vw,10.5rem)] leading-[0.88] tracking-[-0.045em]">
                   Qorvayn
@@ -401,22 +514,23 @@ export default function QorvaynologyHomePage() {
                   </span>
                 </p>
 
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
                   href="#projects"
                   className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/20 bg-white/[0.04] text-xs font-medium text-white hover:border-[#F5B83D] hover:text-[#F5B83D] transition-colors"
                 >
                   <span>Explore Work</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
+                </motion.a>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
           SECTION 02: STUDIO FACTSHEET & "TEAM OF PILOTS" (Warm Paper #F4F3EE)
-          Matches frame_005.jpg, frame_006.jpg & download (1).avif
       ===================================================================== */}
       <section
         id="studio"
@@ -425,14 +539,30 @@ export default function QorvaynologyHomePage() {
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Top Row: ++ Crosshairs on Left + Architectural Facts on Right */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            <div className="lg:col-span-4 flex items-center gap-1 text-lg font-mono-tech text-[#0B1020]">
+            <motion.div
+              initial={{ opacity: 0, x: -16 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.5, ease: EASE_EDITORIAL }}
+              className="lg:col-span-4 flex items-center gap-1 text-lg font-mono-tech text-[#0B1020]"
+            >
               <span>+</span>
               <span>+</span>
-            </div>
+            </motion.div>
 
             <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-12">
               {STUDIO_FACTS.slice(0, 2).map((fact, idx) => (
-                <div key={idx}>
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{
+                    delay: idx * 0.12,
+                    duration: 0.65,
+                    ease: EASE_EDITORIAL,
+                  }}
+                >
                   <div className="text-xs font-semibold text-[#0B1020] pb-3 border-b border-black/20">
                     {fact.title}
                   </div>
@@ -449,11 +579,17 @@ export default function QorvaynologyHomePage() {
                       {fact.description}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
 
-              {/* Third Fact Block offset to the left column of the 2-col grid (matches "Year of Establishment 2004/2008" in frame_005.jpg) */}
-              <div className="sm:col-span-1 pt-2">
+              {/* Third Fact Block offset to the left column of the 2-col grid */}
+              <motion.div
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: 0.24, duration: 0.65, ease: EASE_EDITORIAL }}
+                className="sm:col-span-1 pt-2"
+              >
                 <div className="text-xs font-semibold text-[#0B1020] pb-3 border-b border-black/20">
                   {STUDIO_FACTS[2].title}
                 </div>
@@ -475,12 +611,18 @@ export default function QorvaynologyHomePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
-          {/* Second Row: "Team of Pilots" + Studio Lead + Editorial Statement (Matches frame_006.jpg) */}
-          <div className="mt-24 sm:mt-32 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pt-12 border-t border-black/10">
+          {/* Second Row: "Team of Pilots" + Studio Lead + Editorial Statement */}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
+            className="mt-24 sm:mt-32 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pt-12 border-t border-black/10"
+          >
             {/* Col 1: Team of Pilots */}
             <div className="lg:col-span-3">
               <div className="text-xs font-semibold text-[#0B1020]">
@@ -562,13 +704,12 @@ export default function QorvaynologyHomePage() {
                 <span className="text-[#0B1020]/70">KUSHTIA &amp; DHAKA, BD</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* =====================================================================
           SECTION 03: SERVICES ACCORDION MATRIX (Warm Paper #F4F3EE)
-          Matches frame_007.jpg & frame_008.jpg
       ===================================================================== */}
       <section
         id="services"
@@ -576,25 +717,38 @@ export default function QorvaynologyHomePage() {
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Monumental "Services" Heading */}
-          <div className="mb-14 sm:mb-20 lg:pl-[25%]">
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+            className="mb-14 sm:mb-20 lg:pl-[25%]"
+          >
             <h2 className="font-display text-[clamp(3.2rem,7.5vw,6.8rem)] font-semibold tracking-[-0.045em] text-[#0B1020] leading-none">
               Services
             </h2>
-          </div>
+          </motion.div>
 
           {/* 1px Hairline Accordion Rows (/01 to /06) */}
           <div className="divide-y divide-black/15 border-t border-b border-black/15">
-            {SERVICES_LIST.map((srv) => {
+            {SERVICES_LIST.map((srv, idx) => {
               const isOpen = openServiceId === srv.id;
               return (
-                <div
+                <motion.div
                   key={srv.id}
+                  layout
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{
+                    delay: idx * 0.05,
+                    duration: 0.45,
+                    ease: EASE_EDITORIAL,
+                  }}
                   className="py-7 sm:py-9 transition-colors"
                 >
                   <div
-                    onClick={() =>
-                      setOpenServiceId(isOpen ? "" : srv.id)
-                    }
+                    onClick={() => setOpenServiceId(isOpen ? "" : srv.id)}
                     className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start cursor-pointer group"
                   >
                     {/* Left Index (/01) */}
@@ -618,40 +772,60 @@ export default function QorvaynologyHomePage() {
                         </p>
                       </div>
 
-                      {isOpen && (
-                        <div className="hidden sm:flex items-center gap-1.5">
-                          <div
-                            className={`w-16 h-16 rounded-full bg-gradient-to-br ${srv.accentHue} flex items-center justify-center shadow-inner border border-black/15`}
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.65, rotate: -12 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.65, rotate: 12 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 320,
+                              damping: 24,
+                            }}
+                            className="hidden sm:flex items-center gap-1.5"
                           >
-                            <ContinuumMark
-                              className="w-7 h-7"
-                              strokeColor="#FFFFFF"
-                              accentColor="#F5B83D"
-                            />
-                          </div>
-                          <span className="w-5 h-5 rounded-full bg-[#0B1020] text-white font-mono-tech text-[10px] flex items-center justify-center">
-                            i
-                          </span>
-                        </div>
-                      )}
+                            <div
+                              className={`w-16 h-16 rounded-full bg-gradient-to-br ${srv.accentHue} flex items-center justify-center shadow-inner border border-black/15`}
+                            >
+                              <ContinuumMark
+                                className="w-7 h-7"
+                                strokeColor="#FFFFFF"
+                                accentColor="#F5B83D"
+                              />
+                            </div>
+                            <span className="w-5 h-5 rounded-full bg-[#0B1020] text-white font-mono-tech text-[10px] flex items-center justify-center">
+                              i
+                            </span>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
 
-                    {/* Summary & Deliverables */}
+                    {/* Summary & Animated Deliverables */}
                     <div className="lg:col-span-3">
                       <p className="text-xs sm:text-sm text-[#0B1020]/85 leading-relaxed">
                         {srv.summary}
                       </p>
 
-                      {isOpen && (
-                        <ul className="mt-4 space-y-1.5 text-xs text-black/60">
-                          {srv.deliverables.map((d, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <span className="text-[#B45F06]">·</span>
-                              <span>{d}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.ul
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
+                            className="mt-4 space-y-1.5 text-xs text-black/60 overflow-hidden"
+                          >
+                            {srv.deliverables.map((d, i) => (
+                              <li key={i} className="flex items-start gap-2">
+                                <span className="text-[#B45F06]">·</span>
+                                <span>{d}</span>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
                     </div>
 
                     {/* Right Column: Timeline / Pricing + Expand Toggle */}
@@ -663,31 +837,48 @@ export default function QorvaynologyHomePage() {
                         <div className="font-mono-tech text-[10px] text-black/50 mt-0.5">
                           {srv.timeline}
                         </div>
-                        {isOpen && (
-                          <div className="mt-3 space-y-0.5 text-[11px] text-black/55">
-                            {srv.relatedProjects.map((rp) => (
-                              <div key={rp}>{rp}</div>
-                            ))}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 6 }}
+                              className="mt-3 space-y-0.5 text-[11px] text-black/55"
+                            >
+                              {srv.relatedProjects.map((rp) => (
+                                <div key={rp}>{rp}</div>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
-                      <span className="w-7 h-7 rounded-full border border-black/15 flex items-center justify-center text-[#0B1020] group-hover:bg-[#0B1020] group-hover:text-white transition-colors shrink-0">
+                      <motion.span
+                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-7 h-7 rounded-full border border-black/15 flex items-center justify-center text-[#0B1020] group-hover:bg-[#0B1020] group-hover:text-white transition-colors shrink-0"
+                      >
                         {isOpen ? (
                           <Minus className="w-3.5 h-3.5" />
                         ) : (
                           <Plus className="w-3.5 h-3.5" />
                         )}
-                      </span>
+                      </motion.span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* Bottom Summary Bar under Services (matches frame_008.jpg) */}
-          <div className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Bottom Summary Bar under Services */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE_EDITORIAL }}
+            className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+          >
             <div className="lg:col-span-3" />
             <div className="lg:col-span-5">
               <p className="font-display text-lg sm:text-xl font-medium text-[#0B1020] leading-snug">
@@ -698,7 +889,9 @@ export default function QorvaynologyHomePage() {
               </p>
             </div>
             <div className="lg:col-span-4 flex lg:justify-end">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => openContactWith("Service Package Inquiry")}
                 className="inline-flex items-center justify-between gap-8 bg-[#0B1020] text-[#F4F3EE] pl-6 pr-4 py-3 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer min-w-[180px]"
               >
@@ -707,15 +900,14 @@ export default function QorvaynologyHomePage() {
                   <span className="w-1 h-1 rounded-full bg-white/50" />
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
                 </span>
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* =====================================================================
           SECTION 04: PROJECTS SHOWCASE (Dark Cosmic Surface #07090D)
-          Matches download (2).avif & frame_009.jpg–frame_011.jpg
       ===================================================================== */}
       <section
         id="projects"
@@ -728,7 +920,13 @@ export default function QorvaynologyHomePage() {
               <CelestialCross className="w-5 h-5 text-white/80" />
             </div>
 
-            <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+              className="lg:col-span-5"
+            >
               <h2 className="font-display text-[clamp(3.4rem,8vw,7.2rem)] font-semibold tracking-[-0.045em] text-white leading-none">
                 Projects
               </h2>
@@ -736,7 +934,7 @@ export default function QorvaynologyHomePage() {
                 0{PROJECTS_LIST.length}
                 <sup className="text-sm text-[#F5B83D] ml-0.5">+</sup>
               </div>
-            </div>
+            </motion.div>
 
             <div className="lg:col-span-4 flex flex-col gap-2 text-xs">
               {[
@@ -757,8 +955,9 @@ export default function QorvaynologyHomePage() {
                     }`}
                   >
                     <span>{cat.label}</span>
-                    <span
-                      className={`h-[1.5px] transition-all ${
+                    <motion.span
+                      layout
+                      className={`h-[1.5px] ${
                         active ? "w-4 bg-[#F5B83D]" : "w-2 bg-white/25"
                       }`}
                     />
@@ -768,71 +967,89 @@ export default function QorvaynologyHomePage() {
             </div>
           </div>
 
-          {/* Stacked Full-Width Editorial Project Cards (Matches frame_010.jpg & frame_011.jpg) */}
-          <div className="space-y-16 sm:space-y-24">
-            {filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => setActiveCaseStudy(project)}
-                className="group grid grid-cols-1 lg:grid-cols-12 gap-6 items-start cursor-pointer"
-              >
-                {/* Left Column: Date Stamp (Matches "Jul 22 / 2025" in download (2).avif) */}
-                <div className="lg:col-span-2 pt-2">
-                  <div className="font-display text-base sm:text-lg font-medium text-white pb-2 border-b border-white/25">
-                    {project.dateLabel.split(" ")[0]}
-                  </div>
-                  <div className="font-mono-tech text-[11px] text-white/45 mt-2">
-                    {project.year} · {project.badge}
-                  </div>
-                </div>
-
-                {/* Center Column: Large Interactive Artwork Showcase */}
-                <div className="lg:col-span-9 relative overflow-hidden border border-white/15 group-hover:border-[#F5B83D]/60 transition-colors">
-                  <ProjectArtwork projectId={project.id} variant="hero" />
-
-                  {/* Bottom Title Overlay Bar inside Project Card */}
-                  <div className="bg-[#07090D]/95 backdrop-blur-md border-t border-white/12 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2.5">
-                        <h3 className="font-display text-xl sm:text-2xl font-semibold text-white group-hover:text-[#F5B83D] transition-colors">
-                          {project.title}
-                        </h3>
-                        <span className="font-mono-tech text-[10px] px-2 py-0.5 border border-white/15 text-white/70">
-                          {project.badge}
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/60 mt-0.5">
-                        {project.subtitle}
-                      </p>
+          {/* Stacked Full-Width Editorial Project Cards */}
+          <motion.div layout className="space-y-16 sm:space-y-24">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, idx) => (
+                <motion.div
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{
+                    delay: idx * 0.06,
+                    duration: 0.65,
+                    ease: EASE_EDITORIAL,
+                  }}
+                  onClick={() => setActiveCaseStudy(project)}
+                  className="group grid grid-cols-1 lg:grid-cols-12 gap-6 items-start cursor-pointer"
+                >
+                  {/* Left Column: Date Stamp */}
+                  <div className="lg:col-span-2 pt-2">
+                    <div className="font-display text-base sm:text-lg font-medium text-white pb-2 border-b border-white/25">
+                      {project.dateLabel.split(" ")[0]}
                     </div>
-
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-[#07090D] text-xs font-medium group-hover:bg-[#F5B83D] transition-colors">
-                      <span>Open Case Study</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
+                    <div className="font-mono-tech text-[11px] text-white/45 mt-2">
+                      {project.year} · {project.badge}
+                    </div>
                   </div>
-                </div>
 
-                {/* Right Column: Pod Avatars (Matches right avatar stack in download (2).avif) */}
-                <div className="lg:col-span-1 hidden lg:flex flex-col items-center gap-2 pt-4">
-                  {TEAM_MEMBERS.slice(0, 3).map((m) => (
-                    <TeamAvatar
-                      key={m.id}
-                      initials={m.initials}
-                      name={m.name}
-                      tone={m.tone}
-                      size="xs"
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+                  {/* Center Column: Large Interactive Artwork Showcase */}
+                  <motion.div
+                    whileHover={{ y: -4 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                    className="lg:col-span-9 relative overflow-hidden border border-white/15 group-hover:border-[#F5B83D]/60 transition-colors"
+                  >
+                    <ProjectArtwork projectId={project.id} variant="hero" />
 
-          {/* Bottom "All Projects •→" bar (Matches pricing_03.jpg) */}
+                    {/* Bottom Title Overlay Bar inside Project Card */}
+                    <div className="bg-[#07090D]/95 backdrop-blur-md border-t border-white/12 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2.5">
+                          <h3 className="font-display text-xl sm:text-2xl font-semibold text-white group-hover:text-[#F5B83D] transition-colors">
+                            {project.title}
+                          </h3>
+                          <span className="font-mono-tech text-[10px] px-2 py-0.5 border border-white/15 text-white/70">
+                            {project.badge}
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5">
+                          {project.subtitle}
+                        </p>
+                      </div>
+
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-[#07090D] text-xs font-medium group-hover:bg-[#F5B83D] transition-colors">
+                        <span>Open Case Study</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </motion.div>
+
+                  {/* Right Column: Pod Avatars */}
+                  <div className="lg:col-span-1 hidden lg:flex flex-col items-center gap-2 pt-4">
+                    {TEAM_MEMBERS.slice(0, 3).map((m) => (
+                      <TeamAvatar
+                        key={m.id}
+                        initials={m.initials}
+                        name={m.name}
+                        tone={m.tone}
+                        size="xs"
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Bottom "All Projects •→" bar */}
           <div className="mt-16 pt-10 border-t border-white/10 flex items-center justify-between">
             <span className="font-mono-tech text-xs text-white/50">++</span>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => openContactWith("Custom Project Walkthrough Request")}
               className="inline-flex items-center gap-6 bg-[#F4F3EE] text-[#07090D] pl-6 pr-4 py-2.5 rounded-full text-xs font-semibold hover:bg-[#F5B83D] transition-colors cursor-pointer"
             >
@@ -841,33 +1058,48 @@ export default function QorvaynologyHomePage() {
                 <span className="w-1 h-1 rounded-full bg-black/40" />
                 <span className="w-1.5 h-1.5 rounded-full bg-black" />
               </span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 05: ORBITAL PRICING & CONFIGURATOR (Dark Cosmic Surface)
+          SECTION 05: ORBITAL PRICING & RISING LUNAR SPHERE (Dark Cosmic)
           Matches pfast_01.jpg–pfast_12.jpg
       ===================================================================== */}
       <section
+        ref={pricingRef}
         id="pricing"
         className="cosmos-surface starfield-overlay text-[#F4F3EE] py-24 sm:py-32 border-t border-white/10 relative overflow-hidden"
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
-          {/* Monumental "Pricing" Heading + Currency & Package Switcher */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
-            <div>
-              <h2 className="font-display text-[clamp(3.4rem,8vw,7.2rem)] font-semibold tracking-[-0.045em] text-white leading-none">
-                Pricing
-              </h2>
+          {/* Monumental "Pricing" Heading + Rising Lunar Sphere (from pfast_01.jpg–pfast_05.jpg) */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 relative">
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+              className="relative z-10"
+            >
+              <div className="flex items-center gap-6">
+                <h2 className="font-display text-[clamp(3.4rem,8vw,7.2rem)] font-semibold tracking-[-0.045em] text-white leading-none">
+                  Pricing
+                </h2>
+                {/* Scroll-linked Rising Lunar Sphere matching pfast_01–05 */}
+                <motion.div
+                  aria-hidden="true"
+                  style={{ y: moonY, scale: moonScale, opacity: moonOpacity }}
+                  className="hidden sm:block w-20 h-20 md:w-28 md:h-28 rounded-full bg-[radial-gradient(circle_at_35%_30%,#FFFFFF_0%,#D9D6CE_48%,#6E6B64_85%,#181A20_100%)] shadow-[0_0_60px_rgba(244,243,238,0.18)] shrink-0"
+                />
+              </div>
               <p className="mt-3 text-xs sm:text-sm text-white/65 max-w-md">
                 Transparent 3-tier packages with fixed scope in writing. 50% upfront and 50% on delivery (or 40% / 30% / 30% milestones over $3,000).
               </p>
-            </div>
+            </motion.div>
 
             {/* Interactive Currency Toggle (USD ↔ BDT) */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 relative z-10">
               <div className="inline-flex items-center p-1 rounded-full bg-white/[0.05] border border-white/15 text-xs">
                 <button
                   onClick={() => setCurrency("USD")}
@@ -931,7 +1163,7 @@ export default function QorvaynologyHomePage() {
             </div>
           </div>
 
-          {/* ORBITAL ROW /01: PER PROJECT (Matches pfast_06.jpg & pfast_07.jpg) */}
+          {/* ORBITAL ROW /01: PER PROJECT */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-10 border-b border-white/12">
             <div className="lg:col-span-2 font-mono-tech text-xs text-white/50">
               ++
@@ -945,76 +1177,90 @@ export default function QorvaynologyHomePage() {
                 <span className="font-mono-tech text-xs text-white/50">/01</span>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                {/* Left Lunar Orbital Package Sphere + Price */}
-                <div className="md:col-span-6 flex items-center gap-6">
-                  <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-[#F4F3EE] via-[#D8D5CC] to-[#8C887E] text-[#07090D] p-5 flex flex-col justify-between overflow-hidden shrink-0 shadow-[0_0_50px_rgba(244,243,238,0.12)]">
-                    <span className="text-[10px] font-mono-tech">+</span>
-                    <div>
-                      <div className="text-[9px] font-mono-tech uppercase tracking-wider text-black/60">
-                        Fixed Scope
-                      </div>
-                      <div className="font-display text-xl sm:text-2xl font-bold tracking-tight leading-none mt-0.5">
-                        Qorv.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="font-mono-tech text-[11px] text-[#F5B83D]">
-                      {currentTier.subtitle}
-                    </div>
-                    <div className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-white mt-1">
-                      {currency === "USD" ? currentTier.usd : currentTier.bdt}
-                    </div>
-                    <div className="text-xs text-white/50 mt-1">
-                      50% upfront · 2 revision rounds · 30d support
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Deliverables + Delivery Time + CTA */}
-                <div className="md:col-span-6 flex flex-col justify-between">
-                  <ul className="space-y-2 text-xs sm:text-sm text-white/85">
-                    {currentTier.features.map((feat, i) => (
-                      <li key={i} className="flex items-start gap-2.5">
-                        <span className="text-[#F5B83D] font-mono-tech">+</span>
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-8 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                      <div className="text-[11px] text-white/45">Delivery time:</div>
-                      <div className="font-display text-sm font-medium text-white">
-                        {currentPackage.timeline}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        openContactWith(
-                          `${currentPackage.name} — ${currentTier.tierName} (${
-                            currency === "USD" ? currentTier.usd : currentTier.bdt
-                          })`
-                        )
-                      }
-                      className="inline-flex items-center gap-6 px-5 py-2.5 rounded-full border border-white/25 text-xs font-medium text-white hover:bg-white hover:text-[#07090D] transition-colors cursor-pointer"
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${currentPackage.id}-${currentTier.tierName}-${currency}`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+                  className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+                >
+                  {/* Left Lunar Orbital Package Sphere + Price */}
+                  <div className="md:col-span-6 flex items-center gap-6">
+                    <motion.div
+                      whileHover={{ rotate: 4, scale: 1.04 }}
+                      className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-[#F4F3EE] via-[#D8D5CC] to-[#8C887E] text-[#07090D] p-5 flex flex-col justify-between overflow-hidden shrink-0 shadow-[0_0_50px_rgba(244,243,238,0.12)]"
                     >
-                      <span>Get in Touch</span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1 h-1 rounded-full bg-current opacity-50" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
-                      </span>
-                    </button>
+                      <span className="text-[10px] font-mono-tech">+</span>
+                      <div>
+                        <div className="text-[9px] font-mono-tech uppercase tracking-wider text-black/60">
+                          Fixed Scope
+                        </div>
+                        <div className="font-display text-xl sm:text-2xl font-bold tracking-tight leading-none mt-0.5">
+                          Qorv.
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <div>
+                      <div className="font-mono-tech text-[11px] text-[#F5B83D]">
+                        {currentTier.subtitle}
+                      </div>
+                      <div className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-white mt-1">
+                        {currency === "USD" ? currentTier.usd : currentTier.bdt}
+                      </div>
+                      <div className="text-xs text-white/50 mt-1">
+                        50% upfront · 2 revision rounds · 30d support
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+
+                  {/* Right Deliverables + Delivery Time + CTA */}
+                  <div className="md:col-span-6 flex flex-col justify-between">
+                    <ul className="space-y-2 text-xs sm:text-sm text-white/85">
+                      {currentTier.features.map((feat, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <span className="text-[#F5B83D] font-mono-tech">+</span>
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-8 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                      <div>
+                        <div className="text-[11px] text-white/45">Delivery time:</div>
+                        <div className="font-display text-sm font-medium text-white">
+                          {currentPackage.timeline}
+                        </div>
+                      </div>
+
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() =>
+                          openContactWith(
+                            `${currentPackage.name} — ${currentTier.tierName} (${
+                              currency === "USD" ? currentTier.usd : currentTier.bdt
+                            })`
+                          )
+                        }
+                        className="inline-flex items-center gap-6 px-5 py-2.5 rounded-full border border-white/25 text-xs font-medium text-white hover:bg-white hover:text-[#07090D] transition-colors cursor-pointer"
+                      >
+                        <span>Get in Touch</span>
+                        <span className="flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-current opacity-50" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
+                        </span>
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* ORBITAL ROW /02: MONTHLY GROWTH RETAINER (Matches pfast_08.jpg) */}
+          {/* ORBITAL ROW /02: MONTHLY GROWTH RETAINER */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-12">
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between pb-3 border-b border-white/20">
@@ -1053,7 +1299,9 @@ export default function QorvaynologyHomePage() {
                       </div>
                     </div>
 
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={() =>
                         openContactWith("Monthly Growth Retainer / Care Plan")
                       }
@@ -1064,13 +1312,16 @@ export default function QorvaynologyHomePage() {
                         <span className="w-1 h-1 rounded-full bg-current opacity-50" />
                         <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
                       </span>
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
 
                 {/* Right Dark Orbital Sphere + Retainer Price */}
                 <div className="md:col-span-6 flex items-center gap-6">
-                  <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-[#2B313D] via-[#161B26] to-[#0B0E14] border border-white/20 text-white p-5 flex flex-col justify-between overflow-hidden shrink-0">
+                  <motion.div
+                    whileHover={{ rotate: -4, scale: 1.04 }}
+                    className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-[#2B313D] via-[#161B26] to-[#0B0E14] border border-white/20 text-white p-5 flex flex-col justify-between overflow-hidden shrink-0"
+                  >
                     <span className="text-[10px] font-mono-tech text-[#F5B83D]">+</span>
                     <div>
                       <div className="text-[9px] font-mono-tech uppercase tracking-wider text-white/50">
@@ -1080,7 +1331,7 @@ export default function QorvaynologyHomePage() {
                         Qorv.
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                   <div>
                     <div className="font-mono-tech text-[11px] text-white/55">
@@ -1098,7 +1349,7 @@ export default function QorvaynologyHomePage() {
               </div>
             </div>
 
-            {/* Right-side founder note (Matches pfast_11.jpg) */}
+            {/* Right-side founder note */}
             <div className="lg:col-span-4 lg:pt-16">
               <div className="p-6 bg-white/[0.03] border border-white/10">
                 <div className="text-[#F5B83D] text-xs mb-2">✦</div>
@@ -1125,7 +1376,6 @@ export default function QorvaynologyHomePage() {
 
       {/* =====================================================================
           SECTION 06: THE METHOD & PRODUCT BENCHMARKS (Warm Paper #F4F3EE)
-          Matches frame_014.jpg–frame_018.jpg layout with 100% real studio data
       ===================================================================== */}
       <section
         id="method"
@@ -1133,16 +1383,22 @@ export default function QorvaynologyHomePage() {
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Monumental Heading */}
-          <div className="lg:pl-[25%] mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+            className="lg:pl-[25%] mb-16"
+          >
             <h2 className="font-display text-[clamp(3.2rem,7.5vw,6.8rem)] font-semibold tracking-[-0.045em] text-[#0B1020] leading-none">
               The Method
             </h2>
             <div className="mt-3 font-display text-2xl sm:text-3xl font-semibold text-[#0B1020]">
               7-Step Delivery
             </div>
-          </div>
+          </motion.div>
 
-          {/* 3-Column Studio Principles Switcher (Matches frame_014.jpg / pricing_09.jpg) */}
+          {/* 3-Column Studio Principles Switcher */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-16 border-b border-black/12">
             {[
               {
@@ -1169,8 +1425,12 @@ export default function QorvaynologyHomePage() {
             ].map((item, idx) => {
               const active = activeMethodQuoteIdx === idx;
               return (
-                <div
+                <motion.div
                   key={item.person}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.55, ease: EASE_EDITORIAL }}
                   onClick={() => setActiveMethodQuoteIdx(idx)}
                   className={`p-6 border transition-all cursor-pointer ${
                     active
@@ -1201,15 +1461,20 @@ export default function QorvaynologyHomePage() {
                   <p className="mt-2 text-xs sm:text-sm text-black/70 leading-relaxed">
                     {item.body}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* 3 Architectural Visual Charts Row (Matches frame_017.jpg 1:1) */}
+          {/* 3 Architectural Visual Charts Row */}
           <div className="py-16 grid grid-cols-1 lg:grid-cols-3 gap-10 border-b border-black/12">
-            {/* Chart 1: Capabilities by Discipline (Donut chart) */}
-            <div>
+            {/* Chart 1: Capabilities by Discipline (Animated SVG Donut chart) */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
               <div className="text-xs font-semibold text-[#0B1020] pb-3 border-b border-black/20">
                 Capabilities by Discipline
               </div>
@@ -1224,24 +1489,30 @@ export default function QorvaynologyHomePage() {
                       stroke="#E2E0D8"
                       strokeWidth="4.5"
                     />
-                    <circle
+                    <motion.circle
                       cx="18"
                       cy="18"
                       r="14"
                       fill="none"
                       stroke="#0B1020"
                       strokeWidth="4.5"
-                      strokeDasharray="62 100"
+                      initial={{ strokeDasharray: "0 100" }}
+                      whileInView={{ strokeDasharray: "62 100" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.1, ease: EASE_EDITORIAL }}
                     />
-                    <circle
+                    <motion.circle
                       cx="18"
                       cy="18"
                       r="14"
                       fill="none"
                       stroke="#F5B83D"
                       strokeWidth="4.5"
-                      strokeDasharray="24 100"
                       strokeDashoffset="-62"
+                      initial={{ strokeDasharray: "0 100" }}
+                      whileInView={{ strokeDasharray: "24 100" }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.25, duration: 0.9, ease: EASE_EDITORIAL }}
                     />
                   </svg>
                   <span className="absolute font-display text-xl font-bold text-[#0B1020]">
@@ -1275,31 +1546,47 @@ export default function QorvaynologyHomePage() {
               <p className="mt-6 text-[11px] text-black/55">
                 Core studio packages spanning brand systems, Figma UI/UX, and full-stack Next.js engineering.
               </p>
-            </div>
+            </motion.div>
 
-            {/* Chart 2: Delivery Cadence (Vertical bar chart matching frame_017.jpg) */}
-            <div>
+            {/* Chart 2: Delivery Cadence (Animated Vertical Bars) */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+            >
               <div className="text-xs font-semibold text-[#0B1020] pb-3 border-b border-black/20">
                 5-Phase Delivery Cadence
               </div>
               <div className="mt-6 h-28 flex items-end gap-3 pt-4">
                 {[
-                  { step: "Call", val: "30m", h: "h-10", dark: true },
-                  { step: "Scope", val: "24h", h: "h-14", dark: false },
-                  { step: "Design", val: "Wk 1", h: "h-20", dark: false },
-                  { step: "Build", val: "Wk 2+", h: "h-24", dark: false },
-                  { step: "Care", val: "30d", h: "h-28", dark: true },
-                ].map((bar) => (
-                  <div key={bar.step} className="flex-1 flex flex-col items-center">
-                    <div
-                      className={`w-full ${bar.h} ${
+                  { step: "Call", val: "30m", pct: 36, dark: true },
+                  { step: "Scope", val: "24h", pct: 52, dark: false },
+                  { step: "Design", val: "Wk 1", pct: 72, dark: false },
+                  { step: "Build", val: "Wk 2+", pct: 86, dark: false },
+                  { step: "Care", val: "30d", pct: 100, dark: true },
+                ].map((bar, i) => (
+                  <div
+                    key={bar.step}
+                    className="flex-1 h-full flex flex-col justify-end items-center"
+                  >
+                    <motion.div
+                      initial={{ height: 0 }}
+                      whileInView={{ height: `${bar.pct}%` }}
+                      viewport={{ once: true }}
+                      transition={{
+                        delay: 0.15 + i * 0.08,
+                        duration: 0.75,
+                        ease: EASE_EDITORIAL,
+                      }}
+                      className={`w-full ${
                         bar.dark
                           ? "bg-[#0B1020] text-white"
                           : "bg-black/20 text-[#0B1020]"
-                      } flex items-start justify-center pt-1.5 text-[10px] font-mono-tech font-medium`}
+                      } flex items-start justify-center pt-1.5 text-[10px] font-mono-tech font-medium overflow-hidden`}
                     >
                       {bar.val}
-                    </div>
+                    </motion.div>
                     <span className="text-[10px] font-mono-tech text-black/60 mt-1.5">
                       {bar.step}
                     </span>
@@ -1309,18 +1596,27 @@ export default function QorvaynologyHomePage() {
               <p className="mt-6 text-[11px] text-black/55">
                 Structured weekly milestones with Friday demos and 30 days of post-launch engineering care.
               </p>
-            </div>
+            </motion.div>
 
-            {/* Chart 3: Studio Pod Allocation (Dot matrix matching frame_017.jpg) */}
-            <div>
+            {/* Chart 3: Studio Pod Allocation (Dot matrix) */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
               <div className="text-xs font-semibold text-[#0B1020] pb-3 border-b border-black/20">
                 People Making a Project
               </div>
               <div className="mt-6 flex items-center gap-6">
                 <div className="grid grid-cols-6 gap-2">
                   {Array.from({ length: 18 }).map((_, i) => (
-                    <span
+                    <motion.span
                       key={i}
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 + i * 0.025, duration: 0.35 }}
                       className={`w-3 h-3 rounded-full ${
                         i < 6
                           ? "bg-[#0B1020]"
@@ -1345,16 +1641,21 @@ export default function QorvaynologyHomePage() {
               <p className="mt-6 text-[11px] text-black/55">
                 Every project has a dedicated lead plus brand, UI/UX, and full-stack Next.js specialists.
               </p>
-            </div>
+            </motion.div>
           </div>
 
-          {/* "Built by Us: Product Benchmarks" (Matches "User cases:" in frame_018.jpg) */}
+          {/* "Product proof:" Benchmarks */}
           <div className="pt-16">
-            <div className="lg:pl-[33%] mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="lg:pl-[33%] mb-12"
+            >
               <h3 className="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-[#0B1020]">
                 Product proof:
               </h3>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
@@ -1391,8 +1692,15 @@ export default function QorvaynologyHomePage() {
                   initials: "AM",
                   note: "Every brand, website, and web app ships with full asset handover, 2 revision rounds, and 30 days of included support.",
                 },
-              ].map((item) => (
-                <div key={item.mark} className="flex flex-col justify-between">
+              ].map((item, idx) => (
+                <motion.div
+                  key={item.mark}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.55 }}
+                  className="flex flex-col justify-between"
+                >
                   <div>
                     <div className="font-mono-tech text-xs font-semibold text-black/55 pb-3 border-b border-black/20">
                       {item.mark}
@@ -1428,7 +1736,7 @@ export default function QorvaynologyHomePage() {
                       {item.note}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -1437,7 +1745,6 @@ export default function QorvaynologyHomePage() {
 
       {/* =====================================================================
           SECTION 07: TEAM ORBITAL CAROUSEL (Dark Cosmic Surface #07090D)
-          Matches download (1).avif & frame_024.jpg–frame_026.jpg 1:1
       ===================================================================== */}
       <section
         id="team"
@@ -1445,33 +1752,50 @@ export default function QorvaynologyHomePage() {
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Monumental "Team" Heading */}
-          <div className="lg:pl-[38%] mb-14 sm:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+            className="lg:pl-[38%] mb-14 sm:mb-20"
+          >
             <h2 className="font-display text-[clamp(3.4rem,8vw,7.2rem)] font-semibold tracking-[-0.045em] text-white leading-none">
               Team
             </h2>
-          </div>
+          </motion.div>
 
           {/* Active Member Name & Role above Orbital Line */}
-          <div className="lg:pl-[38%] mb-6">
-            <div className="font-display text-lg sm:text-xl font-medium text-white">
-              {activeMember.name}
-            </div>
-            <div className="w-8 h-[1px] bg-white/35 my-2" />
-            <div className="text-xs text-white/60">
-              {activeMember.role} · {activeMember.division}
-            </div>
+          <div className="lg:pl-[38%] mb-6 min-h-[58px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeMember.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.28, ease: EASE_EDITORIAL }}
+              >
+                <div className="font-display text-lg sm:text-xl font-medium text-white">
+                  {activeMember.name}
+                </div>
+                <div className="w-8 h-[1px] bg-white/35 my-2" />
+                <div className="text-xs text-white/60">
+                  {activeMember.role} · {activeMember.division}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Horizontal Orbital Selector Bar (• Prev.  ... avatars ...  Next •) */}
           <div className="relative flex items-center justify-between gap-4 py-6">
-            {/* Subtle horizontal orbital equator line */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute left-16 right-16 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent"
             />
 
             {/* Left Prev Button */}
-            <button
+            <motion.button
+              whileHover={{ x: -3 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() =>
                 setActiveTeamIdx((prev) =>
                   prev === 0 ? TEAM_MEMBERS.length - 1 : prev - 1
@@ -1482,17 +1806,19 @@ export default function QorvaynologyHomePage() {
               <span className="w-1.5 h-1.5 rounded-full bg-white" />
               <span>Prev.</span>
               <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
 
-            {/* Center Orbital Portraits */}
+            {/* Center Orbital Portraits with Framer Motion layout spring */}
             <div className="relative z-10 flex items-center justify-center gap-4 sm:gap-8 md:gap-10 overflow-x-auto py-4 px-2">
               {TEAM_MEMBERS.map((member, idx) => {
                 const isCenter = idx === activeTeamIdx;
                 return (
-                  <button
+                  <motion.button
                     key={member.id}
+                    layout
+                    transition={{ type: "spring", stiffness: 280, damping: 28 }}
                     onClick={() => setActiveTeamIdx(idx)}
-                    className={`transition-all duration-500 cursor-pointer shrink-0 ${
+                    className={`cursor-pointer shrink-0 ${
                       isCenter
                         ? "scale-100 opacity-100"
                         : "scale-75 sm:scale-90 opacity-50 hover:opacity-85"
@@ -1505,13 +1831,15 @@ export default function QorvaynologyHomePage() {
                       size={isCenter ? "xl" : "md"}
                       active={isCenter}
                     />
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
 
             {/* Right Next Button */}
-            <button
+            <motion.button
+              whileHover={{ x: 3 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() =>
                 setActiveTeamIdx((prev) =>
                   prev === TEAM_MEMBERS.length - 1 ? 0 : prev + 1
@@ -1522,31 +1850,41 @@ export default function QorvaynologyHomePage() {
               <ChevronRight className="w-3.5 h-3.5" />
               <span>Next</span>
               <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            </button>
+            </motion.button>
           </div>
 
-          {/* Quote Block below Active Team Portrait (Matches download (1).avif) */}
+          {/* Quote Block below Active Team Portrait */}
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-5 flex lg:justify-end pr-8 pt-4">
               <CelestialCross className="w-3.5 h-3.5 text-white/70" />
             </div>
-            <div className="lg:col-span-7 max-w-md">
-              <div className="font-display text-4xl text-white/40 leading-none select-none">
-                &rdquo;
-              </div>
-              <p className="mt-2 text-xs sm:text-sm text-white/80 leading-relaxed">
-                {activeMember.quote}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {activeMember.focusAreas.map((area) => (
-                  <span
-                    key={area}
-                    className="font-mono-tech text-[10px] px-2.5 py-1 border border-white/12 text-white/60"
-                  >
-                    {area}
-                  </span>
-                ))}
-              </div>
+            <div className="lg:col-span-7 max-w-md min-h-[120px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMember.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+                >
+                  <div className="font-display text-4xl text-white/40 leading-none select-none">
+                    &rdquo;
+                  </div>
+                  <p className="mt-2 text-xs sm:text-sm text-white/80 leading-relaxed">
+                    {activeMember.quote}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {activeMember.focusAreas.map((area) => (
+                      <span
+                        key={area}
+                        className="font-mono-tech text-[10px] px-2.5 py-1 border border-white/12 text-white/60"
+                      >
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -1554,7 +1892,6 @@ export default function QorvaynologyHomePage() {
 
       {/* =====================================================================
           SECTION 08: INSIGHTS / STUDIO NOTES (Warm Paper #F4F3EE)
-          Matches frame_027.jpg & ifast_03.jpg–ifast_06.jpg
       ===================================================================== */}
       <section
         id="insights"
@@ -1562,7 +1899,13 @@ export default function QorvaynologyHomePage() {
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Monumental "Insights" Heading + Founder Intro */}
-          <div className="lg:pl-[33%] mb-16 sm:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+            className="lg:pl-[33%] mb-16 sm:mb-20"
+          >
             <h2 className="font-display text-[clamp(3.2rem,7.5vw,6.8rem)] font-semibold tracking-[-0.045em] text-[#0B1020] leading-none">
               Insights
             </h2>
@@ -1588,9 +1931,9 @@ export default function QorvaynologyHomePage() {
                 </span>
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          {/* 3 Circular-Aperture Article Columns (Matches ifast_05.jpg & ifast_06.jpg) */}
+          {/* 3 Circular-Aperture Article Columns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {INSIGHTS_LIST.map((article, idx) => {
               const gradients = [
@@ -1599,23 +1942,33 @@ export default function QorvaynologyHomePage() {
                 "from-[#1C1917] via-[#B45F06] to-[#F5B83D]",
               ];
               return (
-                <article
+                <motion.article
                   key={article.id}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    delay: idx * 0.1,
+                    duration: 0.55,
+                    ease: EASE_EDITORIAL,
+                  }}
                   onClick={() => setActiveInsight(article)}
                   className="group cursor-pointer flex flex-col justify-between"
                 >
                   <div>
                     {/* Circular Aperture Thumbnail */}
                     <div className="mb-6 flex items-center justify-center md:justify-start">
-                      <div
-                        className={`w-24 h-24 rounded-full bg-gradient-to-tr ${gradients[idx % 3]} p-4 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300`}
+                      <motion.div
+                        whileHover={{ scale: 1.08, rotate: 4 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className={`w-24 h-24 rounded-full bg-gradient-to-tr ${gradients[idx % 3]} p-4 flex items-center justify-center shadow-md`}
                       >
                         <ContinuumMark
                           className="w-8 h-8"
                           strokeColor="#FFFFFF"
                           accentColor="#F5B83D"
                         />
-                      </div>
+                      </motion.div>
                     </div>
 
                     {/* Top 1px Rule + Date & Title */}
@@ -1649,15 +2002,17 @@ export default function QorvaynologyHomePage() {
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
-                </article>
+                </motion.article>
               );
             })}
           </div>
 
-          {/* Bottom "All Insights •→" bar (Matches ifast_11.jpg) */}
+          {/* Bottom "All Insights •→" bar */}
           <div className="mt-16 pt-8 border-t border-black/10 flex items-center justify-between">
             <span className="font-mono-tech text-xs text-black/50">++</span>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setActiveInsight(INSIGHTS_LIST[0])}
               className="inline-flex items-center gap-6 bg-[#0B1020] text-[#F4F3EE] pl-6 pr-4 py-2.5 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
             >
@@ -1666,14 +2021,13 @@ export default function QorvaynologyHomePage() {
                 <span className="w-1 h-1 rounded-full bg-white/50" />
                 <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
               </span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
           SECTION 09: FAQ ACCORDION (Warm Paper #F4F3EE)
-          Matches frame_028.jpg, frame_031.jpg & ifast_09.jpg–ifast_14.jpg
       ===================================================================== */}
       <section
         id="faq"
@@ -1682,7 +2036,12 @@ export default function QorvaynologyHomePage() {
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Column: Founder Note */}
-            <div className="lg:col-span-4 lg:pt-24">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-4 lg:pt-24"
+            >
               <TeamAvatar
                 initials="RZ"
                 name="Ryan Zannah"
@@ -1696,13 +2055,19 @@ export default function QorvaynologyHomePage() {
               <p className="mt-4 text-xs sm:text-sm text-black/75 max-w-[230px] leading-relaxed">
                 Behind every project: the product thinking and transparent milestones that fuel Qorvaynology&apos;s build process.
               </p>
-            </div>
+            </motion.div>
 
-            {/* Right Column: Monumental "FAQ" Heading + 1px Hairline Accordion */}
+            {/* Right Column: Monumental "FAQ" Heading + Animated Accordion */}
             <div className="lg:col-span-8">
-              <h2 className="font-display text-[clamp(3.2rem,7.5vw,6.8rem)] font-semibold tracking-[-0.045em] text-[#0B1020] leading-none mb-12">
+              <motion.h2
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+                className="font-display text-[clamp(3.2rem,7.5vw,6.8rem)] font-semibold tracking-[-0.045em] text-[#0B1020] leading-none mb-12"
+              >
                 FAQ
-              </h2>
+              </motion.h2>
 
               <div className="divide-y divide-black/15 border-t border-b border-black/15">
                 {FAQ_ITEMS.map((faq) => {
@@ -1716,26 +2081,40 @@ export default function QorvaynologyHomePage() {
                         <span className="font-display text-base sm:text-lg font-semibold text-[#0B1020] group-hover:text-[#B45F06] transition-colors">
                           {faq.question}
                         </span>
-                        <span className="text-black/60 group-hover:text-[#0B1020] shrink-0">
+                        <motion.span
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="text-black/60 group-hover:text-[#0B1020] shrink-0"
+                        >
                           {isOpen ? (
                             <Minus className="w-4 h-4" />
                           ) : (
                             <Plus className="w-4 h-4" />
                           )}
-                        </span>
+                        </motion.span>
                       </button>
 
-                      {isOpen && (
-                        <p className="mt-3 text-xs sm:text-sm text-black/70 leading-relaxed max-w-2xl">
-                          {faq.answer}
-                        </p>
-                      )}
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+                            className="overflow-hidden"
+                          >
+                            <p className="pt-3 text-xs sm:text-sm text-black/70 leading-relaxed max-w-2xl">
+                              {faq.answer}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Bottom "Didn't find the answer? Ask your Question •→" (Matches ifast_14.jpg) */}
+              {/* Bottom "Didn't find the answer? Ask your Question •→" */}
               <div className="mt-10 flex flex-wrap items-center justify-between gap-6">
                 <p className="text-xs font-medium text-[#0B1020]">
                   Didn&apos;t find the answer?
@@ -1745,7 +2124,9 @@ export default function QorvaynologyHomePage() {
                   </span>
                 </p>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => openContactWith("Custom Question from FAQ")}
                   className="inline-flex items-center gap-6 bg-[#0B1020] text-[#F4F3EE] pl-6 pr-4 py-3 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
                 >
@@ -1754,7 +2135,7 @@ export default function QorvaynologyHomePage() {
                     <span className="w-1 h-1 rounded-full bg-white/50" />
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
                   </span>
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
@@ -1763,7 +2144,6 @@ export default function QorvaynologyHomePage() {
 
       {/* =====================================================================
           SECTION 10: COSMIC FOOTER & DIRECT BRIEF HUB (Dark Cosmic #07090D)
-          Matches frame_032.jpg & ifast_15.jpg–ifast_16.jpg 1:1
       ===================================================================== */}
       <footer
         id="contact"
@@ -1771,7 +2151,13 @@ export default function QorvaynologyHomePage() {
       >
         <div className="max-w-[1360px] mx-auto px-5 sm:px-10">
           {/* Top Manifesto Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-20 border-b border-white/12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE_EDITORIAL }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-20 border-b border-white/12"
+          >
             <div className="lg:col-span-4">
               <CelestialCross className="w-5 h-5 text-white" />
             </div>
@@ -1808,9 +2194,9 @@ export default function QorvaynologyHomePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Middle 4-Column Architectural Grid (Matches frame_032.jpg) */}
+          {/* Middle 4-Column Architectural Grid */}
           <div className="py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 items-start">
             {/* Col 1: Phone, Email & Location */}
             <div className="lg:col-span-4 space-y-2">
@@ -1906,7 +2292,7 @@ export default function QorvaynologyHomePage() {
               </ul>
             </div>
 
-            {/* Col 4: Quick Start Brief Form (Matches "Your name * / Email * / Subscribe" in frame_032.jpg) */}
+            {/* Col 4: Quick Start Brief Form */}
             <div className="lg:col-span-4">
               <div className="text-[11px] font-mono-tech text-white/40 mb-4">
                 Start a Conversation
@@ -1947,7 +2333,9 @@ export default function QorvaynologyHomePage() {
                     />
                   </div>
                   <div className="pt-2">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                       type="submit"
                       className="inline-flex items-center justify-between gap-8 px-6 py-2.5 rounded-full border border-white/25 text-xs font-medium text-white hover:bg-white hover:text-[#07090D] transition-colors cursor-pointer min-w-[170px]"
                     >
@@ -1956,15 +2344,21 @@ export default function QorvaynologyHomePage() {
                         <span className="w-1 h-1 rounded-full bg-current opacity-50" />
                         <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
                       </span>
-                    </button>
+                    </motion.button>
                   </div>
                 </form>
               )}
             </div>
           </div>
 
-          {/* Monumental Footer Wordmark (Matches "Astra®" in frame_032.jpg) */}
-          <div className="pt-10 pb-12 border-t border-white/10 flex flex-col items-center justify-center text-center">
+          {/* Monumental Footer Wordmark */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
+            className="pt-10 pb-12 border-t border-white/10 flex flex-col items-center justify-center text-center"
+          >
             <div className="inline-flex items-start select-none">
               <span className="font-display font-semibold text-white text-[clamp(3rem,9vw,8.5rem)] leading-none tracking-[-0.045em]">
                 Qorvaynolog<span className="text-[#F5B83D]">y</span>
@@ -1973,7 +2367,7 @@ export default function QorvaynologyHomePage() {
                 ®
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom Copyright & Attribution Bar */}
           <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-4 gap-4 text-[11px] text-white/45">
@@ -1987,7 +2381,7 @@ export default function QorvaynologyHomePage() {
             </div>
             <div>
               <div>Stack</div>
-              <div className="text-white/75">Next.js 15 · React 19 · TypeScript</div>
+              <div className="text-white/75">Next.js 15 · React 19 · Framer Motion</div>
             </div>
             <div className="sm:text-right">
               <div>Location</div>
@@ -1998,7 +2392,7 @@ export default function QorvaynologyHomePage() {
       </footer>
 
       {/* =====================================================================
-          SLIDE-OVER DRAWERS & MODALS
+          SLIDE-OVER DRAWERS & MODALS (Framer Motion AnimatePresence)
       ===================================================================== */}
       <CaseStudyDrawer
         project={activeCaseStudy}
