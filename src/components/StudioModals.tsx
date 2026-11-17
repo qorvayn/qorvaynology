@@ -48,7 +48,7 @@ export function InsightModal({
             <div className="flex items-center justify-between pb-6 border-b border-black/12">
               <button
                 onClick={onClose}
-                className="inline-flex items-center gap-2 text-xs font-medium text-[#0B1020] hover:text-[#B45F06] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 text-xs font-medium text-[#0B1020] hover:text-[#2E6BFF] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>All Insights</span>
@@ -95,7 +95,7 @@ export function InsightModal({
               </div>
 
               <div className="mt-10 p-6 bg-black/[0.035] border border-black/12">
-                <div className="font-mono-tech text-[11px] text-[#B45F06] mb-3">
+                <div className="font-mono-tech text-[11px] text-[#2E6BFF] mb-3">
                   KEY STUDIO TAKEAWAYS
                 </div>
                 <ul className="space-y-2.5">
@@ -127,10 +127,10 @@ export function InsightModal({
                     onClose();
                     onOpenContact(`Discovery Call — Read "${article.title}"`);
                   }}
-                  className="inline-flex items-center gap-2.5 bg-[#0B1020] text-[#F4F3EE] px-5 py-2.5 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2.5 bg-[#0B1020] text-white px-5 py-2.5 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
                 >
                   <span>Start a Project</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF]" />
                 </button>
               </div>
             </motion.div>
@@ -198,7 +198,7 @@ export function ContactModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 320, damping: 30 }}
-            className="relative w-full max-w-2xl cosmos-surface text-[#F4F3EE] border border-white/15 shadow-2xl p-6 sm:p-10 max-h-[92vh] overflow-y-auto"
+            className="relative w-full max-w-2xl cosmos-surface text-white border border-white/15 shadow-2xl p-6 sm:p-10 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-5 border-b border-white/12">
@@ -276,7 +276,7 @@ export function ContactModal({
                       href="https://cal.com/qorvaynology"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#F5B83D] underline"
+                      className="text-[#60A5FA] underline"
                     >
                       cal.com/qorvaynology
                     </a>
@@ -293,42 +293,52 @@ export function ContactModal({
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
+                      <label htmlFor="modal-name" className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
                         YOUR NAME *
                       </label>
                       <input
+                        id="modal-name"
+                        name="name"
                         type="text"
+                        autoComplete="name"
+                        maxLength={120}
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Ryan / Founder name"
-                        className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#F5B83D]"
+                        className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#2E6BFF]"
                       />
                     </div>
                     <div>
-                      <label className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
+                      <label htmlFor="modal-email" className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
                         WORK EMAIL *
                       </label>
                       <input
+                        id="modal-email"
+                        name="email"
                         type="email"
+                        autoComplete="email"
+                        maxLength={160}
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@company.com"
-                        className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#F5B83D]"
+                        className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#2E6BFF]"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
+                      <label htmlFor="modal-service" className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
                         PACKAGE / SERVICE
                       </label>
                       <select
+                        id="modal-service"
+                        name="service"
                         value={service}
                         onChange={(e) => setService(e.target.value)}
-                        className="w-full bg-[#0C1018] border border-white/15 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#F5B83D]"
+                        className="w-full bg-[#0C1018] border border-white/15 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#2E6BFF]"
                       >
                         <option value="Brand + Website Bundle ($1,200 – $3,500)">
                           Brand + Website Bundle ($1,200 – $3,500)
@@ -357,13 +367,15 @@ export function ContactModal({
                       </select>
                     </div>
                     <div>
-                      <label className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
+                      <label htmlFor="modal-budget" className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
                         BUDGET RANGE (USD OR BDT)
                       </label>
                       <select
+                        id="modal-budget"
+                        name="budget"
                         value={budget}
                         onChange={(e) => setBudget(e.target.value)}
-                        className="w-full bg-[#0C1018] border border-white/15 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#F5B83D]"
+                        className="w-full bg-[#0C1018] border border-white/15 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#2E6BFF]"
                       >
                         <option value="$400 – $1,200 (৳25k – ৳60k)">
                           $400 – $1,200 (৳25k – ৳60k)
@@ -382,15 +394,18 @@ export function ContactModal({
                   </div>
 
                   <div>
-                    <label className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
+                    <label htmlFor="modal-details" className="block font-mono-tech text-[10px] text-white/55 mb-1.5">
                       PROJECT GOALS &amp; TIMELINE
                     </label>
                     <textarea
+                      id="modal-details"
+                      name="details"
+                      maxLength={2000}
                       rows={3}
                       value={details}
                       onChange={(e) => setDetails(e.target.value)}
                       placeholder="Share your product URL, what you want to launch or redesign, and your target timeline..."
-                      className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#F5B83D]"
+                      className="w-full bg-white/[0.04] border border-white/15 px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-[#2E6BFF]"
                     />
                   </div>
 
@@ -400,11 +415,11 @@ export function ContactModal({
                     </span>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-3 bg-[#F4F3EE] text-[#0B1020] px-6 py-2.5 rounded-full text-xs font-medium hover:bg-[#F5B83D] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-3 bg-white text-[#0B1020] px-6 py-2.5 rounded-full text-xs font-medium hover:bg-[#2E6BFF] hover:text-white transition-colors cursor-pointer"
                     >
                       <span>Send Project Brief</span>
                       <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0B1020]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
                       </span>
                     </button>
                   </div>

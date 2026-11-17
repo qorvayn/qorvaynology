@@ -567,13 +567,13 @@ export default function QorvaynologyHomePage() {
             </motion.div>
 
             {/* Main Info Row: Left 4 Service Lines (inverts to black on white planet) + Monumental Wordmark spanning the curve */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-4">
               {/* Left 4 Service Rows */}
               <motion.div
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.75, ease: EASE_OUT_EXPO }}
-                className="lg:col-span-4 space-y-[8px] max-w-[270px]"
+                className="lg:col-span-3 space-y-[8px] max-w-[260px]"
               >
                 {HERO_SERVICES.map((srv) => {
                   const isActive = activeHeroService === srv.id;
@@ -600,26 +600,26 @@ export default function QorvaynologyHomePage() {
                 })}
               </motion.div>
 
-              {/* Right Monumental Title straddling the white planet edge at ~34% */}
+              {/* Right Monumental Title straddling the white planet edge */}
               <motion.div
                 initial={{ opacity: 0, y: 36 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.9, ease: EASE_OUT_EXPO }}
-                className="lg:col-span-8 flex items-center justify-between lg:-ml-6"
+                className="lg:col-span-9 flex items-center justify-between"
               >
-                <div className="relative inline-flex items-start">
+                <div className="relative inline-flex items-start max-w-full">
                   <TitleAsteroidSplatter className="absolute -top-2 left-4 z-10 mix-blend-normal" />
 
-                  <h1 className="font-display font-semibold text-[#FAFAFA] text-[clamp(4.2rem,13.2vw,196px)] leading-[1.02] tracking-[-0.04em]">
-                    Qorvayn
+                  <h1 className="font-display font-semibold text-[#FAFAFA] text-[clamp(2.35rem,7.2vw,112px)] leading-[1.02] tracking-[-0.04em] whitespace-nowrap">
+                    Qorvaynology
                   </h1>
 
-                  <span className="ml-1.5 sm:ml-2.5 mt-3 sm:mt-6 w-[26px] h-[26px] sm:w-[31px] sm:h-[31px] rounded-full bg-[#FAFAFA] text-black font-display font-extrabold text-[14px] sm:text-[18px] tracking-[-1px] flex items-center justify-center shrink-0">
+                  <span className="ml-1 sm:ml-2 mt-1.5 sm:mt-3 w-[18px] h-[18px] sm:w-[26px] sm:h-[26px] rounded-full bg-[#FAFAFA] text-black font-display font-extrabold text-[10px] sm:text-[14px] tracking-[-0.5px] flex items-center justify-center shrink-0">
                     R
                   </span>
                 </div>
 
-                <div className="hidden sm:flex items-center pr-1">
+                <div className="hidden sm:flex items-center pr-1 shrink-0">
                   <AstraStarLogo className="w-[15px] h-[15px] text-white" />
                 </div>
               </motion.div>
@@ -1494,7 +1494,7 @@ export default function QorvaynologyHomePage() {
           </div>
 
           {/* SCATTERED 4-CARD SPATIAL CANVAS (Matches pricing_09.jpg & steps/2243/output.txt 1:1) */}
-          <div className="relative min-h-[600px] lg:h-[620px]">
+          <div className="relative min-h-[600px] lg:h-[680px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`slide-${perspectiveSlideIdx}`}
@@ -1506,11 +1506,11 @@ export default function QorvaynologyHomePage() {
               >
                 {PERSPECTIVE_SLIDES[perspectiveSlideIdx].map((card) => {
                   if (card.slot === "one") {
-                    // Featured Large Card at x: 52%, y: 0, w: 414px
+                    // Featured Large Card at x: 52%, y: 48px, w: 414px
                     return (
                       <div
                         key={card.name}
-                        className="lg:absolute lg:left-[51%] lg:top-0 lg:w-[414px] p-4"
+                        className="lg:absolute lg:left-[51%] lg:top-12 lg:w-[414px] p-4"
                       >
                         <div className="w-[84px] h-[84px] mb-4">
                           <TeamAvatar
@@ -1536,11 +1536,11 @@ export default function QorvaynologyHomePage() {
                     );
                   }
                   if (card.slot === "two") {
-                    // Top-Left Card at x: 0%, y: 120px, w: 289px
+                    // Top-Left Card at x: 0%, y: 150px, w: 289px
                     return (
                       <div
                         key={card.name}
-                        className="lg:absolute lg:left-0 lg:top-[120px] lg:w-[289px] p-4 opacity-75 hover:opacity-100 transition-opacity"
+                        className="lg:absolute lg:left-0 lg:top-[150px] lg:w-[289px] p-4 opacity-75 hover:opacity-100 transition-opacity"
                       >
                         <div className="w-[55px] h-[55px] mb-3">
                           <TeamAvatar
@@ -1562,11 +1562,11 @@ export default function QorvaynologyHomePage() {
                     );
                   }
                   if (card.slot === "three") {
-                    // Bottom-Center-Left Card at x: 25%, y: 275px, w: 343px
+                    // Bottom-Center-Left Card at x: 25%, y: 315px, w: 343px
                     return (
                       <div
                         key={card.name}
-                        className="lg:absolute lg:left-[25%] lg:top-[275px] lg:w-[343px] p-4"
+                        className="lg:absolute lg:left-[25%] lg:top-[315px] lg:w-[343px] p-4"
                       >
                         <div className="w-[65px] h-[65px] mb-3">
                           <TeamAvatar
@@ -1590,11 +1590,11 @@ export default function QorvaynologyHomePage() {
                       </div>
                     );
                   }
-                  // Bottom-Right Card at x: 82%, y: 255px, w: 245px
+                  // Bottom-Right Card at x: 82%, y: 295px, w: 245px
                   return (
                     <div
                       key={card.name}
-                      className="lg:absolute lg:right-0 lg:top-[255px] lg:w-[245px] p-4 opacity-75 hover:opacity-100 transition-opacity"
+                      className="lg:absolute lg:right-0 lg:top-[295px] lg:w-[245px] p-4 opacity-75 hover:opacity-100 transition-opacity"
                     >
                       <div className="w-[46px] h-[46px] mb-2.5">
                         <TeamAvatar
@@ -2552,6 +2552,8 @@ export default function QorvaynologyHomePage() {
                     name="name"
                     type="text"
                     required
+                    autoComplete="name"
+                    maxLength={120}
                     value={footerName}
                     onChange={(e) => setFooterName(e.target.value)}
                     placeholder="Your name *"
@@ -2562,6 +2564,8 @@ export default function QorvaynologyHomePage() {
                     name="email"
                     type="email"
                     required
+                    autoComplete="email"
+                    maxLength={160}
                     value={footerEmail}
                     onChange={(e) => setFooterEmail(e.target.value)}
                     placeholder="Email *"

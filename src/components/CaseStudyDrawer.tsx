@@ -51,7 +51,7 @@ export function CaseStudyDrawer({
             <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-black/10">
               <button
                 onClick={onClose}
-                className="inline-flex items-center gap-2.5 text-xs font-medium text-[#0B1020] hover:text-[#B45F06] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2.5 text-xs font-medium text-[#0B1020] hover:text-[#2E6BFF] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>See all Projects</span>
@@ -167,7 +167,7 @@ export function CaseStudyDrawer({
                       onClose();
                       onOpenContact(`Project Inquiry — Inspired by ${project.title}`);
                     }}
-                    className="inline-flex items-center gap-3 bg-[#0B1020] text-[#F4F3EE] px-5 py-2.5 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-3 bg-[#0B1020] text-white px-5 py-2.5 rounded-full text-xs font-medium hover:bg-[#1E293B] transition-colors cursor-pointer"
                   >
                     <span>Request a Similar Build</span>
                     <span className="flex items-center gap-1">
