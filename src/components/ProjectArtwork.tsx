@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import { ContinuumMark } from "./ContinuumMark";
 
-const PROJECT_VIDEOS: Record<string, string> = {
+const PROJECT_VIDEOS: Record<string, string | null> = {
   orbyn: "/astra/proj-video-1.mp4",
-  "qorvayn-ecosystem": "/astra/proj-video-2.mp4",
-  "snowvayn-sunvayn": "/astra/proj-video-3.mp4",
-  "qorvaynology-continuum": "/astra/proj-video-1.mp4",
-  "aether-clinic-concept": "/astra/proj-video-2.mp4",
+  "qorvayn-ecosystem": "/astra/proj-video-3.mp4",
+  "snowvayn-sunvayn": "/astra/proj-video-2.mp4",
+  "qorvaynology-continuum": null,
+  "aether-clinic-concept": null,
 };
 
 export function ProjectArtwork({
@@ -19,19 +19,22 @@ export function ProjectArtwork({
   variant?: "hero" | "detailA" | "detailB";
 }) {
   const [season, setSeason] = useState<"winter" | "summer">("winter");
-  const videoSrc = PROJECT_VIDEOS[projectId] || "/astra/proj-video-1.mp4";
+  const videoSrc =
+    projectId in PROJECT_VIDEOS ? PROJECT_VIDEOS[projectId] : "/astra/proj-video-1.mp4";
 
   if (variant === "detailA") {
     return (
       <div className="relative w-full h-full min-h-[250px] bg-[#070B16] text-white p-6 flex flex-col justify-between overflow-hidden rounded-[8px] border border-[#0B1020]/15">
-        <video
-          src={videoSrc}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
-        />
+        {videoSrc && (
+          <video
+            src={videoSrc}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-35"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#050811] via-[#0B1020]/70 to-[#0B1020]/40" />
         <div className="relative z-10 flex items-center justify-between text-[11px] font-mono-tech text-white/70">
           <span>SYSTEM ARCHITECTURE</span>
@@ -88,16 +91,59 @@ export function ProjectArtwork({
 
   // Main Hero Video Showcase Card matching Astra's 1091x622 rounded-[8px] Video Container
   return (
-    <div className="relative w-full h-[420px] sm:h-[520px] lg:h-[622px] rounded-[8px] overflow-hidden bg-[#050811] text-white select-none group">
-      {/* Real Looping Showcase Video from Astra reference */}
-      <video
-        src={videoSrc}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover scale-[1.01] group-hover:scale-105 transition-transform duration-700"
-      />
+    <div className="relative w-full h-[420px] sm:h-[520px] lg:h-[622px] rounded-[8px] overflow-hidden bg-[#050811] text-white select-none group border border-white/10">
+      {/* Real Looping Showcase Video OR Bespoke Navy Architectural Backdrop */}
+      {videoSrc ? (
+        <video
+          src={videoSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover scale-[1.01] group-hover:scale-105 transition-transform duration-700"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-[#060B18] flex items-center justify-center">
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, rgba(46,107,255,0.22) 1px, transparent 1px), linear-gradient(to bottom, rgba(46,107,255,0.22) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
+          />
+          <div className="absolute w-80 h-80 rounded-full bg-[#2E6BFF]/18 blur-3xl" />
+          {projectId === "qorvaynology-continuum" ? (
+            <div className="relative z-10 flex items-center gap-6 px-6">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl bg-[#0B1020] border border-white/20 flex items-center justify-center p-6 shadow-2xl">
+                <ContinuumMark className="w-full h-full" strokeColor="#FFFFFF" accentColor="#2E6BFF" />
+              </div>
+              <div className="text-left">
+                <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                  CONCEPT 02 / UNBROKEN LINE (q → y)
+                </div>
+                <div className="font-display text-3xl sm:text-5xl font-semibold tracking-tight mt-1">
+                  qorvaynolog<span className="text-[#60A5FA]">y</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative z-10 grid grid-cols-3 gap-3 max-w-2xl px-6 w-full">
+              {[
+                { s: "01", t: "Department", d: "Specialty Finder" },
+                { s: "02", t: "Live Schedule", d: "Instant Slots" },
+                { s: "03", t: "WhatsApp / SMS", d: "Zero Call Queue" },
+              ].map((card) => (
+                <div key={card.s} className="p-4 bg-[#0B1020]/90 border border-white/15 rounded-lg">
+                  <div className="font-mono-tech text-[10px] text-[#60A5FA]">STEP {card.s}</div>
+                  <div className="font-display text-sm sm:text-base font-semibold mt-1">{card.t}</div>
+                  <div className="text-[11px] text-white/60 mt-0.5">{card.d}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Navy Blue + Cosmic Black Cinema Gradient Overlay */}
       <div
@@ -145,14 +191,16 @@ export function ProjectArtwork({
         )}
       </div>
 
-      {/* Center Interactive Cursor Pill (Matches Astra's circular dual-dot project badge on hover) */}
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#050811]/75 backdrop-blur-md border border-white/25 text-xs font-medium text-white opacity-90 group-hover:scale-110 group-hover:border-[#2E6BFF] transition-all duration-300">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
-          <span className="w-2 h-2 rounded-full bg-[#2E6BFF]" />
-          <span className="ml-1">View Case Study</span>
+      {/* Center Interactive Cursor Pill on Video Cards */}
+      {videoSrc && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#050811]/75 backdrop-blur-md border border-white/25 text-xs font-medium text-white opacity-90 group-hover:scale-110 group-hover:border-[#2E6BFF] transition-all duration-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+            <span className="w-2 h-2 rounded-full bg-[#2E6BFF]" />
+            <span className="ml-1">View Case Study</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom Centered Project Title Overlay (Matches "Sonora Sport" / "Zima Beauty" at bottom center of Astra project cards) */}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">

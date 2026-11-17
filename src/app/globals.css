@@ -4,32 +4,33 @@
   --font-display: "Inter", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  --bg-cosmos: #03050c;
+  --bg-cosmos: #040711;
   --bg-navy: #0b1020;
   --bg-white: #ffffff;
-  --ink-navy: #070b16;
-  --ink-muted: #5a6275;
-  --navy-accent: #2e6bff;
+  --ink-navy: #0b1020;
+  --ink-muted: #525d73;
+  --navy-accent: #2563eb;
   --navy-deep: #1e3a8a;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   background-color: var(--bg-cosmos);
   color: #ffffff;
   font-family: var(--font-sans);
   letter-spacing: -0.03em;
+  overflow-x: clip;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--bg-cosmos);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: #2e6bff;
+  background-color: #1e40af;
   color: #ffffff;
 }
 
@@ -46,18 +47,18 @@ body {
 
 /* Deep Cosmic Black + Navy Blue theme surface */
 .cosmos-surface {
-  background-color: #03050c;
+  background-color: #040711;
   background-image:
-    radial-gradient(ellipse 70% 55% at 76% 35%, rgba(30, 58, 138, 0.28) 0%, rgba(11, 16, 32, 0.35) 50%, transparent 80%),
-    radial-gradient(ellipse 55% 45% at 25% 75%, rgba(46, 107, 255, 0.12) 0%, transparent 70%);
+    radial-gradient(ellipse 72% 58% at 74% 34%, rgba(30, 64, 175, 0.34) 0%, rgba(11, 16, 32, 0.42) 52%, transparent 82%),
+    radial-gradient(ellipse 55% 45% at 24% 76%, rgba(37, 99, 235, 0.18) 0%, transparent 72%);
 }
 
-/* Crisp White + Subtle Navy-Tinted Architectural Paper Surface */
+/* Crisp White + Subtle Ice-Navy Architectural Surface */
 .paper-surface {
   position: relative;
   background-color: #ffffff;
-  color: #070b16;
-  background-image: linear-gradient(180deg, #ffffff 0%, #f6f8fc 52%, #ffffff 100%);
+  color: #0b1020;
+  background-image: linear-gradient(180deg, #ffffff 0%, #f5f8ff 50%, #ffffff 100%);
 }
 
 /* Subtle film noise overlay matching Astra's Noize layer */
@@ -65,7 +66,7 @@ body {
   background-image: url("/astra/noise.gif");
   background-repeat: repeat;
   background-size: 180px 180px;
-  opacity: 0.032;
+  opacity: 0.03;
   pointer-events: none;
 }
 
@@ -94,11 +95,11 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #03050c;
+  background: #040711;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e3a8a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e6bff;
+  background: #2563eb;
 }

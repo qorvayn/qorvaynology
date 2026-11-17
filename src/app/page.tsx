@@ -463,37 +463,47 @@ export default function QorvaynologyHomePage() {
       </AnimatePresence>
 
       {/* =====================================================================
-          SECTION 01: HERO WITH LIVE UNIVERSE VIDEO, PLANET/SAT & MIX-BLEND-DIFFERENCE
+          SECTION 01: HERO WITH LIVE UNIVERSE VIDEO, WHITE PLANET CURVE & MIX-BLEND
           Matches https://astralab.framer.website/ [data-framer-name="Hero"] 1:1
       ===================================================================== */}
       <section
         ref={heroRef}
         id="top"
-        className="relative w-full h-[732px] sm:h-[820px] lg:h-screen min-h-[720px] bg-white overflow-hidden select-none"
+        className="relative w-full h-[732px] sm:h-[820px] lg:h-screen min-h-[720px] bg-[#040711] overflow-hidden select-none"
       >
-        {/* Layer 0: Live Universe Sky Video (rotating white planet on left + universe nebula on right) */}
+        {/* Layer 0: Live Universe Nebula & Starfield Video on the right / full canvas */}
         <motion.div
           style={{ scale: heroVideoScale }}
           className="absolute inset-0 z-0"
         >
           <video
             src="/astra/sky-universe.mp4"
-            poster="/astra/hero-stars-bg.png"
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             className="w-full h-full object-cover"
           />
         </motion.div>
 
-        {/* Layer 1: Subtle Navy-Black Atmospheric Overlay (opacity 0.26 matching Astra's Overlay black) */}
+        {/* Layer 1: Deep Navy Blue + Black Cosmic Tint over the Moving Universe Video */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[#040816]/25"
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-br from-[#060C1F]/40 via-[#040711]/25 to-[#1E3A8A]/25"
         />
 
-        {/* Layer 2: Orbiting Planet (80x80) + Satellite (17x17) at x: 34.5%, y: 27.5% */}
+        {/* Layer 1b: Giant Curved White Eclipse Planet PNG on the Left (transparent on right so universe video shows!) */}
+        <motion.img
+          src="/astra/hero-stars-bg.png"
+          alt=""
+          initial={{ x: "-6%", opacity: 0 }}
+          animate={{ x: "0%", opacity: 1 }}
+          transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
+          className="pointer-events-none absolute inset-0 w-full h-full object-cover object-left z-[2]"
+        />
+
+        {/* Layer 2: Orbiting Planet (80x80) + Satellite (17x17) */}
         <motion.div
           style={{ y: heroPlanetY }}
           initial={{ opacity: 0, scale: 0.7 }}
@@ -519,7 +529,7 @@ export default function QorvaynologyHomePage() {
           />
         </motion.div>
 
-        {/* Layer 2b: Distressed Ink & Asteroid Streaks across the left white planet */}
+        {/* Layer 2b: Distressed Ink & Asteroid Streaks */}
         <HeroAsteroidStreaks />
 
         {/* Layer 3: Topblock with mix-blend-mode: difference (Matches Astra's Topblock 1:1) */}
@@ -527,7 +537,7 @@ export default function QorvaynologyHomePage() {
           {/* Sub-caption under the Contact pill ("Reach out to start your project") */}
           <div className="pt-[102px] grid grid-cols-12">
             <div className="col-start-7 sm:col-start-9 col-span-6 sm:col-span-4">
-              <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/80">
+              <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/85">
                 Reach out to start
                 <br />
                 your project
@@ -538,9 +548,9 @@ export default function QorvaynologyHomePage() {
           {/* Center-to-Bottom Hero Block: Slogan + Services & Giant Title + Who we are */}
           <motion.div
             style={{ y: heroTitleY }}
-            className="my-auto pt-12 sm:pt-16"
+            className="my-auto pt-10 sm:pt-14"
           >
-            {/* Slogan Row ("Space of Creative Solutions" -> "Design & Technology Studio") */}
+            {/* Slogan Row */}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
@@ -556,9 +566,9 @@ export default function QorvaynologyHomePage() {
               </div>
             </motion.div>
 
-            {/* Main Info Row: Left 4 Service Lines (w: 446) + Right Monumental Wordmark */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-6">
-              {/* Left 4 Service Rows (White text inside mix-blend-difference => automatically black over white planet!) */}
+            {/* Main Info Row: Left 4 Service Lines (inverts to black on white planet) + Monumental Wordmark spanning the curve */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-4">
+              {/* Left 4 Service Rows */}
               <motion.div
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -590,35 +600,32 @@ export default function QorvaynologyHomePage() {
                 })}
               </motion.div>
 
-              {/* Right Monumental Title ("Qorvayn®" with TitleAsteroidSplatter + Right Star) */}
+              {/* Right Monumental Title straddling the white planet edge at ~34% */}
               <motion.div
                 initial={{ opacity: 0, y: 36 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.9, ease: EASE_OUT_EXPO }}
-                className="lg:col-span-8 flex items-center justify-between"
+                className="lg:col-span-8 flex items-center justify-between lg:-ml-6"
               >
                 <div className="relative inline-flex items-start">
-                  {/* Asteroid splatter on the first letter, matching "Asteroids on Astra" */}
                   <TitleAsteroidSplatter className="absolute -top-2 left-4 z-10 mix-blend-normal" />
 
                   <h1 className="font-display font-semibold text-[#FAFAFA] text-[clamp(4.2rem,13.2vw,196px)] leading-[1.02] tracking-[-0.04em]">
                     Qorvayn
                   </h1>
 
-                  {/* 31x31 circular R badge */}
                   <span className="ml-1.5 sm:ml-2.5 mt-3 sm:mt-6 w-[26px] h-[26px] sm:w-[31px] sm:h-[31px] rounded-full bg-[#FAFAFA] text-black font-display font-extrabold text-[14px] sm:text-[18px] tracking-[-1px] flex items-center justify-center shrink-0">
                     R
                   </span>
                 </div>
 
-                {/* Far-right 15x15 4-point star */}
                 <div className="hidden sm:flex items-center pr-1">
                   <AstraStarLogo className="w-[15px] h-[15px] text-white" />
                 </div>
               </motion.div>
             </div>
 
-            {/* Bottom "Who we are" Row (x: 728, y: 583) */}
+            {/* Bottom "Who we are" Row */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -2541,6 +2548,8 @@ export default function QorvaynologyHomePage() {
               ) : (
                 <form onSubmit={handleFooterBrief} className="space-y-4">
                   <input
+                    id="footer-name"
+                    name="name"
                     type="text"
                     required
                     value={footerName}
@@ -2549,6 +2558,8 @@ export default function QorvaynologyHomePage() {
                     className="w-full bg-transparent border-b border-white/20 py-2.5 text-xs text-white placeholder:text-white/55 focus:outline-none focus:border-[#2E6BFF]"
                   />
                   <input
+                    id="footer-email"
+                    name="email"
                     type="email"
                     required
                     value={footerEmail}
@@ -2579,8 +2590,8 @@ export default function QorvaynologyHomePage() {
           <div className="pt-14 pb-14 grid grid-cols-1 lg:grid-cols-12 items-center">
             <div className="lg:col-start-5 lg:col-span-8">
               <div className="inline-flex items-start select-none">
-                <span className="font-display font-semibold text-white text-[clamp(3.2rem,9.2vw,136px)] leading-none tracking-[-0.045em]">
-                  Qorvayn
+                <span className="font-display font-semibold text-white text-[clamp(2.8rem,7.8vw,108px)] leading-none tracking-[-0.045em]">
+                  Qorvaynology
                 </span>
                 <span className="ml-2 mt-2 sm:mt-4 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white text-[#070B16] font-display font-extrabold text-xs sm:text-sm flex items-center justify-center">
                   R
