@@ -1,27 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Inter", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  --bg-cosmos: #07090d;
-  --bg-cosmos-elevated: #0c1018;
-  --bg-paper: #f4f3ee;
-  --bg-paper-elevated: #ebe9e1;
-  --ink-primary: #0b1020;
-  --ink-muted: #525866;
-  --mist-primary: #f4f3ee;
-  --mist-muted: #949ba8;
-  --gold-accent: #f5b83d;
-  --gold-deep: #b45f06;
+  --bg-cosmos: #03050c;
+  --bg-navy: #0b1020;
+  --bg-white: #ffffff;
+  --ink-navy: #070b16;
+  --ink-muted: #5a6275;
+  --navy-accent: #2e6bff;
+  --navy-deep: #1e3a8a;
 }
 
 html {
   scroll-behavior: smooth;
   background-color: var(--bg-cosmos);
-  color: var(--mist-primary);
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: -0.011em;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
 }
 
 body {
@@ -32,81 +29,76 @@ body {
 }
 
 ::selection {
-  background-color: #f5b83d;
-  color: #07090d;
+  background-color: #2e6bff;
+  color: #ffffff;
 }
 
 .font-display {
-  font-family: var(--font-display), -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: -0.04em;
+  font-family: var(--font-display);
+  letter-spacing: -0.042em;
 }
 
 .font-mono-tech {
-  font-family: var(--font-mono), monospace;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-/* Deep cosmic atmosphere matching Astra reference without neon clichés */
+/* Deep Cosmic Black + Navy Blue theme surface */
 .cosmos-surface {
-  background-color: #07090d;
+  background-color: #03050c;
   background-image:
-    radial-gradient(ellipse 68% 52% at 78% 36%, rgba(196, 164, 120, 0.13) 0%, rgba(84, 72, 58, 0.05) 45%, transparent 75%),
-    radial-gradient(ellipse 55% 45% at 62% 72%, rgba(145, 128, 104, 0.09) 0%, transparent 70%),
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.025) 0%, transparent 50%);
+    radial-gradient(ellipse 70% 55% at 76% 35%, rgba(30, 58, 138, 0.28) 0%, rgba(11, 16, 32, 0.35) 50%, transparent 80%),
+    radial-gradient(ellipse 55% 45% at 25% 75%, rgba(46, 107, 255, 0.12) 0%, transparent 70%);
 }
 
-/* Warm archival paper surface */
+/* Crisp White + Subtle Navy-Tinted Architectural Paper Surface */
 .paper-surface {
-  background-color: #f4f3ee;
-  color: #0b1020;
-  background-image:
-    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.65) 0%, transparent 55%),
-    radial-gradient(circle at 85% 82%, rgba(218, 214, 202, 0.4) 0%, transparent 55%);
+  position: relative;
+  background-color: #ffffff;
+  color: #070b16;
+  background-image: linear-gradient(180deg, #ffffff 0%, #f6f8fc 52%, #ffffff 100%);
 }
 
-/* Subtle procedural starlight dots */
-.starfield-overlay {
-  background-image:
-    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 28% 64%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
-    radial-gradient(1px 1px at 46% 24%, rgba(255, 255, 255, 0.45) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 64% 14%, rgba(245, 184, 61, 0.45) 50%, transparent 100%),
-    radial-gradient(1px 1px at 73% 48%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
-    radial-gradient(1.2px 1.2px at 84% 28%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
-    radial-gradient(1px 1px at 91% 72%, rgba(255, 255, 255, 0.5) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 57% 82%, rgba(255, 255, 255, 0.35) 50%, transparent 100%),
-    radial-gradient(1px 1px at 38% 88%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
-  background-size: 540px 420px;
+/* Subtle film noise overlay matching Astra's Noize layer */
+.noise-overlay {
+  background-image: url("/astra/noise.gif");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  opacity: 0.032;
+  pointer-events: none;
 }
 
-@keyframes slowOrbit {
+@keyframes tickerScroll {
   0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-6px) rotate(2deg);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateX(-50%);
   }
 }
 
-.animate-slow-orbit {
-  animation: slowOrbit 9s ease-in-out infinite;
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: tickerScroll 26s linear infinite;
 }
 
-/* Custom minimal scrollbar */
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Custom minimal scrollbar in Navy + Black */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #07090d;
+  background: #03050c;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(244, 243, 238, 0.22);
+  background: #1e3a8a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f5b83d;
+  background: #2e6bff;
 }

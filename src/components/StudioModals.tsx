@@ -203,7 +203,7 @@ export function ContactModal({
           >
             <div className="flex items-center justify-between pb-5 border-b border-white/12">
               <div className="flex items-center gap-3">
-                <ContinuumMark className="w-6 h-6" strokeColor="#FFFFFF" accentColor="#F5B83D" />
+                <ContinuumMark className="w-6 h-6" strokeColor="#FFFFFF" accentColor="#2E6BFF" />
                 <span className="font-mono-tech text-[11px] text-white/70">
                   START A PROJECT · QORVAYNOLOGY STUDIO
                 </span>
@@ -231,13 +231,13 @@ export function ContactModal({
                   href="https://cal.com/qorvaynology"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 bg-[#F5B83D]/12 border border-[#F5B83D]/40 hover:bg-[#F5B83D]/20 transition-colors text-xs"
+                  className="flex items-center justify-between p-3 bg-[#2E6BFF]/15 border border-[#2E6BFF]/45 hover:bg-[#2E6BFF]/25 transition-colors text-xs"
                 >
-                  <span className="flex items-center gap-2 font-medium text-[#F5B83D]">
+                  <span className="flex items-center gap-2 font-medium text-[#60A5FA]">
                     <Calendar className="w-3.5 h-3.5" />
                     Book on Cal.com
                   </span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#F5B83D]" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#60A5FA]" />
                 </a>
                 <a
                   href="mailto:qorvaynology@gmail.com"

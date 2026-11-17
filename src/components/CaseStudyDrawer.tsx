@@ -171,7 +171,7 @@ export function CaseStudyDrawer({
                   >
                     <span>Request a Similar Build</span>
                     <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F5B83D]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF]" />
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </span>
                   </button>
@@ -214,7 +214,7 @@ export function CaseStudyDrawer({
                       key={idx}
                       className="flex items-start gap-3 text-xs sm:text-sm text-black/75 leading-relaxed"
                     >
-                      <span className="font-mono-tech text-[11px] text-[#B45F06] mt-0.5">
+                      <span className="font-mono-tech text-[11px] text-[#2E6BFF] mt-0.5">
                         0{idx + 1}
                       </span>
                       <span>{item}</span>
