@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
   --bg-cosmos: #07090d;
   --bg-cosmos-elevated: #0c1018;
   --bg-paper: #f4f3ee;
