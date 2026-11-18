@@ -286,7 +286,7 @@ export default function QorvaynologyHomePage() {
                   <TeamAvatar
                     initials="RZ"
                     name="Ryan Zannah"
-                    tone="from-[#2E6BFF] to-[#0B1020]"
+                    tone="from-[#141414] to-[#000000]"
                     size="xs"
                   />
                 </div>
@@ -487,10 +487,10 @@ export default function QorvaynologyHomePage() {
           />
         </motion.div>
 
-        {/* Layer 1: Deep Navy Blue + Black Cosmic Tint over the Moving Universe Video */}
+        {/* Layer 1: Deep Midnight Navy Blue + Cosmic Black Atmospheric Wash */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-br from-[#060C1F]/40 via-[#040711]/25 to-[#1E3A8A]/25"
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-br from-[#06112E]/78 via-[#0B1E4E]/45 to-[#1E3A8A]/40"
         />
 
         {/* Layer 1b: Giant Curved White Eclipse Planet PNG on the Left (transparent on right so universe video shows!) */}
@@ -681,7 +681,7 @@ export default function QorvaynologyHomePage() {
                     {fact.title}
                   </div>
                   <div className="mt-5 flex items-start justify-between gap-6">
-                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#070B16] flex items-start">
+                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#0A1633] flex items-start">
                       <span>{fact.value}</span>
                       {fact.sup && (
                         <span className="text-2xl sm:text-3xl font-semibold text-[#2E6BFF] ml-1 -mt-1">
@@ -712,14 +712,14 @@ export default function QorvaynologyHomePage() {
                     {STUDIO_FACTS[2].description}
                   </p>
                   <div className="flex flex-col items-end">
-                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#070B16]">
+                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#0A1633]">
                       {STUDIO_FACTS[2].value}
                     </div>
                     <div className="mt-2 flex items-center gap-1">
-                      <span className="w-5 h-5 rounded-full bg-[#0B1020] text-white text-[10px] font-semibold flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-[#0A1633] text-white text-[10px] font-semibold flex items-center justify-center">
                         Q
                       </span>
-                      <span className="w-5 h-5 rounded-full bg-[#2E6BFF] text-white text-[10px] font-semibold flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-[#1E40AF] text-white text-[10px] font-semibold flex items-center justify-center">
                         y
                       </span>
                     </div>
@@ -884,21 +884,21 @@ export default function QorvaynologyHomePage() {
                   className="py-8 sm:py-10"
                 >
                   {isOpen ? (
-                    /* OPEN STATE (Matches "Desktop - Open" in frame_007.jpg) */
+                    /* OPEN STATE (Signature White + Deep Navy Blue Architecture) */
                     <div
                       onClick={() => setOpenServiceId("")}
-                      className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start cursor-pointer"
+                      className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start cursor-pointer bg-[#EFF4FF]/70 border-l-4 border-[#1E3A8A] pl-4 sm:pl-6 pr-3 py-5 -my-2"
                     >
                       {/* Col 1-4: /01 */}
                       <div className="lg:col-span-4">
-                        <span className="font-display text-[20px] font-semibold tracking-[-1px] text-[#070B16]">
+                        <span className="font-display text-[20px] font-semibold tracking-[-1px] text-[#1E3A8A]">
                           {srv.index}
                         </span>
                       </div>
 
-                      {/* Col 5-7: Title + 135x135 Circular Sphere + 40x40 "i" badge */}
+                      {/* Col 5-7: Title + 135x135 Navy-Toned Sphere + 40x40 "i" badge */}
                       <div className="lg:col-span-3 flex items-start justify-between gap-4">
-                        <h3 className="font-display text-[22px] sm:text-[24px] font-semibold leading-[1.2] tracking-[-1px] text-[#070B16] max-w-[160px]">
+                        <h3 className="font-display text-[22px] sm:text-[24px] font-semibold leading-[1.2] tracking-[-1px] text-[#0A1633] max-w-[160px]">
                           {srv.title}
                         </h3>
 
@@ -915,12 +915,12 @@ export default function QorvaynologyHomePage() {
                           <img
                             src="/astra/service-sphere.png"
                             alt={srv.title}
-                            className="w-[110px] h-[110px] sm:w-[135px] sm:h-[135px] rounded-full object-cover shadow-md"
+                            className="w-[110px] h-[110px] sm:w-[135px] sm:h-[135px] rounded-full object-cover shadow-md ring-2 ring-[#1E3A8A]/35 [filter:hue-rotate(205deg)_saturate(1.4)_contrast(1.05)]"
                           />
                           <img
                             src="/astra/service-i.png"
                             alt="Info"
-                            className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] -ml-3 mt-1 rounded-full object-cover shadow"
+                            className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] -ml-3 mt-1 rounded-full object-cover shadow ring-2 ring-white [filter:hue-rotate(205deg)_saturate(1.4)]"
                           />
                         </motion.div>
                       </div>
@@ -1005,11 +1005,11 @@ export default function QorvaynologyHomePage() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => openContactWith("Get Started — Services CTA")}
-                className="h-[47px] w-[235px] px-6 rounded-[32px] bg-[#070B16] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium tracking-[-0.48px] transition-colors cursor-pointer"
+                className="h-[47px] w-[235px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium tracking-[-0.48px] transition-colors cursor-pointer"
               >
                 <span>Get Started</span>
                 <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                   <span className="w-2 h-2 rounded-full bg-white" />
                 </span>
               </motion.button>
@@ -1022,8 +1022,8 @@ export default function QorvaynologyHomePage() {
           SECTIONS 04 & 05: STICKY UNIVERSE WRAPPER FOR PROJECTS & PRICING
           Matches [data-framer-name="Projects and Pricing"] (y: 3320, h: 6846) 1:1
       ===================================================================== */}
-      <div className="relative bg-[#03050C] text-white">
-        {/* Sticky 100vh Universe Starfield Backdrop + Navy Blue Cosmic Glow */}
+      <div className="relative bg-[#050B1C] text-white">
+        {/* Sticky 100vh Universe Starfield Backdrop + Signature Midnight Navy Cosmic Glow */}
         <div
           aria-hidden="true"
           className="sticky top-0 h-screen w-full overflow-hidden pointer-events-none z-0"
@@ -1031,9 +1031,9 @@ export default function QorvaynologyHomePage() {
           <img
             src="/astra/section-stars-bg.png"
             alt=""
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-full object-cover opacity-85"
           />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_65%_50%_at_75%_35%,rgba(30,58,138,0.28),rgba(3,5,12,0.55)_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_60%_at_75%_30%,rgba(29,78,216,0.44),rgba(7,18,46,0.70)_55%,rgba(4,7,17,0.90)_90%)]" />
         </div>
 
         {/* Content floating over the Sticky Universe Starfield */}
@@ -1150,11 +1150,11 @@ export default function QorvaynologyHomePage() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setActiveCaseStudy(PROJECTS_LIST[0])}
-                    className="h-[47px] w-[244px] px-6 rounded-[32px] bg-white text-[#070B16] hover:bg-[#2E6BFF] hover:text-white flex items-center justify-between text-xs font-semibold tracking-[-0.48px] transition-colors cursor-pointer"
+                    className="h-[47px] w-[244px] px-6 rounded-[32px] bg-[#0F2557] text-white border border-[#2E6BFF]/50 hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-semibold tracking-[-0.48px] transition-colors cursor-pointer"
                   >
                     <span>All Projects</span>
                     <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                       <span className="w-2 h-2 rounded-full bg-current" />
                     </span>
                   </motion.button>
@@ -1254,8 +1254,8 @@ export default function QorvaynologyHomePage() {
                   <AstraStarLogo className="w-2.5 h-2.5" />
                 </div>
 
-                <div className="lg:col-span-8">
-                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-white/25">
+                <div className="lg:col-span-8 bg-[#091536]/55 border border-[#2E6BFF]/25 p-6 sm:p-8 backdrop-blur-sm">
+                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-[#2E6BFF]/35">
                     Per Project — {currentPackage.name} ({currentTier.tierName})
                   </div>
 
@@ -1274,7 +1274,7 @@ export default function QorvaynologyHomePage() {
                         <img
                           src="/astra/pack-project.png"
                           alt="Pack per project"
-                          className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl"
+                          className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl ring-2 ring-[#2E6BFF]/40"
                         />
                       </motion.div>
 
@@ -1299,7 +1299,7 @@ export default function QorvaynologyHomePage() {
                             </li>
                           ))}
                         </ul>
-                        <span className="text-[12px] font-medium text-white/50 shrink-0">
+                        <span className="text-[12px] font-medium text-[#60A5FA] shrink-0">
                           /01
                         </span>
                       </div>
@@ -1322,11 +1322,11 @@ export default function QorvaynologyHomePage() {
                               `Per Project: ${currentPackage.name} (${currentTier.tierName})`
                             )
                           }
-                          className="h-[42px] w-[190px] px-5 rounded-[32px] border-2 border-white/25 hover:border-white hover:bg-white hover:text-[#070B16] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
+                          className="h-[42px] w-[190px] px-5 rounded-[32px] bg-[#0F2557]/80 border-2 border-[#3B82F6]/60 hover:border-white hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
                         >
                           <span>Get in Touch</span>
                           <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                             <span className="w-2 h-2 rounded-full bg-current" />
                           </span>
                         </motion.button>
@@ -1341,8 +1341,8 @@ export default function QorvaynologyHomePage() {
                 style={{ opacity: row2Opacity, y: row2Y }}
                 className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-12"
               >
-                <div className="lg:col-span-8">
-                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-white/25">
+                <div className="lg:col-span-8 bg-[#091536]/55 border border-[#2E6BFF]/25 p-6 sm:p-8 backdrop-blur-sm">
+                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-[#2E6BFF]/35">
                     Monthly — Growth Retainer &amp; Care Plan
                   </div>
 
@@ -1368,7 +1368,7 @@ export default function QorvaynologyHomePage() {
                             <span>Dedicated monthly support &amp; Friday reports</span>
                           </li>
                         </ul>
-                        <span className="text-[12px] font-medium text-white/50 shrink-0">
+                        <span className="text-[12px] font-medium text-[#60A5FA] shrink-0">
                           /02
                         </span>
                       </div>
@@ -1389,11 +1389,11 @@ export default function QorvaynologyHomePage() {
                           onClick={() =>
                             openContactWith("Monthly Growth Retainer Inquiry")
                           }
-                          className="h-[42px] w-[190px] px-5 rounded-[32px] border-2 border-white/25 hover:border-white hover:bg-white hover:text-[#070B16] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
+                          className="h-[42px] w-[190px] px-5 rounded-[32px] bg-[#0F2557]/80 border-2 border-[#3B82F6]/60 hover:border-white hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
                         >
                           <span>Get in Touch</span>
                           <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                             <span className="w-2 h-2 rounded-full bg-current" />
                           </span>
                         </motion.button>
@@ -1414,7 +1414,7 @@ export default function QorvaynologyHomePage() {
                         <img
                           src="/astra/pack-month.png"
                           alt="Pack per month"
-                          className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl"
+                          className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl ring-2 ring-[#2E6BFF]/40"
                         />
                       </motion.div>
 
@@ -1663,11 +1663,11 @@ export default function QorvaynologyHomePage() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => openContactWith("Book Discovery Call")}
-                className="h-[47px] w-[237px] px-6 rounded-[32px] bg-[#070B16] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
+                className="h-[47px] w-[237px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
               >
                 <span>Book a Discovery Call</span>
                 <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                   <span className="w-2 h-2 rounded-full bg-white" />
                 </span>
               </motion.button>
@@ -1785,8 +1785,8 @@ export default function QorvaynologyHomePage() {
                       }}
                       className={`w-full ${
                         bar.active
-                          ? "bg-[#070B16] text-white"
-                          : "bg-[#91908E]/50 text-white"
+                          ? "bg-[#1E3A8A] text-white"
+                          : "bg-[#0B1B46]/20 text-[#0A1633]"
                       } flex items-start justify-center pt-2 text-[11px] font-semibold`}
                     >
                       {bar.val}
@@ -1817,19 +1817,19 @@ export default function QorvaynologyHomePage() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.025, duration: 0.35 }}
                       className={`w-4 h-4 rounded-full ${
-                        i < 11 ? "bg-[#070B16]" : "bg-[#91908E]/40"
+                        i < 11 ? "bg-[#1E3A8A]" : "bg-[#CBD5E1]"
                       }`}
                     />
                   ))}
                 </div>
                 <div className="space-y-2 text-[13px]">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#070B16]" />
-                    <span className="font-semibold text-[#070B16]">Involved</span>
+                    <span className="w-2 h-2 rounded-full bg-[#1E3A8A]" />
+                    <span className="font-semibold text-[#0A1633]">Involved</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#91908E]/50" />
-                    <span className="text-[#686963]">Advisory</span>
+                    <span className="w-2 h-2 rounded-full bg-[#CBD5E1]" />
+                    <span className="text-[#525D73]">Advisory</span>
                   </div>
                 </div>
               </div>
@@ -2352,11 +2352,11 @@ export default function QorvaynologyHomePage() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => openContactWith("Question from FAQ")}
-                    className="h-[47px] w-[239px] px-6 rounded-[32px] bg-[#070B16] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
+                    className="h-[47px] w-[239px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
                   >
                     <span>Ask your Question</span>
                     <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                       <span className="w-2 h-2 rounded-full bg-white" />
                     </span>
                   </motion.button>
@@ -2386,7 +2386,7 @@ export default function QorvaynologyHomePage() {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#03050C]/75 via-[#060C1E]/80 to-[#03050C]/95"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#06112E]/85 via-[#0B1C47]/70 to-[#040711]/95"
         />
 
         <div className="relative z-10 max-w-[1354px] mx-auto px-5 sm:px-9">

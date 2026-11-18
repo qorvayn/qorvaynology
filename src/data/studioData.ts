@@ -128,7 +128,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Complete Brand Guidelines book & social launch kit",
     ],
     relatedProjects: ["Qorvaynology Continuum", "QORVAYN", "SnowVayn"],
-    accentHue: "from-[#F5B83D] via-[#D97706] to-[#0B1020]",
+    accentHue: "from-[#2E6BFF] via-[#1E3A8A] to-[#050B1C]",
   },
   {
     index: "/02",
@@ -147,7 +147,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Developer-ready specs, states & motion guidelines",
     ],
     relatedProjects: ["Orbyn Web App", "SnowVayn Storefront", "Aether Clinic (Concept)"],
-    accentHue: "from-[#38BDF8] via-[#1D4ED8] to-[#0B1020]",
+    accentHue: "from-[#3B82F6] via-[#1D4ED8] to-[#050B1C]",
   },
   {
     index: "/03",
@@ -166,7 +166,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Launch checklist + 30 days of post-launch engineering support",
     ],
     relatedProjects: ["QORVAYN Flagship", "SnowVayn / SunVayn", "Qorvaynology Studio"],
-    accentHue: "from-[#10B981] via-[#047857] to-[#0B1020]",
+    accentHue: "from-[#60A5FA] via-[#1E3A8A] to-[#050B1C]",
   },
   {
     index: "/04",
@@ -185,7 +185,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Vercel edge deployment, monitoring & 30-day post-launch support",
     ],
     relatedProjects: ["Orbyn (Live Beta)", "QORVAYN Core"],
-    accentHue: "from-[#F5B83D] via-[#6366F1] to-[#0B1020]",
+    accentHue: "from-[#2563EB] via-[#0F2557] to-[#040711]",
   },
   {
     index: "/05",
@@ -204,7 +204,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Team documentation, guardrails & cost-controlled model routing",
     ],
     relatedProjects: ["Orbyn AI Date Planner", "Studio Ops Pipeline"],
-    accentHue: "from-[#A855F7] via-[#3B82F6] to-[#0B1020]",
+    accentHue: "from-[#93C5FD] via-[#1E40AF] to-[#050B1C]",
   },
   {
     index: "/06",
@@ -223,7 +223,7 @@ export const SERVICES_LIST: ServiceItem[] = [
       "Clear Friday progress reports & monthly strategy review",
     ],
     relatedProjects: ["QORVAYN Ecosystem", "Partner Retainers"],
-    accentHue: "from-[#F59E0B] via-[#EA580C] to-[#0B1020]",
+    accentHue: "from-[#2E6BFF] via-[#0B1B46] to-[#040711]",
   },
 ];
 
@@ -588,7 +588,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "Every product we launch at QORVAYN teaches us how to design for real people and ship without cutting corners. When you work with Qorvaynology, you get the exact method behind our own products.",
     focusAreas: ["Product Strategy", "Full-Stack Web Apps", "AI Automation", "Client Architecture"],
     initials: "RZ",
-    tone: "from-[#F5B83D]/35 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#2E6BFF]/55 via-[#1E3A8A] to-[#050B1C]",
   },
   {
     id: "shoyetur-rahman-sayel",
@@ -600,7 +600,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "Fast load times, clean TypeScript architecture, and database schemas that don't break under real traffic — good engineering should feel effortless to the end user.",
     focusAreas: ["Next.js & React 19", "TypeScript", "Supabase & Databases", "E-Commerce Systems"],
     initials: "SS",
-    tone: "from-[#38BDF8]/30 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#60A5FA]/45 via-[#0F2557] to-[#050B1C]",
   },
   {
     id: "adelia-maharani",
@@ -612,7 +612,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "A strong brand starts with clarity — knowing who you are, how you speak, and how every screen makes your customer feel within the first three seconds.",
     focusAreas: ["Brand Systems", "Creative Direction", "UI/UX Narrative", "Social Growth"],
     initials: "AM",
-    tone: "from-[#F43F5E]/25 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#3B82F6]/45 via-[#172554] to-[#050B1C]",
   },
   {
     id: "tam-zayn",
@@ -624,7 +624,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "We architect systems so that design tokens, API contracts, and edge deployments work as one continuous pipeline from day one.",
     focusAreas: ["System Architecture", "Product Engineering", "Performance & Security"],
     initials: "TZ",
-    tone: "from-[#10B981]/25 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#1D4ED8]/50 via-[#0B1B46] to-[#040711]",
   },
   {
     id: "siyami-muntaha-saba",
@@ -636,7 +636,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "Restraint is what separates enduring design from trend-chasing templates. Every border, typeface, and transition should earn its place on the screen.",
     focusAreas: ["Design Systems", "Visual Craft", "Apparel & Digital Aesthetics"],
     initials: "SM",
-    tone: "from-[#A855F7]/25 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#93C5FD]/35 via-[#1E3A8A] to-[#050B1C]",
   },
   {
     id: "rahat-ehsan-sufi",
@@ -648,7 +648,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
       "Clear milestones, Friday progress updates, and structured launch checklists keep every build predictable from kickoff to handover.",
     focusAreas: ["Delivery Operations", "Milestone Governance", "Client Handover"],
     initials: "RS",
-    tone: "from-[#F59E0B]/25 via-[#1E293B] to-[#07090D]",
+    tone: "from-[#2563EB]/45 via-[#0F2557] to-[#040711]",
   },
 ];
 
