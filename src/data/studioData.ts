@@ -285,7 +285,7 @@ export const PROJECTS_LIST: ProjectCaseStudy[] = [
     ],
     metrics: [
       { label: "Founded", value: "10 Mar", note: "Established in Bangladesh in March 2026" },
-      { label: "Ecosystem Pillars", value: "04", note: "QORVAYN, Orbyn, SnowVayn/SunVayn, Qorvaynology" },
+      { label: "Brands in the group", value: "04", note: "QORVAYN, Orbyn, SnowVayn/SunVayn, Qorvaynology" },
       { label: "Core Leadership", value: "06", note: "Cross-functional product, design & engineering leads" },
     ],
     palette: {

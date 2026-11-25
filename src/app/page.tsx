@@ -47,6 +47,28 @@ import { ContactModal, InsightModal } from "@/components/StudioModals";
 
 const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+/* Architectural index line: 20px hairline + numbered mono label (replaces pill badges) */
+function SectionIndex({
+  num,
+  label,
+  tone = "dark",
+}: {
+  num: string;
+  label: string;
+  tone?: "dark" | "light";
+}) {
+  const ink = tone === "dark" ? "text-[#0A1633]/60" : "text-white/60";
+  const rule = tone === "dark" ? "bg-[#0A1633]/40" : "bg-white/40";
+  return (
+    <div className={`mb-5 flex items-center gap-3 font-mono-tech text-[11px] tracking-[0.16em] ${ink}`}>
+      <span className={`h-px w-5 ${rule}`} />
+      <span>
+        {num} / {label}
+      </span>
+    </div>
+  );
+}
+
 const INSIGHT_IMAGES = [
   "/astra/insight-1.png",
   "/astra/insight-2.png",
@@ -657,10 +679,13 @@ export default function QorvaynologyHomePage() {
         <div className="max-w-[1354px] mx-auto px-5 sm:px-9">
           {/* NUMBERS BLOCK (Top Row: ++ on left, 2 Stat Columns on right, 3rd Stat below) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {/* Left ++ stars */}
-            <div className="lg:col-span-4 flex items-center gap-1.5 text-[#070B16]">
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+            {/* Left ++ stars + section index */}
+            <div className="lg:col-span-4 text-[#070B16]">
+              <SectionIndex num="01" label="STUDIO" />
+              <div className="flex items-center gap-1.5">
+                <Plus className="w-4 h-4 stroke-[2.5]" />
+                <Plus className="w-4 h-4 stroke-[2.5]" />
+              </div>
             </div>
 
             {/* Stat 1 (col 5-8) & Stat 2 (col 9-12) */}
@@ -740,7 +765,7 @@ export default function QorvaynologyHomePage() {
             {/* Left Col (w: 441): Team of Pilots + 2x3 circular cluster */}
             <div className="lg:col-span-4">
               <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                Team of Pilots
+                The team
               </div>
               <div className="w-3 h-[1.5px] bg-[#91908E] my-1.5" />
               <div className="text-[14.08px] font-medium tracking-[-0.704px] text-[#91908E]">
@@ -774,9 +799,9 @@ export default function QorvaynologyHomePage() {
                 Design &amp; Tech Studio
               </div>
               <p className="mt-3 text-[12px] leading-[16.8px] text-[#686963]">
-                A community
+                Six people who also
                 <br />
-                of driven builders.
+                ship QORVAYN products.
               </p>
               <div className="w-3 h-[2px] bg-[#070B16] my-4" />
 
@@ -801,40 +826,27 @@ export default function QorvaynologyHomePage() {
             {/* Right Col (w: 662): 24px Editorial Message + Infinite Marquee Ticker */}
             <div className="lg:col-span-6">
               <p className="font-display text-[21px] sm:text-[24px] font-medium leading-[33.12px] tracking-[-1.44px] text-[#070B16]">
-                We’re a full-service studio driven by strategy, design, and technology. From brand foundations to fully developed Next.js &amp; Supabase digital products, we create work that doesn’t just look good —{" "}
+                We started QORVAYN in March 2026 to build our own products: Orbyn, a shared web app for long-distance couples, and SnowVayn / SunVayn, a seasonal apparel store.{" "}
                 <span className="text-[#686963]">
-                  it performs, connects, and endures.
+                  Qorvaynology takes that same team and stack to client work, from brand identity to Next.js and Supabase apps.
                 </span>
               </p>
 
-              {/* Infinite Clients / Ecosystem Ticker (Matches "Clients ticker" at y: 1599) */}
-              <div className="mt-12 pt-8 border-t border-[#070B16]/12 overflow-hidden relative">
-                <div className="animate-ticker flex items-center gap-12">
-                  {[
-                    "QORVAYN®",
-                    "ORBYN LIVE BETA",
-                    "SNOWVAYN®",
-                    "SUNVAYN®",
-                    "CONTINUUM SYSTEM",
-                    "NEXT.JS 15",
-                    "SUPABASE",
-                    "QORVAYN®",
-                    "ORBYN LIVE BETA",
-                    "SNOWVAYN®",
-                    "SUNVAYN®",
-                    "CONTINUUM SYSTEM",
-                    "NEXT.JS 15",
-                    "SUPABASE",
-                  ].map((item, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-3 font-display text-sm sm:text-base font-semibold tracking-[-0.04em] text-[#070B16]/55 whitespace-nowrap"
-                    >
-                      <AstraStarLogo className="w-3.5 h-3.5 text-[#2E6BFF]" />
-                      {item}
+              {/* Static ecosystem factsheet (replaces the scrolling ticker) */}
+              <div className="mt-12 border-t border-[#070B16]/12 divide-y divide-[#070B16]/10 text-[13px]">
+                {[
+                  { k: "QORVAYN", v: "Parent company · founded 10 Mar 2026" },
+                  { k: "ORBYN", v: "Couples web app · live beta" },
+                  { k: "SNOWVAYN / SUNVAYN", v: "Seasonal apparel store · in progress" },
+                  { k: "QORVAYNOLOGY", v: "Client studio · Kushtia & Dhaka" },
+                ].map((row) => (
+                  <div key={row.k} className="py-3 flex items-center justify-between gap-6">
+                    <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[#0A1633]/60">
+                      {row.k}
                     </span>
-                  ))}
-                </div>
+                    <span className="font-medium text-[#0A1633] text-right">{row.v}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -861,6 +873,7 @@ export default function QorvaynologyHomePage() {
               transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
               className="lg:col-start-5 lg:col-span-8"
             >
+              <SectionIndex num="02" label="SERVICES" />
               <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
                 Services
               </h2>
@@ -997,7 +1010,7 @@ export default function QorvaynologyHomePage() {
           <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-start-5 lg:col-span-4">
               <p className="font-display text-[18px] sm:text-[20px] font-medium leading-[26px] tracking-[-0.8px] text-[#070B16]">
-                Qorvaynology helps businesses stand out with bold design and smart digital solutions. We mix strategy, creativity, and technology.
+                Every project starts with a free 15–30 minute call and a written proposal within 24 hours. You see progress every Friday.
               </p>
             </div>
             <div className="lg:col-start-9 lg:col-span-4">
@@ -1046,6 +1059,7 @@ export default function QorvaynologyHomePage() {
               {/* Header Block: Monumental 128px "Projects" + 05+ count + 4 Service Filter lines */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16 sm:mb-24">
                 <div className="lg:col-start-5 lg:col-span-8">
+                  <SectionIndex num="03" label="WORK" tone="light" />
                   <motion.h2
                     initial={{ opacity: 0, y: 32 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1176,6 +1190,7 @@ export default function QorvaynologyHomePage() {
               {/* Monumental 128px "Pricing" Header at col-start-5 + Currency & Package Switcher */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-14">
                 <div className="lg:col-start-5 lg:col-span-8">
+                  <SectionIndex num="04" label="PRICING" tone="light" />
                   <motion.h2
                     initial={{ opacity: 0, y: 32 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1478,6 +1493,7 @@ export default function QorvaynologyHomePage() {
           {/* Header Block: Monumental 128px Heading + Metric at col-start-5 */}
           <div className="grid grid-cols-1 lg:grid-cols-12 mb-12">
             <div className="lg:col-start-5 lg:col-span-8">
+              <SectionIndex num="05" label="HOW WE WORK" />
               <motion.h2
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1526,9 +1542,7 @@ export default function QorvaynologyHomePage() {
                         <div className="text-[13px] font-medium text-[#91908E] mb-4">
                           {card.role}
                         </div>
-                        <div className="flex items-center gap-1 text-[#2E6BFF] text-xs mb-2">
-                          <span>★★★★★</span>
-                        </div>
+                        <div className="h-px w-5 bg-[#1E3A8A]/50 mb-3" />
                         <p className="font-display text-[20px] sm:text-[22px] font-medium leading-[29px] tracking-[-0.9px] text-[#070B16]">
                           {card.quote}
                         </p>
@@ -1581,9 +1595,7 @@ export default function QorvaynologyHomePage() {
                         <div className="text-[12px] text-[#91908E] mb-2">
                           {card.role}
                         </div>
-                        <div className="text-[#2E6BFF] text-[11px] mb-1">
-                          ★★★★★
-                        </div>
+                        <div className="h-px w-5 bg-[#1E3A8A]/50 mb-2" />
                         <p className="text-[14.5px] font-medium leading-[20.5px] text-[#070B16]/85">
                           {card.quote}
                         </p>
@@ -1950,6 +1962,7 @@ export default function QorvaynologyHomePage() {
             {/* Monumental 128px "Team" Heading at col-start-5 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 mb-6 sm:mb-10">
               <div className="lg:col-start-5 lg:col-span-8">
+                <SectionIndex num="06" label="TEAM" tone="light" />
                 <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-white">
                   Team
                 </h2>
@@ -2145,6 +2158,7 @@ export default function QorvaynologyHomePage() {
               transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
               className="lg:col-start-5 lg:col-span-8"
             >
+              <SectionIndex num="07" label="NOTES" />
               <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
                 Insights
               </h2>
@@ -2269,6 +2283,7 @@ export default function QorvaynologyHomePage() {
               transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
               className="lg:col-start-5 lg:col-span-8"
             >
+              <SectionIndex num="08" label="QUESTIONS" />
               <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
                 FAQ
               </h2>
@@ -2291,7 +2306,7 @@ export default function QorvaynologyHomePage() {
               </div>
               <div className="text-[12px] text-[#91908E]">Founder &amp; CEO</div>
               <p className="mt-5 text-[14.08px] font-semibold leading-[19.7px] tracking-[-0.704px] text-[#070B16] max-w-[210px]">
-                Behind every project: the thinking that fuels Qorvaynology’s creative process.
+                Questions we get on almost every discovery call, answered by Ryan.
               </p>
             </div>
 
@@ -2398,9 +2413,9 @@ export default function QorvaynologyHomePage() {
 
             <div className="lg:col-span-4">
               <p className="font-display text-[20px] sm:text-[22px] font-medium leading-[30px] tracking-[-1.1px] text-white/90 max-w-[381px]">
-                Qorvaynology creates brands, websites, and web apps that are simple, bold, and built to last.{" "}
+                Qorvaynology designs brands and builds websites and web apps for businesses in Bangladesh and abroad.{" "}
                 <span className="text-white/55">
-                  We care about every detail and treat every project like it matters — because it does.
+                  Every build ships with full code handover and 30 days of support.
                 </span>
               </p>
 
@@ -2422,9 +2437,9 @@ export default function QorvaynologyHomePage() {
 
             <div className="lg:col-span-4">
               <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/85">
-                Space of Creative
+                Kushtia &amp; Dhaka, Bangladesh
                 <br />
-                Solutions · QORVAYN
+                Remote worldwide · QORVAYN
               </p>
             </div>
           </div>
