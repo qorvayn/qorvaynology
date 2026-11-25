@@ -12,8 +12,7 @@ import {
 import {
   ArrowUpRight,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
+  Check,
   Minus,
   Plus,
   X,
@@ -32,12 +31,10 @@ import {
   VERIFIED_SOCIALS,
 } from "@/data/studioData";
 import {
-  CelestialCross,
   ContinuumMark,
   TeamAvatar,
 } from "@/components/ContinuumMark";
 import {
-  AstraStarLogo,
   HeroAsteroidStreaks,
   TitleAsteroidSplatter,
 } from "@/components/AstraSvgDefs";
@@ -47,7 +44,7 @@ import { ContactModal, InsightModal } from "@/components/StudioModals";
 
 const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-/* Architectural index line: 20px hairline + numbered mono label (replaces pill badges) */
+/* Architectural index line: 20px hairline + numbered mono label */
 function SectionIndex({
   num,
   label,
@@ -57,10 +54,12 @@ function SectionIndex({
   label: string;
   tone?: "dark" | "light";
 }) {
-  const ink = tone === "dark" ? "text-[#0A1633]/60" : "text-white/60";
-  const rule = tone === "dark" ? "bg-[#0A1633]/40" : "bg-white/40";
+  const ink = tone === "dark" ? "text-[#0A1633]/65" : "text-white/65";
+  const rule = tone === "dark" ? "bg-[#1E3A8A]" : "bg-[#60A5FA]";
   return (
-    <div className={`mb-5 flex items-center gap-3 font-mono-tech text-[11px] tracking-[0.16em] ${ink}`}>
+    <div
+      className={`mb-5 flex items-center gap-3 font-mono-tech text-[11px] tracking-[0.16em] ${ink}`}
+    >
       <span className={`h-px w-5 ${rule}`} />
       <span>
         {num} / {label}
@@ -84,95 +83,162 @@ const SERVICE_SCOPE_COUNTS: Record<string, { num: string; unit: string }> = {
   "growth-retainer": { num: "04", unit: "Sprints/Mo" },
 };
 
-const PERSPECTIVE_SLIDES = [
-  [
-    {
-      slot: "one", // Featured center-right (x: 52%, top: 0, w: 414px)
-      name: "Ryan Zannah",
-      role: "Founder & CEO, QORVAYN",
-      initials: "RZ",
-      quote:
-        "Every product we launch at QORVAYN teaches us how to design for real people and build fast without cutting corners. Qorvaynology is that exact product method turned into a dedicated studio for your business.",
-    },
-    {
-      slot: "two", // Top-left (x: 2.5%, top: 120px, w: 289px)
-      name: "Shoyetur Rahman Sayel",
-      role: "Lead Software Engineer",
-      initials: "SS",
-      quote:
-        "We build client platforms on the exact Next.js 15, React 19, TypeScript, and Supabase architecture that powers Orbyn in live beta.",
-    },
-    {
-      slot: "three", // Bottom-center-left (x: 26%, top: 270px, w: 343px)
-      name: "Adelia Maharani",
-      role: "Co-Founder & Creative Director",
-      initials: "AM",
-      quote:
-        "Instead of hiring disconnected freelancers for logo, UI, and code, you get one integrated team carrying your brand from first sketch to production launch.",
-    },
-    {
-      slot: "four", // Bottom-right (x: 80%, top: 250px, w: 245px)
-      name: "Tam Zayn",
-      role: "Head of Technology, QORVAYN",
-      initials: "TZ",
-      quote:
-        "Every build ships with a written 3-tier scope, weekly Friday demos, a launch checklist, and 30 days of included post-launch support.",
-    },
-  ],
-  [
-    {
-      slot: "one",
-      name: "Siyami Muntaha Saba",
-      role: "Co-Founder & Head of Design, QORVAYN",
-      initials: "SM",
-      quote:
-        "Restraint is what separates enduring digital products from loud templates. Our White, Navy Blue, and Cosmic Black design system is engineered for clarity on every screen.",
-    },
-    {
-      slot: "two",
-      name: "Rahat Ehsan Sufi",
-      role: "Operations & Business, QORVAYN",
-      initials: "RS",
-      quote:
-        "Fixed scope in writing, 50/50 or 40/30/30 milestone billing, and zero surprise fees from discovery call to final handover.",
-    },
-    {
-      slot: "three",
-      name: "Orbyn Live Beta",
-      role: "In-House Product Benchmark",
-      initials: "OR",
-      quote:
-        "6 real-time modules — presence, daily reflection, voice notes, shared memories, AI date planner, and an on-device two-person photobooth.",
-    },
-    {
-      slot: "four",
-      name: "SnowVayn / SunVayn",
-      role: "Seasonal Commerce Engine",
-      initials: "SV",
-      quote:
-        "Dual-season clothing brand and storefront architecture that automatically shifts its visual theme between winter and summer.",
-    },
-  ],
+/* Base numeric values from Qorvaynology-Brief.md for the interactive scope calculator */
+const PACKAGE_BASE_PRICES: Record<
+  string,
+  { usd: [number, number, number]; bdt: [number, number, number] }
+> = {
+  "launch-website": {
+    usd: [800, 1500, 2800],
+    bdt: [40000, 75000, 130000],
+  },
+  "webapp-mvp": {
+    usd: [3000, 5500, 9500],
+    bdt: [180000, 320000, 550000],
+  },
+  "brand-identity-pkg": {
+    usd: [400, 750, 1200],
+    bdt: [25000, 42000, 60000],
+  },
+  "brand-plus-web": {
+    usd: [1200, 2100, 3500],
+    bdt: [60000, 105000, 175000],
+  },
+};
+
+const SCOPE_ADDONS = [
+  {
+    id: "copywriting",
+    label: "Editorial Copywriting (per 5 pages)",
+    usd: 150,
+    bdt: 10000,
+    recurring: false,
+  },
+  {
+    id: "extra-pages",
+    label: "2 Additional Custom Pages / Views",
+    usd: 120,
+    bdt: 8000,
+    recurring: false,
+  },
+  {
+    id: "seo-schema",
+    label: "Technical SEO, OpenGraph & Schema Pack",
+    usd: 150,
+    bdt: 12000,
+    recurring: false,
+  },
+  {
+    id: "care-plan",
+    label: "Post-30d Monthly Care & Hosting Plan (/mo)",
+    usd: 100,
+    bdt: 8000,
+    recurring: true,
+  },
+];
+
+const DELIVERY_STAGES = [
+  {
+    num: "01",
+    code: "STAGE 01 · DAY 01–02",
+    title: "Discovery Call & Written 3-Tier Proposal",
+    duration: "15–30 min call · Proposal in 24h",
+    lead: "Ryan Zannah",
+    leadRole: "Founder & CEO",
+    leadInitials: "RZ",
+    summary:
+      "We start with a focused 15–30 minute discovery call to map your business goals, target users, and technical constraints. Within 24 hours, you receive a written proposal with 3 clear scope options (Basic, Standard, Premium), exact deliverables, timeline, and milestone schedule.",
+    artifacts: [
+      "Written 3-tier scope & investment breakdown (USD or BDT)",
+      "System architecture & stack recommendation (Next.js, Supabase, Figma)",
+      "Fixed milestone payment schedule (50/50 or 40/30/30)",
+      "Shared project channel (WhatsApp, Slack, or Discord)",
+    ],
+  },
+  {
+    num: "02",
+    code: "STAGE 02 · WEEK 01–02",
+    title: "Visual Architecture & Interactive Figma Prototype",
+    duration: "1–2 weeks · Full UI approval before code",
+    lead: "Adelia Maharani & Siyami Muntaha Saba",
+    leadRole: "Creative Direction & Design Systems",
+    leadInitials: "AM",
+    summary:
+      "Before writing production frontend code, we design your visual system and clickable Figma prototype. You review real screens on desktop and mobile, test user flows, and approve the interface direction so engineering runs with zero guesswork.",
+    artifacts: [
+      "Typography, surface palette, and 1px structural grid tokens",
+      "High-fidelity desktop & mobile screens in Figma",
+      "Interactive clickable prototype for stakeholder sign-off",
+      "Brand mark, responsive lockups, and asset library",
+    ],
+  },
+  {
+    num: "03",
+    code: "STAGE 03 · WEEK 02–06",
+    title: "Next.js & Supabase Engineering Sprints",
+    duration: "Weekly Friday demos · Live staging URL",
+    lead: "Shoyetur Rahman Sayel & Tam Zayn",
+    leadRole: "Lead Software Engineer & Head of Technology",
+    leadInitials: "SS",
+    summary:
+      "We build on the exact Next.js, React 19, TypeScript, and Supabase stack that powers Orbyn in live beta. Every Friday you receive a working staging deployment and recorded walkthrough so you can test real features in your browser every week.",
+    artifacts: [
+      "Clean Next.js App Router + TypeScript production codebase",
+      "Supabase PostgreSQL schema, Auth, and Row-Level Security (for apps)",
+      "Framer Motion scroll choreography & Core Web Vitals tuning",
+      "Every-Friday live staging link + progress review",
+    ],
+  },
+  {
+    num: "04",
+    code: "STAGE 04 · LAUNCH + 30 DAYS",
+    title: "Production Cutover, Code Handover & 30d Care",
+    duration: "30 days included post-launch support",
+    lead: "Rahat Ehsan Sufi & Ryan Zannah",
+    leadRole: "Operations & Studio Leadership",
+    leadInitials: "RS",
+    summary:
+      "At launch, we connect your custom domain, configure SSL and edge security headers, verify analytics, and hand over 100% of your GitHub repository and Figma files. Every build includes a 30-day post-launch support window for bug fixes and team onboarding.",
+    artifacts: [
+      "Custom domain DNS cutover, SSL, and security header verification",
+      "Full GitHub repository, Figma source files, and credentials handover",
+      "Recorded walkthrough teaching your team how to manage content",
+      "30 days of included post-launch engineering support",
+    ],
+  },
 ];
 
 export default function QorvaynologyHomePage() {
   // Interactive state
-  const [activeHeroService, setActiveHeroService] = useState<string>("websites-ecommerce");
+  const [activeHeroService, setActiveHeroService] =
+    useState<string>("websites-ecommerce");
   const [openServiceId, setOpenServiceId] = useState<string>("brand-identity");
-  const [selectedProjectCategory, setSelectedProjectCategory] = useState<string>("All");
-  const [activeCaseStudy, setActiveCaseStudy] = useState<ProjectCaseStudy | null>(null);
-  const [activeInsight, setActiveInsight] = useState<InsightArticle | null>(null);
+  const [selectedProjectCategory, setSelectedProjectCategory] =
+    useState<string>("All");
+  const [activeCaseStudy, setActiveCaseStudy] =
+    useState<ProjectCaseStudy | null>(null);
+  const [activeInsight, setActiveInsight] = useState<InsightArticle | null>(
+    null
+  );
   const [contactOpen, setContactOpen] = useState<boolean>(false);
   const [contactSubject, setContactSubject] = useState<string>("");
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
-  // Pricing configurator state
+  // Interactive Scope & Investment Architect state
   const [currency, setCurrency] = useState<"USD" | "BDT">("USD");
   const [selectedPkgId, setSelectedPkgId] = useState<string>("launch-website");
   const [selectedTierIdx, setSelectedTierIdx] = useState<number>(1); // Standard default
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>(
+    {
+      copywriting: false,
+      "extra-pages": false,
+      "seo-schema": false,
+      "care-plan": false,
+    }
+  );
 
-  // Scattered perspectives slide index (0 or 1)
-  const [perspectiveSlideIdx, setPerspectiveSlideIdx] = useState<number>(0);
+  // Delivery Architecture interactive stage index (0..3)
+  const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
 
   // Team orbital carousel state
   const [activeTeamIdx, setActiveTeamIdx] = useState<number>(0);
@@ -189,7 +255,7 @@ export default function QorvaynologyHomePage() {
   const [footerSent, setFooterSent] = useState(false);
 
   // =========================================================================
-  // SCROLL-LINKED ANIMATIONS (Hero, Pricing Sticky Timeline, Team Sticky Orbit)
+  // SCROLL-LINKED ANIMATIONS (Hero, Pricing Sticky Spheres, Team Sticky Orbit)
   // =========================================================================
   const heroRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress: heroScroll } = useScroll({
@@ -211,17 +277,12 @@ export default function QorvaynologyHomePage() {
     stiffness: 100,
     damping: 26,
   });
-  const planet1Y = useTransform(smoothPricing, [0.05, 0.45], [140, 0]);
-  const planet1Scale = useTransform(smoothPricing, [0.05, 0.45], [0.72, 1]);
-  const row1Opacity = useTransform(smoothPricing, [0.1, 0.4], [0, 1]);
-  const row1Y = useTransform(smoothPricing, [0.1, 0.4], [48, 0]);
+  const planet1Y = useTransform(smoothPricing, [0.05, 0.5], [80, 0]);
+  const planet1Scale = useTransform(smoothPricing, [0.05, 0.5], [0.84, 1]);
+  const planet2Y = useTransform(smoothPricing, [0.3, 0.8], [90, 0]);
+  const planet2Scale = useTransform(smoothPricing, [0.3, 0.8], [0.84, 1]);
 
-  const planet2Y = useTransform(smoothPricing, [0.35, 0.78], [160, 0]);
-  const planet2Scale = useTransform(smoothPricing, [0.35, 0.78], [0.72, 1]);
-  const row2Opacity = useTransform(smoothPricing, [0.42, 0.78], [0, 1]);
-  const row2Y = useTransform(smoothPricing, [0.42, 0.78], [56, 0]);
-
-  // Team Sticky Scroll Section — automatically advances active team member as you scroll!
+  // Team Sticky Scroll Section
   const teamScrollRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress: teamProgress } = useScroll({
     target: teamScrollRef,
@@ -246,12 +307,50 @@ export default function QorvaynologyHomePage() {
     setOpenFaqIds((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const toggleAddon = (id: string) => {
+    setSelectedAddons((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const currentPackage =
     PRICING_PACKAGES.find((p) => p.id === selectedPkgId) || PRICING_PACKAGES[0];
   const currentTier =
     currentPackage.tiers[selectedTierIdx] || currentPackage.tiers[1];
 
+  const activeService =
+    SERVICES_LIST.find((s) => s.id === openServiceId) || SERVICES_LIST[0];
+
+  const activeStage = DELIVERY_STAGES[activeStageIdx] || DELIVERY_STAGES[0];
   const activeMember = TEAM_MEMBERS[activeTeamIdx] || TEAM_MEMBERS[0];
+
+  // Live Interactive Scope Calculator math
+  const basePriceTuple =
+    PACKAGE_BASE_PRICES[selectedPkgId] || PACKAGE_BASE_PRICES["launch-website"];
+  const baseAmount =
+    currency === "USD"
+      ? basePriceTuple.usd[selectedTierIdx] || basePriceTuple.usd[1]
+      : basePriceTuple.bdt[selectedTierIdx] || basePriceTuple.bdt[1];
+
+  const oneTimeAddonTotal = SCOPE_ADDONS.reduce((sum, addon) => {
+    if (!addon.recurring && selectedAddons[addon.id]) {
+      return sum + (currency === "USD" ? addon.usd : addon.bdt);
+    }
+    return sum;
+  }, 0);
+
+  const hasCarePlan = !!selectedAddons["care-plan"];
+  const totalEstimate = baseAmount + oneTimeAddonTotal;
+  const isThreeMilestone =
+    (currency === "USD" && totalEstimate >= 1500) ||
+    (currency === "BDT" && totalEstimate >= 80000);
+
+  const formatMoney = (amount: number) =>
+    currency === "USD"
+      ? `$${amount.toLocaleString("en-US")}`
+      : `৳${amount.toLocaleString("en-IN")}`;
+
+  const activeAddonNames = SCOPE_ADDONS.filter((a) => selectedAddons[a.id]).map(
+    (a) => a.label
+  );
 
   const filteredProjects =
     selectedProjectCategory === "All"
@@ -280,7 +379,7 @@ export default function QorvaynologyHomePage() {
   return (
     <div className="min-h-screen bg-[#03050C] text-white selection:bg-[#2E6BFF] selection:text-white">
       {/* =====================================================================
-          FIXED HEADER WITH MIX-BLEND-MODE: DIFFERENCE (Matches Astra Menu 1:1)
+          FIXED HEADER WITH QORVAYNOLOGY CONTINUUM (q → y) MONOGRAM & MIX-BLEND
       ===================================================================== */}
       <motion.header
         initial={{ opacity: 0, y: -24 }}
@@ -288,52 +387,56 @@ export default function QorvaynologyHomePage() {
         transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
         className="fixed top-0 left-0 right-0 z-40 pointer-events-none mix-blend-difference"
       >
-        <div className="max-w-[1426px] mx-auto px-5 sm:px-9 pt-[30px] pb-3 flex items-start justify-between">
-          {/* Left: 4-Point Astra Star Logomark + Continuum Mark */}
+        <div className="max-w-[1426px] mx-auto px-5 sm:px-9 pt-[28px] pb-3 flex items-start justify-between">
+          {/* Left: Qorvaynology Continuum (q → y) Geometric Mark + Wordmark */}
           <a
             href="#top"
             className="pointer-events-auto group inline-flex items-center gap-3 text-white"
           >
-            <AstraStarLogo className="w-8 h-8 sm:w-9 sm:h-9 text-white transition-transform duration-500 group-hover:rotate-90" />
-            <span className="hidden md:inline-block font-display text-sm font-semibold tracking-[-0.04em] text-white/90">
+            <ContinuumMark
+              className="w-8 h-8 sm:w-9 sm:h-9 transition-transform duration-500 group-hover:scale-105"
+              strokeColor="#FFFFFF"
+              accentColor="#FFFFFF"
+            />
+            <span className="hidden md:inline-block font-display text-sm font-semibold tracking-[-0.04em] text-white/95">
               Qorvaynology®
             </span>
           </a>
 
-          {/* Right: Contact Pill (245x42, rounded-[32px], 2px border) + Reach out text + Menu dots */}
-          <div className="pointer-events-auto flex items-start gap-6 sm:gap-10">
-            <div className="flex flex-col items-start">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-white p-0.5 overflow-hidden shrink-0">
-                  <TeamAvatar
-                    initials="RZ"
-                    name="Ryan Zannah"
-                    tone="from-[#141414] to-[#000000]"
-                    size="xs"
-                  />
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => openContactWith("Discovery Call — Header CTA")}
-                  className="group h-[42px] w-[200px] sm:w-[235px] px-4 rounded-[32px] border-2 border-white/25 hover:border-white/60 flex items-center justify-between text-xs font-medium tracking-[-0.04em] text-white transition-colors cursor-pointer"
-                >
-                  <span>Contact Now</span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
-                    <span className="w-2 h-2 rounded-full bg-white group-hover:scale-125 transition-transform" />
-                  </span>
-                </motion.button>
+          {/* Right: Monochrome Founder Badge + Contact Pill + Menu Trigger */}
+          <div className="pointer-events-auto flex items-start gap-5 sm:gap-8">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-white p-0.5 overflow-hidden shrink-0">
+                <TeamAvatar
+                  initials="RZ"
+                  name="Ryan Zannah"
+                  tone="from-[#141414] to-[#000000]"
+                  size="xs"
+                />
               </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openContactWith("Discovery Call — Header CTA")}
+                className="group h-[42px] w-[196px] sm:w-[230px] px-4 rounded-[32px] border border-white/35 hover:border-white flex items-center justify-between text-xs font-medium tracking-[-0.03em] text-white transition-colors cursor-pointer"
+              >
+                <span>Start a Project</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="font-mono-tech text-[10px] text-white/60">
+                    24H
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-white group-hover:scale-125 transition-transform" />
+                </span>
+              </motion.button>
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.08 }}
+              whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.94 }}
               onClick={() => setMenuOpen(true)}
               aria-label="Open navigation menu"
-              className="h-[42px] px-2 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="h-[42px] px-2.5 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-white" />
               <span className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -364,11 +467,12 @@ export default function QorvaynologyHomePage() {
                   accentColor="#2E6BFF"
                 />
                 <span className="font-mono-tech text-[11px] text-white/65">
-                  QORVAYNOLOGY® NAVIGATION INDEX
+                  QORVAYNOLOGY® · ARCHITECTURAL DIRECTORY
                 </span>
               </div>
               <button
                 onClick={() => setMenuOpen(false)}
+                aria-label="Close navigation menu"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/25 text-xs hover:bg-white hover:text-[#070B16] transition-colors cursor-pointer"
               >
                 <span>Close</span>
@@ -379,15 +483,15 @@ export default function QorvaynologyHomePage() {
             <div className="max-w-[1354px] w-full mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 my-auto py-8">
               <nav className="md:col-span-7 flex flex-col gap-2 sm:gap-3">
                 {[
-                  { idx: "01", label: "Home", href: "#top" },
-                  { idx: "02", label: "Studio & Numbers", href: "#studio" },
-                  { idx: "03", label: "Services", href: "#services" },
-                  { idx: "04", label: "Projects", href: "#projects" },
-                  { idx: "05", label: "Pricing", href: "#pricing" },
-                  { idx: "06", label: "Studio Standard", href: "#method" },
-                  { idx: "07", label: "Team", href: "#team" },
-                  { idx: "08", label: "Insights", href: "#insights" },
-                  { idx: "09", label: "FAQ", href: "#faq" },
+                  { idx: "00", label: "Overview", href: "#top" },
+                  { idx: "01", label: "Studio & Ecosystem", href: "#studio" },
+                  { idx: "02", label: "Capabilities Matrix", href: "#services" },
+                  { idx: "03", label: "Selected Work", href: "#projects" },
+                  { idx: "04", label: "Interactive Scope & Pricing", href: "#pricing" },
+                  { idx: "05", label: "Delivery Architecture", href: "#method" },
+                  { idx: "06", label: "Leadership & Engineering Pod", href: "#team" },
+                  { idx: "07", label: "Studio Notes", href: "#insights" },
+                  { idx: "08", label: "FAQ", href: "#faq" },
                 ].map((item, i) => (
                   <motion.a
                     key={item.idx}
@@ -418,7 +522,7 @@ export default function QorvaynologyHomePage() {
                     DIRECT STUDIO CONTACT
                   </div>
                   <p className="font-display text-xl font-medium text-white">
-                    The QORVAYN way of building, applied to your business.
+                    The QORVAYN product engineering team, available for selected client builds.
                   </p>
                   <div className="mt-4 space-y-1.5 text-xs text-white/70">
                     <div>Kushtia &amp; Dhaka, Bangladesh · Remote Worldwide</div>
@@ -477,7 +581,7 @@ export default function QorvaynologyHomePage() {
             </div>
 
             <div className="max-w-[1354px] w-full mx-auto flex items-center justify-between text-[11px] font-mono-tech text-white/45 pt-4 border-t border-white/15">
-              <span>QORVAYNOLOGY® · EST. 2026</span>
+              <span>QORVAYNOLOGY® · EST. 10 MAR 2026</span>
               <span>WHITE · NAVY BLUE · COSMIC BLACK</span>
             </div>
           </motion.div>
@@ -485,15 +589,14 @@ export default function QorvaynologyHomePage() {
       </AnimatePresence>
 
       {/* =====================================================================
-          SECTION 01: HERO WITH LIVE UNIVERSE VIDEO, WHITE PLANET CURVE & MIX-BLEND
-          Matches https://astralab.framer.website/ [data-framer-name="Hero"] 1:1
+          SECTION 00: HERO — LIVE UNIVERSE VIDEO, ECLIPSE HORIZON & 1PX SPEC BAR
       ===================================================================== */}
       <section
         ref={heroRef}
         id="top"
-        className="relative w-full h-[732px] sm:h-[820px] lg:h-screen min-h-[720px] bg-[#040711] overflow-hidden select-none"
+        className="relative w-full h-[760px] sm:h-[840px] lg:h-screen min-h-[740px] bg-[#040711] overflow-hidden select-none"
       >
-        {/* Layer 0: Live Universe Nebula & Starfield Video on the right / full canvas */}
+        {/* Layer 0: Live Universe Nebula & Starfield Video */}
         <motion.div
           style={{ scale: heroVideoScale }}
           className="absolute inset-0 z-0"
@@ -515,7 +618,7 @@ export default function QorvaynologyHomePage() {
           className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-br from-[#06112E]/78 via-[#0B1E4E]/45 to-[#1E3A8A]/40"
         />
 
-        {/* Layer 1b: Giant Curved White Eclipse Planet PNG on the Left (transparent on right so universe video shows!) */}
+        {/* Layer 1b: Giant Curved White Eclipse Planet PNG on the Left */}
         <motion.img
           src="/astra/hero-stars-bg.png"
           alt=""
@@ -554,25 +657,25 @@ export default function QorvaynologyHomePage() {
         {/* Layer 2b: Distressed Ink & Asteroid Streaks */}
         <HeroAsteroidStreaks />
 
-        {/* Layer 3: Topblock with mix-blend-mode: difference (Matches Astra's Topblock 1:1) */}
+        {/* Layer 3: Architectural Topblock with mix-blend-mode: difference */}
         <div className="relative z-[3] h-full max-w-[1426px] mx-auto px-5 sm:px-9 flex flex-col justify-between mix-blend-difference text-white">
-          {/* Sub-caption under the Contact pill ("Reach out to start your project") */}
-          <div className="pt-[102px] grid grid-cols-12">
+          {/* Sub-caption under the Contact pill */}
+          <div className="pt-[98px] grid grid-cols-12">
             <div className="col-start-7 sm:col-start-9 col-span-6 sm:col-span-4">
-              <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/85">
-                Reach out to start
-                <br />
-                your project
+              <p className="font-mono-tech text-[10px] tracking-[0.16em] text-white/80">
+                00 / STUDIO OVERVIEW
+              </p>
+              <p className="mt-1 text-[13.5px] font-medium leading-[18.5px] tracking-[-0.4px] text-white/90">
+                Free 15–30 min discovery call · Written 3-tier scope in 24h
               </p>
             </div>
           </div>
 
-          {/* Center-to-Bottom Hero Block: Slogan + Services & Giant Title + Who we are */}
+          {/* Center Hero Block: Discipline Index + Monumental Wordmark */}
           <motion.div
             style={{ y: heroTitleY }}
-            className="my-auto pt-10 sm:pt-14"
+            className="my-auto pt-8 sm:pt-12"
           >
-            {/* Slogan Row */}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
@@ -580,24 +683,23 @@ export default function QorvaynologyHomePage() {
               className="grid grid-cols-12 mb-3 sm:mb-4"
             >
               <div className="col-start-6 sm:col-start-9 col-span-7 sm:col-span-4">
-                <p className="font-display text-[20px] sm:text-[24px] font-medium leading-[1.35] tracking-[-1.44px] text-[#FAFAFA]">
-                  Design &amp; Technology
+                <p className="font-display text-[19px] sm:text-[23px] font-semibold leading-[1.3] tracking-[-0.035em] text-[#FAFAFA]">
+                  Brand Systems, Figma UI/UX
                   <br />
-                  Studio
+                  &amp; Next.js Web Applications
                 </p>
               </div>
             </motion.div>
 
-            {/* Main Info Row: Left 4 Service Lines (inverts to black on white planet) + Monumental Wordmark spanning the curve */}
+            {/* Left 4 Discipline Rows + Right Monumental Wordmark */}
             <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-4">
-              {/* Left 4 Service Rows */}
               <motion.div
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.75, ease: EASE_OUT_EXPO }}
                 className="lg:col-span-3 space-y-[8px] max-w-[260px]"
               >
-                {HERO_SERVICES.map((srv) => {
+                {HERO_SERVICES.map((srv, idx) => {
                   const isActive = activeHeroService === srv.id;
                   return (
                     <a
@@ -605,13 +707,18 @@ export default function QorvaynologyHomePage() {
                       href="#services"
                       onMouseEnter={() => setActiveHeroService(srv.id)}
                       onClick={() => setOpenServiceId(srv.id)}
-                      className="group flex items-center justify-between text-[14.08px] font-semibold leading-[19.7px] tracking-[-0.704px] text-white py-0.5"
+                      className="group flex items-center justify-between text-[13.5px] font-semibold leading-[19px] tracking-[-0.5px] text-white py-0.5"
                     >
-                      <span className="transition-opacity group-hover:opacity-100">
-                        {srv.label}
+                      <span className="flex items-center gap-2">
+                        <span className="font-mono-tech text-[10px] opacity-55">
+                          0{idx + 1}
+                        </span>
+                        <span className="transition-opacity group-hover:opacity-100">
+                          {srv.label}
+                        </span>
                       </span>
                       <span
-                        className={`w-[16px] h-[3px] bg-white transition-opacity ${
+                        className={`w-[16px] h-[2px] bg-white transition-opacity ${
                           isActive
                             ? "opacity-100"
                             : "opacity-25 group-hover:opacity-75"
@@ -622,7 +729,6 @@ export default function QorvaynologyHomePage() {
                 })}
               </motion.div>
 
-              {/* Right Monumental Title straddling the white planet edge */}
               <motion.div
                 initial={{ opacity: 0, y: 36 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -642,25 +748,26 @@ export default function QorvaynologyHomePage() {
                 </div>
 
                 <div className="hidden sm:flex items-center pr-1 shrink-0">
-                  <AstraStarLogo className="w-[15px] h-[15px] text-white" />
+                  <ContinuumMark
+                    className="w-6 h-6"
+                    strokeColor="#FFFFFF"
+                    accentColor="#FFFFFF"
+                  />
                 </div>
               </motion.div>
             </div>
 
-            {/* Bottom "Who we are" Row */}
+            {/* Bottom Architectural Metadata Strip */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.65, ease: EASE_OUT_EXPO }}
-              className="mt-5 sm:mt-7 grid grid-cols-12"
+              className="mt-8 pt-4 border-t border-white/20 grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono-tech text-[10px] tracking-[0.14em] text-white/85"
             >
-              <div className="col-start-5 sm:col-start-7 col-span-8 sm:col-span-6">
-                <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/90">
-                  Full-service
-                  <br />
-                  Design &amp; Tech Studio · Qorvaynology
-                </p>
-              </div>
+              <div>EST. 10 MAR 2026 · BANGLADESH</div>
+              <div>PARENT COMPANY: QORVAYN</div>
+              <div>KUSHTIA &amp; DHAKA · REMOTE</div>
+              <div className="sm:text-right">NEXT.JS 16 · SUPABASE · FIGMA</div>
             </motion.div>
           </motion.div>
 
@@ -669,374 +776,411 @@ export default function QorvaynologyHomePage() {
       </section>
 
       {/* =====================================================================
-          SECTION 02: ABOUT — NUMBERS BLOCK, TEAM OF PILOTS & TICKER (Crisp White)
-          Matches [data-framer-name="About"] (y: 732, h: 1140) 1:1
+          SECTION 01: STUDIO & ECOSYSTEM
+          Geometry: Asymmetric 4/8 Editorial Split + 1px Hairline Matrix + Spec Table
       ===================================================================== */}
       <section
         id="studio"
-        className="paper-surface text-[#070B16] py-24 sm:py-36 overflow-hidden"
+        className="paper-surface text-[#0A1633] py-24 sm:py-32 border-b border-[#0A1633]/10"
       >
         <div className="max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* NUMBERS BLOCK (Top Row: ++ on left, 2 Stat Columns on right, 3rd Stat below) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {/* Left ++ stars + section index */}
-            <div className="lg:col-span-4 text-[#070B16]">
-              <SectionIndex num="01" label="STUDIO" />
-              <div className="flex items-center gap-1.5">
-                <Plus className="w-4 h-4 stroke-[2.5]" />
-                <Plus className="w-4 h-4 stroke-[2.5]" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left 4 Columns: Sticky Editorial Thesis & Founder Card */}
+            <div className="lg:col-span-4 lg:sticky lg:top-28">
+              <SectionIndex num="01" label="STUDIO &amp; ORIGIN" />
+
+              <h2 className="font-display text-3xl sm:text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-[#0A1633]">
+                Built by the team shipping QORVAYN&apos;s own software.
+              </h2>
+
+              <p className="mt-4 text-sm leading-[1.65] text-[#525D73]">
+                QORVAYN was founded on 10 March 2026 in Bangladesh by Ryan
+                Zannah with co-founders Adelia Maharani and Siyami Muntaha Saba.
+                Qorvaynology brings our internal product design and engineering
+                pod directly to client builds.
+              </p>
+
+              {/* Founder Attribution Block */}
+              <div className="mt-8 pt-6 border-t border-[#0A1633]/12 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
+                    <TeamAvatar
+                      initials="RZ"
+                      name="Ryan Zannah"
+                      tone="from-[#2E6BFF] via-[#0B1020] to-[#03050C]"
+                      size="sm"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-[#0A1633]">
+                      Ryan Zannah
+                    </div>
+                    <div className="text-[11px] text-[#525D73]">
+                      Founder &amp; CEO · Kushtia &amp; Dhaka
+                    </div>
+                  </div>
+                </div>
+
+                <a
+                  href="https://cal.com/qorvaynology"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono-tech text-[10px] tracking-[0.14em] text-[#1E3A8A] hover:text-[#2E6BFF] transition-colors"
+                >
+                  <span>CAL.COM</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* 6-Builder Pod Cluster */}
+              <div className="mt-6 p-4 bg-[#EFF4FF]/80 border border-[#1E3A8A]/15 flex items-center justify-between">
+                <div className="flex -space-x-2">
+                  {TEAM_MEMBERS.map((m) => (
+                    <div key={m.id} className="w-8 h-8">
+                      <TeamAvatar
+                        initials={m.initials}
+                        name={m.name}
+                        tone={m.tone}
+                        size="xs"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <span className="font-mono-tech text-[10px] tracking-[0.14em] text-[#0A1633]">
+                  06 CORE BUILDERS
+                </span>
               </div>
             </div>
 
-            {/* Stat 1 (col 5-8) & Stat 2 (col 9-12) */}
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
-              {STUDIO_FACTS.slice(0, 2).map((fact, idx) => (
-                <motion.div
-                  key={fact.title}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{
-                    delay: idx * 0.12,
-                    duration: 0.7,
-                    ease: EASE_OUT_EXPO,
-                  }}
-                >
-                  <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16] pb-3 border-b border-[#070B16]/20">
-                    {fact.title}
-                  </div>
-                  <div className="mt-5 flex items-start justify-between gap-6">
-                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#0A1633] flex items-start">
+            {/* Right 8 Columns: 1px Hairline Matrix + Narrative + Structured Ecosystem Factsheet */}
+            <div className="lg:col-span-8">
+              {/* 3-Cell 1px Hairline Matrix for Verifiable Studio Numbers */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 border border-[#0A1633]/12 divide-y sm:divide-y-0 sm:divide-x divide-[#0A1633]/12 bg-white">
+                {STUDIO_FACTS.map((fact, idx) => (
+                  <motion.div
+                    key={fact.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: idx * 0.08,
+                      duration: 0.55,
+                      ease: EASE_OUT_EXPO,
+                    }}
+                    className="p-6 sm:p-7 flex flex-col justify-between"
+                  >
+                    <div className="flex items-center justify-between font-mono-tech text-[10px] tracking-[0.16em] text-[#525D73]">
+                      <span>0{idx + 1} / METRIC</span>
+                      <span className="text-[#1E3A8A]">VERIFIED</span>
+                    </div>
+
+                    <div className="my-5 font-display text-5xl sm:text-6xl font-semibold leading-none tracking-[-0.045em] text-[#0A1633] flex items-start">
                       <span>{fact.value}</span>
                       {fact.sup && (
-                        <span className="text-2xl sm:text-3xl font-semibold text-[#2E6BFF] ml-1 -mt-1">
+                        <span className="text-2xl font-semibold text-[#2E6BFF] ml-1 -mt-1">
                           {fact.sup}
                         </span>
                       )}
                     </div>
-                    <p className="text-[15px] sm:text-[16px] font-medium leading-[22.4px] tracking-[-0.8px] text-[#686963] max-w-[185px]">
-                      {fact.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
 
-              {/* Stat 3: Year of Establishment (Offset to start at center column, matching y: 1104) */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: 0.24, duration: 0.7, ease: EASE_OUT_EXPO }}
-                className="sm:col-span-2 lg:ml-[25%] pt-6"
-              >
-                <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16] pb-3 border-b border-[#070B16]/20">
-                  {STUDIO_FACTS[2].title}
-                </div>
-                <div className="mt-5 flex flex-wrap items-start justify-between gap-6">
-                  <p className="text-[15px] sm:text-[16px] font-medium leading-[22.4px] tracking-[-0.8px] text-[#686963] max-w-[230px]">
-                    {STUDIO_FACTS[2].description}
-                  </p>
-                  <div className="flex flex-col items-end">
-                    <div className="font-display text-[64px] sm:text-[72px] font-semibold leading-none tracking-[-0.045em] text-[#0A1633]">
-                      {STUDIO_FACTS[2].value}
+                    <div>
+                      <div className="text-xs font-semibold text-[#0A1633]">
+                        {fact.title}
+                      </div>
+                      <p className="mt-1.5 text-xs leading-[1.55] text-[#525D73]">
+                        {fact.description}
+                      </p>
                     </div>
-                    <div className="mt-2 flex items-center gap-1">
-                      <span className="w-5 h-5 rounded-full bg-[#0A1633] text-white text-[10px] font-semibold flex items-center justify-center">
-                        Q
-                      </span>
-                      <span className="w-5 h-5 rounded-full bg-[#1E40AF] text-white text-[10px] font-semibold flex items-center justify-center">
-                        y
-                      </span>
-                    </div>
-                  </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Concrete Studio Narrative */}
+              <div className="mt-10">
+                <p className="font-display text-xl sm:text-2xl font-medium leading-[1.45] tracking-[-0.025em] text-[#0A1633]">
+                  We started QORVAYN in March 2026 to build our own software:
+                  Orbyn, a shared web app for long-distance couples in live
+                  beta, and SnowVayn / SunVayn, a seasonal clothing brand and
+                  storefront engine.{" "}
+                  <span className="text-[#525D73]">
+                    Qorvaynology applies that exact six-person product team and
+                    Next.js + Supabase architecture to client businesses.
+                  </span>
+                </p>
+              </div>
+
+              {/* Structured Ecosystem Factsheet / Spec Table */}
+              <div className="mt-10">
+                <div className="flex items-center justify-between pb-3 border-b border-[#0A1633]/15 font-mono-tech text-[10px] tracking-[0.16em] text-[#525D73]">
+                  <span>QORVAYN GROUP DIRECTORY</span>
+                  <span>STATUS &amp; ARCHITECTURE</span>
                 </div>
-              </motion.div>
+
+                <div className="divide-y divide-[#0A1633]/10 border-b border-[#0A1633]/15 text-xs sm:text-sm">
+                  {[
+                    {
+                      idx: "01",
+                      name: "QORVAYN",
+                      role: "Parent technology company",
+                      stack: "Founded 10 Mar 2026 · Bangladesh",
+                      status: "Parent Entity",
+                    },
+                    {
+                      idx: "02",
+                      name: "Orbyn",
+                      role: "Shared web application for long-distance couples (6 real-time modules)",
+                      stack: "Next.js 15 · React 19 · Supabase",
+                      status: "Live Beta",
+                    },
+                    {
+                      idx: "03",
+                      name: "SnowVayn / SunVayn",
+                      role: "Seasonal winter & summer apparel storefront with auto-switching theme engine",
+                      stack: "Next.js · Tokenized Commerce UI",
+                      status: "In Progress",
+                    },
+                    {
+                      idx: "04",
+                      name: "Qorvaynology®",
+                      role: "Client design & technology studio (Brand, Figma UI/UX, Websites, Web Apps)",
+                      stack: "Kushtia & Dhaka · Remote Worldwide",
+                      status: "Active Studio",
+                    },
+                  ].map((row) => (
+                    <div
+                      key={row.name}
+                      className="py-4 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center"
+                    >
+                      <div className="sm:col-span-4 flex items-center gap-3">
+                        <span className="font-mono-tech text-[10px] text-[#1E3A8A]">
+                          /{row.idx}
+                        </span>
+                        <span className="font-display font-semibold text-[#0A1633]">
+                          {row.name}
+                        </span>
+                      </div>
+                      <div className="sm:col-span-5 text-xs text-[#525D73]">
+                        {row.role}
+                      </div>
+                      <div className="sm:col-span-3 flex sm:justify-end items-center gap-2">
+                        <span className="font-mono-tech text-[10px] px-2 py-0.5 border border-[#1E3A8A]/25 bg-[#EFF4FF] text-[#1E3A8A]">
+                          {row.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* TEAM AND MESSAGE ROW (Matches y: 1378 in steps/2239/output.txt) */}
-          <motion.div
-            initial={{ opacity: 0, y: 36 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.75, ease: EASE_OUT_EXPO }}
-            className="mt-28 sm:mt-36 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
-          >
-            {/* Left Col (w: 441): Team of Pilots + 2x3 circular cluster */}
-            <div className="lg:col-span-4">
-              <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                The team
-              </div>
-              <div className="w-3 h-[1.5px] bg-[#91908E] my-1.5" />
-              <div className="text-[14.08px] font-medium tracking-[-0.704px] text-[#91908E]">
-                Our People
-              </div>
-
-              {/* 2x3 Avatar Cluster matching download (1).avif */}
-              <div className="mt-7 grid grid-cols-3 gap-2.5 w-[146px]">
-                <div className="w-[42px] h-[42px] rounded-full bg-[#F0F3FA] border border-[#0B1020]/15 flex items-center justify-center font-display text-xs font-semibold text-[#070B16]">
-                  06<sup className="text-[9px] text-[#2E6BFF]">+</sup>
-                </div>
-                {TEAM_MEMBERS.slice(0, 5).map((m) => (
-                  <div key={m.id} className="w-[42px] h-[42px]">
-                    <TeamAvatar
-                      initials={m.initials}
-                      name={m.name}
-                      tone={m.tone}
-                      size="sm"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Middle Col (w: 221): Qorvaynology Creative Agency + Founder portrait */}
-            <div className="lg:col-span-2">
-              <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                Qorvaynology
-              </div>
-              <div className="text-[14.08px] font-medium tracking-[-0.704px] text-[#91908E]">
-                Design &amp; Tech Studio
-              </div>
-              <p className="mt-3 text-[12px] leading-[16.8px] text-[#686963]">
-                Six people who also
-                <br />
-                ship QORVAYN products.
-              </p>
-              <div className="w-3 h-[2px] bg-[#070B16] my-4" />
-
-              <div className="mt-3">
-                <div className="w-[65px] h-[65px] rounded-full overflow-hidden mb-2.5">
-                  <TeamAvatar
-                    initials="RZ"
-                    name="Ryan Zannah"
-                    tone="from-[#2E6BFF] via-[#0B1020] to-[#03050C]"
-                    size="md"
-                  />
-                </div>
-                <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                  Ryan Zannah
-                </div>
-                <div className="text-[14.08px] font-medium tracking-[-0.704px] text-[#91908E]">
-                  Founder &amp; CEO
-                </div>
-              </div>
-            </div>
-
-            {/* Right Col (w: 662): 24px Editorial Message + Infinite Marquee Ticker */}
-            <div className="lg:col-span-6">
-              <p className="font-display text-[21px] sm:text-[24px] font-medium leading-[33.12px] tracking-[-1.44px] text-[#070B16]">
-                We started QORVAYN in March 2026 to build our own products: Orbyn, a shared web app for long-distance couples, and SnowVayn / SunVayn, a seasonal apparel store.{" "}
-                <span className="text-[#686963]">
-                  Qorvaynology takes that same team and stack to client work, from brand identity to Next.js and Supabase apps.
-                </span>
-              </p>
-
-              {/* Static ecosystem factsheet (replaces the scrolling ticker) */}
-              <div className="mt-12 border-t border-[#070B16]/12 divide-y divide-[#070B16]/10 text-[13px]">
-                {[
-                  { k: "QORVAYN", v: "Parent company · founded 10 Mar 2026" },
-                  { k: "ORBYN", v: "Couples web app · live beta" },
-                  { k: "SNOWVAYN / SUNVAYN", v: "Seasonal apparel store · in progress" },
-                  { k: "QORVAYNOLOGY", v: "Client studio · Kushtia & Dhaka" },
-                ].map((row) => (
-                  <div key={row.k} className="py-3 flex items-center justify-between gap-6">
-                    <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[#0A1633]/60">
-                      {row.k}
-                    </span>
-                    <span className="font-medium text-[#0A1633] text-right">{row.v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 03: SERVICES ACCORDION (Crisp White + Noise + 135px Sphere)
-          Matches [data-framer-name="Services"] (y: 1872, h: 1448) 1:1
+          SECTION 02: CAPABILITIES MATRIX
+          Geometry: Flush 6-Cell 1px Hairline Matrix + Interactive Blueprint Bar
       ===================================================================== */}
       <section
         id="services"
-        className="paper-surface text-[#070B16] py-24 sm:py-36 relative overflow-hidden"
+        className="paper-surface text-[#0A1633] py-24 sm:py-32 relative overflow-hidden"
       >
         <div className="noise-overlay absolute inset-0" />
 
         <div className="relative z-10 max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* Monumental 128px "Services" Header at col-start-5 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 mb-16 sm:mb-24">
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-              className="lg:col-start-5 lg:col-span-8"
-            >
-              <SectionIndex num="02" label="SERVICES" />
-              <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
-                Services
+          {/* Header Split */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-14">
+            <div className="lg:col-span-7">
+              <SectionIndex num="02" label="CAPABILITIES MATRIX" />
+              <h2 className="font-display text-[clamp(2.5rem,5.6vw,76px)] font-semibold leading-[0.98] tracking-[-0.038em] text-[#0A1633]">
+                Six disciplines, one integrated product pod.
               </h2>
-            </motion.div>
+            </div>
+            <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-4">
+              <p className="text-xs sm:text-sm text-[#525D73] max-w-[360px] lg:text-right">
+                Select any capability cell below to inspect deliverables,
+                typical timeline, and transparent USD / BDT investment bands.
+              </p>
+              <div className="inline-flex items-center p-1 border border-[#0A1633]/15 bg-white">
+                <button
+                  onClick={() => setCurrency("USD")}
+                  className={`px-3 py-1 font-mono-tech text-[10px] transition-colors cursor-pointer ${
+                    currency === "USD"
+                      ? "bg-[#0A1633] text-white"
+                      : "text-[#525D73] hover:text-[#0A1633]"
+                  }`}
+                >
+                  USD ($)
+                </button>
+                <button
+                  onClick={() => setCurrency("BDT")}
+                  className={`px-3 py-1 font-mono-tech text-[10px] transition-colors cursor-pointer ${
+                    currency === "BDT"
+                      ? "bg-[#1E3A8A] text-white"
+                      : "text-[#525D73] hover:text-[#0A1633]"
+                  }`}
+                >
+                  BDT (৳)
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* Services List (/01 to /06) */}
-          <div className="divide-y divide-[#070B16]/15 border-t border-b border-[#070B16]/15">
+          {/* 6-Cell 1px Hairline Matrix */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border border-[#0A1633]/15 divide-y md:divide-x divide-[#0A1633]/15 bg-white">
             {SERVICES_LIST.map((srv) => {
-              const isOpen = openServiceId === srv.id;
+              const isSelected = activeService.id === srv.id;
               const scopeStat = SERVICE_SCOPE_COUNTS[srv.id] || {
                 num: "12",
                 unit: "Deliverables",
               };
 
               return (
-                <motion.div
+                <button
                   key={srv.id}
-                  layout
-                  transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-                  className="py-8 sm:py-10"
+                  type="button"
+                  onClick={() => setOpenServiceId(srv.id)}
+                  className={`text-left p-6 sm:p-8 flex flex-col justify-between transition-colors cursor-pointer relative ${
+                    isSelected
+                      ? "bg-[#EFF4FF]"
+                      : "bg-white hover:bg-[#F8FAFF]"
+                  }`}
                 >
-                  {isOpen ? (
-                    /* OPEN STATE (Signature White + Deep Navy Blue Architecture) */
-                    <div
-                      onClick={() => setOpenServiceId("")}
-                      className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start cursor-pointer bg-[#EFF4FF]/70 border-l-4 border-[#1E3A8A] pl-4 sm:pl-6 pr-3 py-5 -my-2"
-                    >
-                      {/* Col 1-4: /01 */}
-                      <div className="lg:col-span-4">
-                        <span className="font-display text-[20px] font-semibold tracking-[-1px] text-[#1E3A8A]">
-                          {srv.index}
-                        </span>
-                      </div>
-
-                      {/* Col 5-7: Title + 135x135 Navy-Toned Sphere + 40x40 "i" badge */}
-                      <div className="lg:col-span-3 flex items-start justify-between gap-4">
-                        <h3 className="font-display text-[22px] sm:text-[24px] font-semibold leading-[1.2] tracking-[-1px] text-[#0A1633] max-w-[160px]">
-                          {srv.title}
-                        </h3>
-
-                        <motion.div
-                          initial={{ scale: 0.75, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 280,
-                            damping: 22,
-                          }}
-                          className="relative flex items-start shrink-0"
-                        >
-                          <img
-                            src="/astra/service-sphere.png"
-                            alt={srv.title}
-                            className="w-[110px] h-[110px] sm:w-[135px] sm:h-[135px] rounded-full object-cover shadow-md ring-2 ring-[#1E3A8A]/35 [filter:hue-rotate(205deg)_saturate(1.4)_contrast(1.05)]"
-                          />
-                          <img
-                            src="/astra/service-i.png"
-                            alt="Info"
-                            className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] -ml-3 mt-1 rounded-full object-cover shadow ring-2 ring-white [filter:hue-rotate(205deg)_saturate(1.4)]"
-                          />
-                        </motion.div>
-                      </div>
-
-                      {/* Col 8-10: 20px Summary + Deliverable keywords */}
-                      <div className="lg:col-span-3">
-                        <p className="font-display text-[18px] sm:text-[20px] font-medium leading-[28px] tracking-[-0.8px] text-[#070B16]">
-                          {srv.summary}
-                        </p>
-                        <p className="mt-4 text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-[#686963]">
-                          {srv.deliverables.join(" · ")}
-                        </p>
-                      </div>
-
-                      {/* Col 11-12: Related Projects list + Minus icon */}
-                      <div className="lg:col-span-2 flex items-start justify-between">
-                        <div className="space-y-1 text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                          {srv.relatedProjects.map((rp) => (
-                            <div key={rp}>{rp}</div>
-                          ))}
-                          <div className="text-[#91908E] pt-1">
-                            {currency === "USD" ? srv.usdRange : srv.bdtRange}
-                          </div>
-                        </div>
-
-                        <span className="mt-1 text-[#070B16]">
-                          <Minus className="w-4 h-4 stroke-[2.2]" />
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    /* CLOSED STATE (Matches "Desktop - Closed" in frame_008.jpg) */
-                    <div
-                      onClick={() => setOpenServiceId(srv.id)}
-                      className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center cursor-pointer group"
-                    >
-                      {/* Left: Service Title */}
-                      <div className="lg:col-span-4 flex items-center gap-4">
-                        <span className="font-display text-[18px] sm:text-[20px] font-semibold tracking-[-0.8px] text-[#070B16] group-hover:text-[#2E6BFF] transition-colors">
-                          {srv.title}
-                        </span>
-                      </div>
-
-                      {/* Middle (col-start-5): 16px short description */}
-                      <div className="lg:col-span-4">
-                        <p className="text-[15px] sm:text-[16px] font-medium leading-[22.4px] tracking-[-0.8px] text-[#595959] max-w-[240px]">
-                          {srv.summary}
-                        </p>
-                      </div>
-
-                      {/* Right (col-start-9): 40.8px Bold Scope Numeral + Unit + Plus Icon */}
-                      <div className="lg:col-span-4 flex items-center justify-between">
-                        <div className="flex items-start gap-2">
-                          <span className="font-display text-[36px] sm:text-[40.8px] font-semibold leading-none tracking-[-2.04px] text-[#070B16]">
-                            {scopeStat.num}
-                          </span>
-                          <span className="text-[14.08px] font-medium tracking-[-0.704px] text-[#070B16] mt-0.5">
-                            {scopeStat.unit}
-                          </span>
-                        </div>
-
-                        <span className="text-[#070B16] group-hover:text-[#2E6BFF] transition-colors">
-                          <Plus className="w-4 h-4 stroke-[2.2]" />
-                        </span>
-                      </div>
-                    </div>
+                  {isSelected && (
+                    <span className="absolute top-0 left-0 right-0 h-[3px] bg-[#1E3A8A]" />
                   )}
-                </motion.div>
+
+                  <div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[#1E3A8A]">
+                        {srv.index} · {srv.timeline.toUpperCase()}
+                      </span>
+                      <span className="font-mono-tech text-[10px] px-2 py-0.5 border border-[#0A1633]/15 text-[#0A1633]">
+                        {scopeStat.num} {scopeStat.unit}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-5 font-display text-2xl font-semibold tracking-[-0.03em] text-[#0A1633]">
+                      {srv.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-[1.6] text-[#525D73]">
+                      {srv.summary}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 pt-4 border-t border-[#0A1633]/10 flex items-center justify-between">
+                    <div>
+                      <div className="font-mono-tech text-[10px] text-[#525D73]">
+                        TYPICAL BAND
+                      </div>
+                      <div className="font-display text-base font-semibold text-[#0A1633]">
+                        {currency === "USD" ? srv.usdRange : srv.bdtRange}
+                      </div>
+                    </div>
+                    <span
+                      className={`font-mono-tech text-[10px] tracking-[0.14em] ${
+                        isSelected ? "text-[#1E3A8A] font-semibold" : "text-[#525D73]"
+                      }`}
+                    >
+                      {isSelected ? "INSPECTING ●" : "INSPECT →"}
+                    </span>
+                  </div>
+                </button>
               );
             })}
           </div>
 
-          {/* Bottom Message & CTA Row (Matches y: 2994 in steps/2239/output.txt) */}
-          <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-start-5 lg:col-span-4">
-              <p className="font-display text-[18px] sm:text-[20px] font-medium leading-[26px] tracking-[-0.8px] text-[#070B16]">
-                Every project starts with a free 15–30 minute call and a written proposal within 24 hours. You see progress every Friday.
-              </p>
-            </div>
-            <div className="lg:col-start-9 lg:col-span-4">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => openContactWith("Get Started — Services CTA")}
-                className="h-[47px] w-[235px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium tracking-[-0.48px] transition-colors cursor-pointer"
-              >
-                <span>Get Started</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                  <span className="w-2 h-2 rounded-full bg-white" />
-                </span>
-              </motion.button>
-            </div>
-          </div>
+          {/* Interactive Capability Blueprint Bar (Updates live when any matrix cell is selected) */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeService.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+              className="mt-6 border border-[#1E3A8A]/30 bg-[#07122E] text-white p-6 sm:p-10"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Col 1-4: Selected Discipline Title + Navy Sphere Emblem */}
+                <div className="lg:col-span-4 flex items-center gap-5">
+                  <div className="relative shrink-0">
+                    <img
+                      src="/astra/service-sphere.png"
+                      alt={activeService.title}
+                      className="w-[84px] h-[84px] sm:w-[96px] sm:h-[96px] rounded-full object-cover ring-2 ring-[#2E6BFF]/45 [filter:hue-rotate(205deg)_saturate(1.4)_contrast(1.05)]"
+                    />
+                  </div>
+                  <div>
+                    <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                      {activeService.index} / BLUEPRINT SPECIFICATION
+                    </div>
+                    <h3 className="mt-1 font-display text-2xl sm:text-3xl font-semibold tracking-[-0.03em] text-white">
+                      {activeService.title}
+                    </h3>
+                    <div className="mt-1 text-xs text-white/65">
+                      Timeline: {activeService.timeline} ·{" "}
+                      {currency === "USD"
+                        ? activeService.usdRange
+                        : activeService.bdtRange}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 5-9: Deliverables Checklist */}
+                <div className="lg:col-span-5 border-t lg:border-t-0 lg:border-l border-white/12 pt-5 lg:pt-0 lg:pl-8">
+                  <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/50 mb-3">
+                    INCLUDED DELIVERABLES &amp; HANDOVER
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-white/90">
+                    {activeService.deliverables.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="font-mono-tech text-[10px] text-[#60A5FA] mt-0.5">
+                          0{idx + 1}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Col 10-12: Benchmarks + Direct Scope CTA */}
+                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l border-white/12 pt-5 lg:pt-0 lg:pl-8 flex flex-col justify-between gap-4">
+                  <div>
+                    <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/50">
+                      STUDIO BENCHMARKS
+                    </div>
+                    <div className="mt-1.5 text-xs text-white/85">
+                      {activeService.relatedProjects.join(" · ")}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openContactWith(
+                        `Capability Inquiry — ${activeService.title} (${
+                          currency === "USD"
+                            ? activeService.usdRange
+                            : activeService.bdtRange
+                        })`
+                      )
+                    }
+                    className="w-full py-3 px-5 bg-[#2E6BFF] hover:bg-white text-white hover:text-[#0A1633] font-mono-tech text-[11px] tracking-[0.14em] flex items-center justify-between transition-colors cursor-pointer"
+                  >
+                    <span>SCOPE THIS CAPABILITY</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTIONS 04 & 05: STICKY UNIVERSE WRAPPER FOR PROJECTS & PRICING
-          Matches [data-framer-name="Projects and Pricing"] (y: 3320, h: 6846) 1:1
+          SECTIONS 03 & 04: STICKY UNIVERSE WRAPPER FOR WORK & INTERACTIVE SCOPE
       ===================================================================== */}
       <div className="relative bg-[#050B1C] text-white">
-        {/* Sticky 100vh Universe Starfield Backdrop + Signature Midnight Navy Cosmic Glow */}
+        {/* Sticky 100vh Universe Starfield Backdrop + Signature Midnight Navy Glow */}
         <div
           aria-hidden="true"
           className="sticky top-0 h-screen w-full overflow-hidden pointer-events-none z-0"
@@ -1052,171 +1196,215 @@ export default function QorvaynologyHomePage() {
         {/* Content floating over the Sticky Universe Starfield */}
         <div className="relative z-10 -mt-[100vh]">
           {/* -----------------------------------------------------------------
-              SECTION 04: PROJECTS SHOWCASE
+              SECTION 03: SELECTED WORK (Editorial Frame + 1px Spec Strip)
           ----------------------------------------------------------------- */}
-          <section id="projects" className="pt-28 sm:pt-40 pb-24">
+          <section
+            id="projects"
+            className="pt-28 sm:pt-36 pb-24 border-b border-white/10"
+          >
             <div className="max-w-[1354px] mx-auto px-5 sm:px-9">
-              {/* Header Block: Monumental 128px "Projects" + 05+ count + 4 Service Filter lines */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16 sm:mb-24">
-                <div className="lg:col-start-5 lg:col-span-8">
-                  <SectionIndex num="03" label="WORK" tone="light" />
-                  <motion.h2
-                    initial={{ opacity: 0, y: 32 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                    className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-white mix-blend-difference"
-                  >
-                    Projects
-                  </motion.h2>
-                  <div className="mt-4 font-display text-[36px] sm:text-[40.8px] font-semibold leading-none tracking-[-2px] text-white flex items-start">
-                    <span>0{PROJECTS_LIST.length}</span>
-                    <span className="text-xl text-[#60A5FA] ml-0.5">+</span>
-                  </div>
+              {/* Asymmetric 5/7 Header + Filter Bar */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-16">
+                <div className="lg:col-span-6">
+                  <SectionIndex
+                    num="03"
+                    label="SELECTED WORK &amp; VENTURES"
+                    tone="light"
+                  />
+                  <h2 className="font-display text-[clamp(2.8rem,6.5vw,88px)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
+                    Shipped products &amp; studio systems.
+                  </h2>
                 </div>
 
-                {/* Filter lines at col-start-7 (x: 728) */}
-                <div className="lg:col-start-7 lg:col-span-6 max-w-[340px] space-y-2 pt-2">
-                  {[
-                    { label: "All Studio & Ecosystem Work", filter: "All" },
-                    { label: "Branding and Identity", filter: "Brand" },
-                    { label: "UI/UX and Product Design", filter: "App" },
-                    { label: "E-Commerce & Seasonal Systems", filter: "Commerce" },
-                  ].map((cat) => {
-                    const active = selectedProjectCategory === cat.filter;
-                    return (
-                      <button
-                        key={cat.filter}
-                        onClick={() => setSelectedProjectCategory(cat.filter)}
-                        className={`w-full flex items-center justify-between text-[14.08px] font-semibold tracking-[-0.704px] py-0.5 text-left transition-opacity cursor-pointer ${
-                          active
-                            ? "text-white opacity-100"
-                            : "text-white/45 hover:text-white/80"
-                        }`}
-                      >
-                        <span>{cat.label}</span>
-                        <span
-                          className={`w-[16px] h-[2.5px] transition-colors ${
-                            active ? "bg-white" : "bg-white/25"
+                <div className="lg:col-span-6 flex flex-col lg:items-end justify-end gap-4">
+                  <p className="text-xs sm:text-sm text-white/65 max-w-[440px] lg:text-right">
+                    Real QORVAYN ventures in live beta and active build,
+                    alongside clearly labeled studio concept explorations.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: `All (0${PROJECTS_LIST.length})`, filter: "All" },
+                      { label: "Brand Systems", filter: "Brand" },
+                      { label: "Web Apps & UI/UX", filter: "App" },
+                      { label: "Seasonal Commerce", filter: "Commerce" },
+                    ].map((cat) => {
+                      const active = selectedProjectCategory === cat.filter;
+                      return (
+                        <button
+                          key={cat.filter}
+                          type="button"
+                          onClick={() =>
+                            setSelectedProjectCategory(cat.filter)
+                          }
+                          className={`px-3.5 py-2 font-mono-tech text-[10px] tracking-[0.14em] border transition-colors cursor-pointer ${
+                            active
+                              ? "bg-[#2E6BFF] text-white border-[#2E6BFF]"
+                              : "bg-[#050B1C]/70 text-white/65 border-white/15 hover:border-white/40 hover:text-white"
                           }`}
-                        />
-                      </button>
-                    );
-                  })}
+                        >
+                          {cat.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
-              {/* Stacked Project Video Cards (1091x622 center frame, date on left, avatars on right) */}
-              <div className="space-y-16 sm:space-y-24">
+              {/* Architectural Project Frames with 1px Spec Strips */}
+              <div className="space-y-16 sm:space-y-20">
                 {filteredProjects.map((project, idx) => (
-                  <motion.div
+                  <motion.article
                     key={project.id}
-                    initial={{ opacity: 0, y: 48 }}
+                    initial={{ opacity: 0, y: 36 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{
-                      delay: idx * 0.06,
-                      duration: 0.75,
+                      delay: idx * 0.05,
+                      duration: 0.65,
                       ease: EASE_OUT_EXPO,
                     }}
                     onClick={() => setActiveCaseStudy(project)}
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start cursor-pointer group"
+                    className="border border-white/15 bg-[#050B1C]/85 backdrop-blur-md cursor-pointer group"
                   >
-                    {/* Left Date Stamp (x: 36, w: 105) */}
-                    <div className="lg:col-span-1 pt-2">
-                      <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-2.5 border-b border-white/25">
-                        {project.dateLabel.split(" ")[0]}
+                    {/* Top 1px Architectural Bar */}
+                    <div className="px-5 sm:px-8 py-3.5 border-b border-white/12 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono-tech text-[11px] text-[#60A5FA]">
+                          0{idx + 1} / {project.badge.toUpperCase()}
+                        </span>
+                        <span className="text-white/25">·</span>
+                        <span className="font-display text-lg font-semibold text-white">
+                          {project.title}
+                        </span>
+                        <span className="hidden md:inline text-xs text-white/55">
+                          — {project.subtitle}
+                        </span>
                       </div>
-                      <div className="text-[12px] font-medium text-white/50 mt-2">
-                        {project.year}
+
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono-tech text-[10px] text-white/55">
+                          {project.dateLabel}
+                        </span>
+                        <span className="font-mono-tech text-[10px] px-2.5 py-1 bg-[#1E3A8A]/45 border border-[#2E6BFF]/40 text-white group-hover:bg-[#2E6BFF] transition-colors">
+                          OPEN CASE STUDY →
+                        </span>
                       </div>
                     </div>
 
-                    {/* Center 1091x622 Video Container */}
-                    <div className="lg:col-span-10">
+                    {/* Main Interactive Video / Visual Canvas */}
+                    <div className="p-3 sm:p-6">
                       <ProjectArtwork projectId={project.id} variant="hero" />
                     </div>
 
-                    {/* Right 2-Column Team Avatars Stack (x: 1282, w: 108) */}
-                    <div className="lg:col-span-1 hidden lg:grid grid-cols-2 gap-1.5 pt-2">
-                      {TEAM_MEMBERS.slice(0, 5).map((m) => (
-                        <TeamAvatar
-                          key={m.id}
-                          initials={m.initials}
-                          name={m.name}
-                          tone={m.tone}
-                          size="xs"
-                        />
-                      ))}
+                    {/* Bottom 4-Cell 1px Hairline Spec Table */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 border-t border-white/12 divide-y lg:divide-y-0 divide-x divide-white/12 text-xs">
+                      <div className="p-4 sm:px-6">
+                        <div className="font-mono-tech text-[10px] text-white/45">
+                          OWNER / STATUS
+                        </div>
+                        <div className="mt-1 font-medium text-white">
+                          {project.clientOrOwner}
+                        </div>
+                      </div>
+                      <div className="p-4 sm:px-6">
+                        <div className="font-mono-tech text-[10px] text-white/45">
+                          DISCIPLINE
+                        </div>
+                        <div className="mt-1 font-medium text-white">
+                          {project.category}
+                        </div>
+                      </div>
+                      <div className="p-4 sm:px-6">
+                        <div className="font-mono-tech text-[10px] text-white/45">
+                          STACK &amp; SYSTEM
+                        </div>
+                        <div className="mt-1 font-mono-tech text-[11px] text-[#60A5FA] truncate">
+                          {project.stack}
+                        </div>
+                      </div>
+                      <div className="p-4 sm:px-6 flex items-center justify-between">
+                        <div>
+                          <div className="font-mono-tech text-[10px] text-white/45">
+                            KEY METRIC
+                          </div>
+                          <div className="mt-1 font-medium text-white">
+                            {project.metrics[0]?.value}{" "}
+                            <span className="text-white/55">
+                              {project.metrics[0]?.label}
+                            </span>
+                          </div>
+                        </div>
+                        <ArrowUpRight className="w-4 h-4 text-[#60A5FA] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </div>
                     </div>
-                  </motion.div>
+                  </motion.article>
                 ))}
-              </div>
-
-              {/* CTA Block: ++ on left, White "All Projects •●" pill button at col-start-7 */}
-              <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 items-center gap-6">
-                <div className="lg:col-start-5 lg:col-span-2 flex items-center gap-1 text-white/80">
-                  <Plus className="w-4 h-4" />
-                  <Plus className="w-4 h-4" />
-                </div>
-                <div className="lg:col-start-7 lg:col-span-6">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setActiveCaseStudy(PROJECTS_LIST[0])}
-                    className="h-[47px] w-[244px] px-6 rounded-[32px] bg-[#0F2557] text-white border border-[#2E6BFF]/50 hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-semibold tracking-[-0.48px] transition-colors cursor-pointer"
-                  >
-                    <span>All Projects</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                      <span className="w-2 h-2 rounded-full bg-current" />
-                    </span>
-                  </motion.button>
-                </div>
               </div>
             </div>
           </section>
 
           {/* -----------------------------------------------------------------
-              SECTION 05: PRICING (Sticky Scroll-Animated Lunar Spheres)
-              Matches [data-framer-name="Pricing"] (y: 6864) 1:1
+              SECTION 04: INTERACTIVE SCOPE & INVESTMENT ARCHITECT
+              Geometry: Real In-Page Interactive Calculator + Sticky Lunar Spheres
           ----------------------------------------------------------------- */}
           <section
             ref={pricingScrollRef}
             id="pricing"
-            className="pt-20 sm:pt-32 pb-28"
+            className="pt-24 sm:pt-32 pb-28"
           >
             <div className="max-w-[1354px] mx-auto px-5 sm:px-9">
-              {/* Monumental 128px "Pricing" Header at col-start-5 + Currency & Package Switcher */}
+              {/* Header */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-14">
-                <div className="lg:col-start-5 lg:col-span-8">
-                  <SectionIndex num="04" label="PRICING" tone="light" />
-                  <motion.h2
-                    initial={{ opacity: 0, y: 32 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                    className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-white"
-                  >
-                    Pricing
-                  </motion.h2>
+                <div className="lg:col-span-7">
+                  <SectionIndex
+                    num="04"
+                    label="INTERACTIVE SCOPE &amp; INVESTMENT ARCHITECT"
+                    tone="light"
+                  />
+                  <h2 className="font-display text-[clamp(2.6rem,6vw,84px)] font-semibold leading-[0.96] tracking-[-0.04em] text-white">
+                    Transparent 3-tier pricing &amp; live milestone calculator.
+                  </h2>
+                </div>
+                <div className="lg:col-span-5 flex lg:justify-end">
+                  <p className="text-xs sm:text-sm text-white/65 max-w-[410px] lg:text-right">
+                    Configure your primary package, tier, and optional add-ons
+                    below to calculate exact USD or BDT milestone payments
+                    before our discovery call.
+                  </p>
+                </div>
+              </div>
 
-                  {/* Interactive Currency + Package Switcher Pills */}
-                  <div className="mt-8 flex flex-wrap items-center gap-3">
-                    <div className="inline-flex items-center p-1 rounded-full bg-white/[0.06] border border-white/15">
+              {/* 7/5 Split: Left Interactive Scope Architect, Right Sticky Lunar Spheres & Retainer */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Left 7 Columns: Interactive In-Page Scope Configurator */}
+                <div className="lg:col-span-7 border border-[#2E6BFF]/35 bg-[#07122E]/85 backdrop-blur-md p-6 sm:p-10">
+                  {/* Step 1: Currency & Package Track */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/12">
+                    <div>
+                      <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                        STEP 01 / SELECT TRACK &amp; CURRENCY
+                      </div>
+                      <div className="mt-1 text-xs text-white/65">
+                        International (USD) &amp; Bangladesh (BDT) rate cards
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center p-1 bg-[#050B1C] border border-white/15">
                       <button
+                        type="button"
                         onClick={() => setCurrency("USD")}
-                        className={`px-3.5 py-1 rounded-full text-[11px] font-mono-tech transition-colors cursor-pointer ${
+                        className={`px-3.5 py-1 font-mono-tech text-[11px] transition-colors cursor-pointer ${
                           currency === "USD"
-                            ? "bg-white text-[#070B16] font-semibold"
+                            ? "bg-white text-[#0A1633] font-semibold"
                             : "text-white/65 hover:text-white"
                         }`}
                       >
                         USD ($)
                       </button>
                       <button
+                        type="button"
                         onClick={() => setCurrency("BDT")}
-                        className={`px-3.5 py-1 rounded-full text-[11px] font-mono-tech transition-colors cursor-pointer ${
+                        className={`px-3.5 py-1 font-mono-tech text-[11px] transition-colors cursor-pointer ${
                           currency === "BDT"
                             ? "bg-[#2E6BFF] text-white font-semibold"
                             : "text-white/65 hover:text-white"
@@ -1225,251 +1413,360 @@ export default function QorvaynologyHomePage() {
                         BDT (৳)
                       </button>
                     </div>
+                  </div>
 
-                    {PRICING_PACKAGES.map((pkg) => (
-                      <button
-                        key={pkg.id}
-                        onClick={() => setSelectedPkgId(pkg.id)}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer ${
-                          selectedPkgId === pkg.id
-                            ? "bg-[#2E6BFF] text-white border-[#2E6BFF]"
-                            : "bg-white/[0.03] text-white/70 border-white/15 hover:border-white/40"
-                        }`}
-                      >
-                        {pkg.name}
-                      </button>
-                    ))}
-
-                    <div className="inline-flex items-center gap-1 bg-white/[0.05] border border-white/15 p-1 rounded-full">
-                      {currentPackage.tiers.map((t, idx) => (
+                  {/* 4 Package Track Buttons */}
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {PRICING_PACKAGES.map((pkg) => {
+                      const active = selectedPkgId === pkg.id;
+                      return (
                         <button
-                          key={t.tierName}
-                          onClick={() => setSelectedTierIdx(idx)}
-                          className={`px-3 py-1 rounded-full text-[11px] font-mono-tech transition-colors cursor-pointer ${
-                            selectedTierIdx === idx
-                              ? "bg-white text-[#070B16] font-semibold"
-                              : "text-white/60 hover:text-white"
+                          key={pkg.id}
+                          type="button"
+                          onClick={() => setSelectedPkgId(pkg.id)}
+                          className={`p-4 text-left border transition-colors cursor-pointer ${
+                            active
+                              ? "bg-[#1E3A8A]/55 border-[#2E6BFF] text-white"
+                              : "bg-[#050B1C]/60 border-white/12 text-white/75 hover:border-white/35"
                           }`}
                         >
-                          {t.tierName}
+                          <div className="flex items-center justify-between">
+                            <span className="font-display text-sm font-semibold">
+                              {pkg.name}
+                            </span>
+                            <span className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              {pkg.timeline}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[11px] text-white/55 line-clamp-1">
+                            {pkg.summary}
+                          </p>
                         </button>
-                      ))}
+                      );
+                    })}
+                  </div>
+
+                  {/* Step 2: 3-Tier Selector (Basic / Standard / Premium) */}
+                  <div className="mt-8 pt-6 border-t border-white/12">
+                    <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA] mb-3">
+                      STEP 02 / CHOOSE SCOPE TIER
+                    </div>
+
+                    <div className="grid grid-cols-3 border border-white/15 divide-x divide-white/15">
+                      {currentPackage.tiers.map((t, idx) => {
+                        const active = selectedTierIdx === idx;
+                        return (
+                          <button
+                            key={t.tierName}
+                            type="button"
+                            onClick={() => setSelectedTierIdx(idx)}
+                            className={`p-3.5 sm:p-4 text-left transition-colors cursor-pointer ${
+                              active
+                                ? "bg-white text-[#0A1633]"
+                                : "bg-[#050B1C]/60 text-white/75 hover:bg-white/5"
+                            }`}
+                          >
+                            <div className="font-mono-tech text-[10px] tracking-[0.14em] opacity-70">
+                              0{idx + 1} / {t.tierName.toUpperCase()}
+                            </div>
+                            <div className="mt-1 font-display text-lg sm:text-xl font-semibold">
+                              {currency === "USD" ? t.usd : t.bdt}
+                            </div>
+                            <div className="mt-0.5 text-[11px] opacity-75 line-clamp-1">
+                              {t.subtitle}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Included Features for Selected Tier */}
+                    <div className="mt-5 p-4 bg-[#050B1C]/70 border border-white/10">
+                      <div className="font-mono-tech text-[10px] text-white/50 mb-2.5">
+                        INCLUDED IN {currentPackage.name.toUpperCase()} (
+                        {currentTier.tierName.toUpperCase()})
+                      </div>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-white/90">
+                        {currentTier.features.map((feat, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="text-[#60A5FA] font-bold">+</span>
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* ROW /01: PER PROJECT (Starts at col-start-5, w: 883px, matches pfast_06.jpg) */}
-              <motion.div
-                style={{ opacity: row1Opacity, y: row1Y }}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-10"
-              >
-                <div className="lg:col-span-4 hidden lg:flex items-center gap-1 text-white/55 pt-2">
-                  <AstraStarLogo className="w-2.5 h-2.5" />
-                  <AstraStarLogo className="w-2.5 h-2.5" />
-                </div>
-
-                <div className="lg:col-span-8 bg-[#091536]/55 border border-[#2E6BFF]/25 p-6 sm:p-8 backdrop-blur-sm">
-                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-[#2E6BFF]/35">
-                    Per Project — {currentPackage.name} ({currentTier.tierName})
+                  {/* Step 3: Interactive Add-on Toggles */}
+                  <div className="mt-8 pt-6 border-t border-white/12">
+                    <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA] mb-3">
+                      STEP 03 / OPTIONAL STUDIO ADD-ONS
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {SCOPE_ADDONS.map((addon) => {
+                        const checked = !!selectedAddons[addon.id];
+                        const priceText =
+                          currency === "USD"
+                            ? `+$${addon.usd}${addon.recurring ? "/mo" : ""}`
+                            : `+৳${addon.bdt.toLocaleString("en-IN")}${
+                                addon.recurring ? "/mo" : ""
+                              }`;
+                        return (
+                          <button
+                            key={addon.id}
+                            type="button"
+                            onClick={() => toggleAddon(addon.id)}
+                            className={`p-3 border text-left flex items-center justify-between gap-3 transition-colors cursor-pointer ${
+                              checked
+                                ? "bg-[#1E3A8A]/50 border-[#2E6BFF] text-white"
+                                : "bg-[#050B1C]/50 border-white/12 text-white/70 hover:border-white/30"
+                            }`}
+                          >
+                            <span className="flex items-center gap-2.5 text-xs">
+                              <span
+                                className={`w-4 h-4 flex items-center justify-center border ${
+                                  checked
+                                    ? "bg-[#2E6BFF] border-[#2E6BFF] text-white"
+                                    : "border-white/30"
+                                }`}
+                              >
+                                {checked && <Check className="w-3 h-3" />}
+                              </span>
+                              <span>{addon.label}</span>
+                            </span>
+                            <span className="font-mono-tech text-[10px] text-[#60A5FA] shrink-0">
+                              {priceText}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
-                  <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    {/* Left: Real 185x185 Pack Per Project Sphere + 241x241 Lunar Shadow + Price */}
-                    <div className="relative flex items-center gap-5">
+                  {/* Step 4: Live Calculated Estimate & Milestone Schedule */}
+                  <div className="mt-8 pt-6 border-t border-[#2E6BFF]/40 bg-[#050B1C]/90 p-5 sm:p-6">
+                    <div className="flex flex-wrap items-baseline justify-between gap-4">
+                      <div>
+                        <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                          ESTIMATED PROJECT INVESTMENT
+                        </div>
+                        <div className="mt-1 font-display text-4xl sm:text-5xl font-semibold tracking-[-0.04em] text-white">
+                          {formatMoney(totalEstimate)}
+                          {selectedPkgId === "webapp-mvp" &&
+                            selectedTierIdx === 2 && (
+                              <span className="text-2xl text-[#60A5FA]">+</span>
+                            )}
+                        </div>
+                        {hasCarePlan && (
+                          <div className="mt-1 font-mono-tech text-[10px] text-[#60A5FA]">
+                            + {currency === "USD" ? "$100/mo" : "৳8,000/mo"}{" "}
+                            POST-30D CARE PLAN
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="text-right">
+                        <div className="font-mono-tech text-[10px] text-white/50">
+                          ESTIMATED TIMELINE
+                        </div>
+                        <div className="mt-1 font-display text-lg font-semibold text-white">
+                          {currentPackage.timeline}
+                        </div>
+                        <div className="text-[11px] text-white/55">
+                          + 30 days post-launch support
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Milestone Breakdown Bar */}
+                    <div className="mt-5 pt-4 border-t border-white/10">
+                      <div className="font-mono-tech text-[10px] text-white/50 mb-2">
+                        CONTRACT MILESTONE SCHEDULE (
+                        {isThreeMilestone
+                          ? "40% / 30% / 30%"
+                          : "50% KICKOFF / 50% HANDOVER"}
+                        )
+                      </div>
+                      {isThreeMilestone ? (
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="p-2.5 bg-white/[0.03] border border-white/10">
+                            <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              40% KICKOFF
+                            </div>
+                            <div className="font-semibold mt-0.5">
+                              {formatMoney(Math.round(totalEstimate * 0.4))}
+                            </div>
+                          </div>
+                          <div className="p-2.5 bg-white/[0.03] border border-white/10">
+                            <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              30% FIGMA / MID
+                            </div>
+                            <div className="font-semibold mt-0.5">
+                              {formatMoney(Math.round(totalEstimate * 0.3))}
+                            </div>
+                          </div>
+                          <div className="p-2.5 bg-white/[0.03] border border-white/10">
+                            <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              30% LAUNCH
+                            </div>
+                            <div className="font-semibold mt-0.5">
+                              {formatMoney(
+                                totalEstimate -
+                                  Math.round(totalEstimate * 0.4) -
+                                  Math.round(totalEstimate * 0.3)
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="p-2.5 bg-white/[0.03] border border-white/10">
+                            <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              50% KICKOFF DEPOSIT
+                            </div>
+                            <div className="font-semibold mt-0.5">
+                              {formatMoney(Math.round(totalEstimate * 0.5))}
+                            </div>
+                          </div>
+                          <div className="p-2.5 bg-white/[0.03] border border-white/10">
+                            <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                              50% FINAL HANDOVER
+                            </div>
+                            <div className="font-semibold mt-0.5">
+                              {formatMoney(
+                                totalEstimate - Math.round(totalEstimate * 0.5)
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openContactWith(
+                          `Configured Scope: ${currentPackage.name} (${
+                            currentTier.tierName
+                          }) — Est. ${formatMoney(totalEstimate)}${
+                            activeAddonNames.length
+                              ? ` + [${activeAddonNames.join(", ")}]`
+                              : ""
+                          }`
+                        )
+                      }
+                      className="mt-5 w-full py-3.5 px-6 bg-[#2E6BFF] hover:bg-white text-white hover:text-[#0A1633] font-mono-tech text-[11px] tracking-[0.15em] font-semibold flex items-center justify-between transition-colors cursor-pointer"
+                    >
+                      <span>LOCK IN THIS SCOPE FOR DISCOVERY CALL</span>
+                      <ArrowUpRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right 5 Columns: Scroll-Animated Lunar Spheres (Per Project + Monthly Retainer) */}
+                <div className="lg:col-span-5 space-y-6">
+                  {/* Card /01: Fixed-Scope Project Sphere */}
+                  <div className="border border-[#2E6BFF]/25 bg-[#091536]/60 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center justify-between pb-3 border-b border-[#2E6BFF]/30">
+                      <span className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                        /01 · FIXED-SCOPE ENGAGEMENT
+                      </span>
+                      <span className="font-mono-tech text-[10px] text-white/55">
+                        {currentPackage.timeline}
+                      </span>
+                    </div>
+
+                    <div className="mt-6 flex items-center gap-6">
                       <motion.div
                         style={{ y: planet1Y, scale: planet1Scale }}
-                        className="relative w-[155px] h-[155px] sm:w-[185px] sm:h-[185px] rounded-full shrink-0"
+                        className="relative w-[124px] h-[124px] sm:w-[144px] sm:h-[144px] rounded-full shrink-0"
                       >
                         <img
                           src="/astra/moon-shadow.png"
                           alt=""
-                          className="absolute -inset-4 w-[220px] h-[220px] rounded-full object-cover opacity-50 pointer-events-none"
+                          className="absolute -inset-3 w-[170px] h-[170px] rounded-full object-cover opacity-50 pointer-events-none"
                         />
                         <img
                           src="/astra/pack-project.png"
-                          alt="Pack per project"
+                          alt="Per Project Sphere"
                           className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl ring-2 ring-[#2E6BFF]/40"
                         />
                       </motion.div>
 
-                      <div className="relative z-10">
-                        <div className="text-[11px] font-mono-tech text-[#60A5FA] mb-1">
-                          {currentTier.subtitle}
+                      <div>
+                        <div className="font-mono-tech text-[10px] text-[#60A5FA]">
+                          {currentPackage.name.toUpperCase()}
                         </div>
-                        <div className="font-display text-[36px] sm:text-[42px] font-semibold leading-none tracking-[-2px] text-white">
-                          {currency === "USD" ? currentTier.usd : currentTier.bdt}
+                        <div className="mt-1 font-display text-3xl font-semibold text-white">
+                          {currency === "USD"
+                            ? currentTier.usd
+                            : currentTier.bdt}
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Right: Features + /01 + Delivery time + Get in Touch pill */}
-                    <div className="flex flex-col justify-between">
-                      <div className="flex items-start justify-between gap-4">
-                        <ul className="space-y-2 text-[14.08px] font-medium tracking-[-0.704px] text-white/90">
-                          {currentTier.features.map((feat, i) => (
-                            <li key={i} className="flex items-start gap-2.5">
-                              <span className="text-[#60A5FA] font-bold">+</span>
-                              <span>{feat}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <span className="text-[12px] font-medium text-[#60A5FA] shrink-0">
-                          /01
-                        </span>
-                      </div>
-
-                      <div className="mt-8 pt-4 flex items-center justify-between gap-4">
-                        <div>
-                          <div className="text-[12px] text-white/50">
-                            Delivery time:
-                          </div>
-                          <div className="text-[16px] font-semibold tracking-[-0.8px] text-white">
-                            {currentPackage.timeline}
-                          </div>
-                        </div>
-
-                        <motion.button
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() =>
-                            openContactWith(
-                              `Per Project: ${currentPackage.name} (${currentTier.tierName})`
-                            )
-                          }
-                          className="h-[42px] w-[190px] px-5 rounded-[32px] bg-[#0F2557]/80 border-2 border-[#3B82F6]/60 hover:border-white hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
-                        >
-                          <span>Get in Touch</span>
-                          <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                            <span className="w-2 h-2 rounded-full bg-current" />
-                          </span>
-                        </motion.button>
+                        <p className="mt-2 text-xs text-white/65 leading-relaxed">
+                          Written scope, weekly Friday staging demos, full
+                          GitHub &amp; Figma ownership, and 30 days of support.
+                        </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
 
-              {/* ROW /02: MONTHLY (Starts at col-start-1, w: 883px, matches pfast_08.jpg) */}
-              <motion.div
-                style={{ opacity: row2Opacity, y: row2Y }}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-12"
-              >
-                <div className="lg:col-span-8 bg-[#091536]/55 border border-[#2E6BFF]/25 p-6 sm:p-8 backdrop-blur-sm">
-                  <div className="text-[18px] font-semibold tracking-[-0.8px] text-white pb-3 border-b border-[#2E6BFF]/35">
-                    Monthly — Growth Retainer &amp; Care Plan
-                  </div>
-
-                  <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    {/* Left: Features + /02 + Delivery time + Get in Touch */}
-                    <div className="flex flex-col justify-between">
-                      <div className="flex items-start justify-between gap-4">
-                        <ul className="space-y-2 text-[14.08px] font-medium tracking-[-0.704px] text-white/90">
-                          <li className="flex items-start gap-2.5">
-                            <span className="text-[#60A5FA] font-bold">+</span>
-                            <span>Homepage + inner pages &amp; continuous updates</span>
-                          </li>
-                          <li className="flex items-start gap-2.5">
-                            <span className="text-[#60A5FA] font-bold">+</span>
-                            <span>Design, Next.js development &amp; conversion tuning</span>
-                          </li>
-                          <li className="flex items-start gap-2.5">
-                            <span className="text-[#60A5FA] font-bold">+</span>
-                            <span>Social media creative &amp; campaign landing pages</span>
-                          </li>
-                          <li className="flex items-start gap-2.5">
-                            <span className="text-[#60A5FA] font-bold">+</span>
-                            <span>Dedicated monthly support &amp; Friday reports</span>
-                          </li>
-                        </ul>
-                        <span className="text-[12px] font-medium text-[#60A5FA] shrink-0">
-                          /02
-                        </span>
-                      </div>
-
-                      <div className="mt-8 pt-4 flex items-center justify-between gap-4">
-                        <div>
-                          <div className="text-[12px] text-white/50">
-                            Delivery time:
-                          </div>
-                          <div className="text-[16px] font-semibold tracking-[-0.8px] text-white">
-                            Ongoing
-                          </div>
-                        </div>
-
-                        <motion.button
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() =>
-                            openContactWith("Monthly Growth Retainer Inquiry")
-                          }
-                          className="h-[42px] w-[190px] px-5 rounded-[32px] bg-[#0F2557]/80 border-2 border-[#3B82F6]/60 hover:border-white hover:bg-white hover:text-[#0A1633] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
-                        >
-                          <span>Get in Touch</span>
-                          <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                            <span className="w-2 h-2 rounded-full bg-current" />
-                          </span>
-                        </motion.button>
-                      </div>
+                  {/* Card /02: Monthly Growth Retainer Lunar Sphere */}
+                  <div className="border border-white/15 bg-[#050B1C]/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center justify-between pb-3 border-b border-white/15">
+                      <span className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                        /02 · DEDICATED MONTHLY POD
+                      </span>
+                      <span className="font-mono-tech text-[10px] text-white/55">
+                        ONGOING
+                      </span>
                     </div>
 
-                    {/* Right: Real 185x185 Pack Per Month Dark Lunar Sphere + Price */}
-                    <div className="relative flex items-center gap-5">
+                    <div className="mt-6 flex items-center gap-6">
                       <motion.div
                         style={{ y: planet2Y, scale: planet2Scale }}
-                        className="relative w-[155px] h-[155px] sm:w-[185px] sm:h-[185px] rounded-full shrink-0"
+                        className="relative w-[124px] h-[124px] sm:w-[144px] sm:h-[144px] rounded-full shrink-0"
                       >
                         <img
                           src="/astra/moon-shadow.png"
                           alt=""
-                          className="absolute -inset-4 w-[220px] h-[220px] rounded-full object-cover opacity-40 pointer-events-none"
+                          className="absolute -inset-3 w-[170px] h-[170px] rounded-full object-cover opacity-40 pointer-events-none"
                         />
                         <img
                           src="/astra/pack-month.png"
-                          alt="Pack per month"
+                          alt="Monthly Retainer Sphere"
                           className="relative z-10 w-full h-full rounded-full object-cover shadow-2xl ring-2 ring-[#2E6BFF]/40"
                         />
                       </motion.div>
 
-                      <div className="relative z-10">
-                        <div className="text-[11px] font-mono-tech text-white/60 mb-1">
-                          Monthly Retainer
+                      <div>
+                        <div className="font-mono-tech text-[10px] text-white/60">
+                          GROWTH RETAINER &amp; CARE
                         </div>
-                        <div className="font-display text-[36px] sm:text-[42px] font-semibold leading-none tracking-[-2px] text-white">
-                          {currency === "USD" ? "$500+" : "৳20,000+"}
+                        <div className="mt-1 font-display text-3xl font-semibold text-white">
+                          {currency === "USD"
+                            ? "$500 – $2,000/mo"
+                            : "৳20k – ৳60k/mo"}
                         </div>
+                        <p className="mt-2 text-xs text-white/65 leading-relaxed">
+                          Continuous Next.js feature shipping, conversion pages,
+                          social design systems, and Friday progress reports.
+                        </p>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
 
-              {/* Bottom Founder Message Row (Matches pfast_11.jpg / y: 9809) */}
-              <div className="mt-14 pt-10 border-t border-white/12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div className="lg:col-start-5 lg:col-span-4">
-                  <div className="mb-3 text-white/80">
-                    <AstraStarLogo className="w-3.5 h-3.5" />
-                  </div>
-                  <p className="font-display text-[18px] sm:text-[20px] font-medium leading-[27px] tracking-[-0.8px] text-white/85">
-                    Add copywriting, SEO, extra pages, or a $100/mo Care Plan — flexible tools designed to strengthen your project. We build solutions around your business.
-                  </p>
-                </div>
-
-                <div className="lg:col-start-9 lg:col-span-4 flex items-center gap-3 pt-4">
-                  <TeamAvatar
-                    initials="RZ"
-                    name="Ryan Zannah"
-                    tone="from-[#2E6BFF] to-[#0B1020]"
-                    size="sm"
-                  />
-                  <div>
-                    <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-white">
-                      Ryan Zannah
-                    </div>
-                    <div className="text-[14.08px] font-medium tracking-[-0.704px] text-white/50">
-                      Founder &amp; CEO
+                    <div className="mt-6 pt-4 border-t border-white/12 flex items-center justify-between">
+                      <span className="text-xs text-white/60">
+                        Cancel or pause between monthly cycles
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openContactWith("Monthly Growth Retainer Inquiry")
+                        }
+                        className="px-4 py-2 border border-[#2E6BFF]/60 bg-[#0F2557]/80 hover:bg-white text-white hover:text-[#0A1633] font-mono-tech text-[10px] tracking-[0.14em] transition-colors cursor-pointer"
+                      >
+                        INQUIRE RETAINER →
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1480,498 +1777,316 @@ export default function QorvaynologyHomePage() {
       </div>
 
       {/* =====================================================================
-          SECTION 06: SCATTERED STUDIO PERSPECTIVES + DASHBOARD CHARTS (White)
-          Matches [data-framer-name="Testimonials"] & [data-framer-name="Dashboard"] 1:1
+          SECTION 05: DELIVERY ARCHITECTURE & STUDIO STANDARD
+          Geometry: Asymmetric 5/7 Split + Interactive 4-Stage Sprint Switcher
+                    + 1px Hairline Product Benchmarks Matrix
       ===================================================================== */}
       <section
         id="method"
-        className="paper-surface text-[#070B16] py-24 sm:py-36 relative overflow-hidden"
+        className="paper-surface text-[#0A1633] py-24 sm:py-32 relative overflow-hidden border-b border-[#0A1633]/10"
       >
         <div className="noise-overlay absolute inset-0" />
 
         <div className="relative z-10 max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* Header Block: Monumental 128px Heading + Metric at col-start-5 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 mb-12">
-            <div className="lg:col-start-5 lg:col-span-8">
-              <SectionIndex num="05" label="HOW WE WORK" />
-              <motion.h2
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                className="font-display text-[clamp(3.6rem,8.5vw,124px)] font-semibold leading-[0.92] tracking-[-0.04em] text-[#070B16]"
-              >
-                Our standard
-              </motion.h2>
-              <div className="mt-4 font-display text-[32px] sm:text-[40.8px] font-semibold tracking-[-2px] text-[#070B16]">
-                30d Care
-              </div>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left 5 Columns: Heading + Interactive 4-Stage Delivery Selector */}
+            <div className="lg:col-span-5">
+              <SectionIndex num="05" label="DELIVERY ARCHITECTURE" />
+              <h2 className="font-display text-3xl sm:text-5xl font-semibold leading-[1.02] tracking-[-0.038em] text-[#0A1633]">
+                How a build moves from discovery call to 30-day care.
+              </h2>
+              <p className="mt-4 text-xs sm:text-sm leading-[1.65] text-[#525D73]">
+                No vague agency retainers or disappearing freelancers. Every
+                project follows four fixed checkpoints with written sign-offs
+                and weekly Friday builds.
+              </p>
 
-          {/* SCATTERED 4-CARD SPATIAL CANVAS (Matches pricing_09.jpg & steps/2243/output.txt 1:1) */}
-          <div className="relative min-h-[600px] lg:h-[680px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`slide-${perspectiveSlideIdx}`}
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.55, ease: EASE_OUT_EXPO }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:block gap-8 lg:h-full relative"
-              >
-                {PERSPECTIVE_SLIDES[perspectiveSlideIdx].map((card) => {
-                  if (card.slot === "one") {
-                    // Featured Large Card at x: 52%, y: 48px, w: 414px
-                    return (
-                      <div
-                        key={card.name}
-                        className="lg:absolute lg:left-[51%] lg:top-12 lg:w-[414px] p-4"
-                      >
-                        <div className="w-[84px] h-[84px] mb-4">
-                          <TeamAvatar
-                            initials={card.initials}
-                            name={card.name}
-                            size="lg"
-                            active
-                          />
-                        </div>
-                        <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16]">
-                          {card.name}
-                        </div>
-                        <div className="text-[13px] font-medium text-[#91908E] mb-4">
-                          {card.role}
-                        </div>
-                        <div className="h-px w-5 bg-[#1E3A8A]/50 mb-3" />
-                        <p className="font-display text-[20px] sm:text-[22px] font-medium leading-[29px] tracking-[-0.9px] text-[#070B16]">
-                          {card.quote}
-                        </p>
-                      </div>
-                    );
-                  }
-                  if (card.slot === "two") {
-                    // Top-Left Card at x: 0%, y: 150px, w: 289px
-                    return (
-                      <div
-                        key={card.name}
-                        className="lg:absolute lg:left-0 lg:top-[150px] lg:w-[289px] p-4 opacity-75 hover:opacity-100 transition-opacity"
-                      >
-                        <div className="w-[55px] h-[55px] mb-3">
-                          <TeamAvatar
-                            initials={card.initials}
-                            name={card.name}
-                            size="md"
-                          />
-                        </div>
-                        <div className="text-[13px] font-semibold text-[#070B16]">
-                          {card.name}
-                        </div>
-                        <div className="text-[12px] text-[#91908E] mb-2">
-                          {card.role}
-                        </div>
-                        <p className="text-[13px] leading-[18.5px] text-[#686963]">
-                          {card.quote}
-                        </p>
-                      </div>
-                    );
-                  }
-                  if (card.slot === "three") {
-                    // Bottom-Center-Left Card at x: 25%, y: 315px, w: 343px
-                    return (
-                      <div
-                        key={card.name}
-                        className="lg:absolute lg:left-[25%] lg:top-[315px] lg:w-[343px] p-4"
-                      >
-                        <div className="w-[65px] h-[65px] mb-3">
-                          <TeamAvatar
-                            initials={card.initials}
-                            name={card.name}
-                            size="md"
-                          />
-                        </div>
-                        <div className="text-[14px] font-semibold text-[#070B16]">
-                          {card.name}
-                        </div>
-                        <div className="text-[12px] text-[#91908E] mb-2">
-                          {card.role}
-                        </div>
-                        <div className="h-px w-5 bg-[#1E3A8A]/50 mb-2" />
-                        <p className="text-[14.5px] font-medium leading-[20.5px] text-[#070B16]/85">
-                          {card.quote}
-                        </p>
-                      </div>
-                    );
-                  }
-                  // Bottom-Right Card at x: 82%, y: 295px, w: 245px
+              {/* 4-Stage Vertical Selector Buttons */}
+              <div className="mt-8 border border-[#0A1633]/15 divide-y divide-[#0A1633]/15 bg-white">
+                {DELIVERY_STAGES.map((st, idx) => {
+                  const active = activeStageIdx === idx;
                   return (
-                    <div
-                      key={card.name}
-                      className="lg:absolute lg:right-0 lg:top-[295px] lg:w-[245px] p-4 opacity-75 hover:opacity-100 transition-opacity"
+                    <button
+                      key={st.num}
+                      type="button"
+                      onClick={() => setActiveStageIdx(idx)}
+                      className={`w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 transition-colors cursor-pointer ${
+                        active
+                          ? "bg-[#0A1633] text-white"
+                          : "bg-white text-[#0A1633] hover:bg-[#EFF4FF]"
+                      }`}
                     >
-                      <div className="w-[46px] h-[46px] mb-2.5">
-                        <TeamAvatar
-                          initials={card.initials}
-                          name={card.name}
-                          size="sm"
-                        />
+                      <div className="flex items-start gap-3.5">
+                        <span
+                          className={`font-mono-tech text-[11px] mt-0.5 ${
+                            active ? "text-[#60A5FA]" : "text-[#1E3A8A]"
+                          }`}
+                        >
+                          /{st.num}
+                        </span>
+                        <div>
+                          <div className="font-display text-sm sm:text-base font-semibold">
+                            {st.title}
+                          </div>
+                          <div
+                            className={`text-[11px] mt-0.5 ${
+                              active ? "text-white/65" : "text-[#525D73]"
+                            }`}
+                          >
+                            {st.duration}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-[13px] font-semibold text-[#070B16]">
-                        {card.name}
-                      </div>
-                      <div className="text-[11px] text-[#91908E] mb-2">
-                        {card.role}
-                      </div>
-                      <p className="text-[12.5px] leading-[17.5px] text-[#686963]">
-                        {card.quote}
-                      </p>
-                    </div>
+                      <span className="font-mono-tech text-[10px]">
+                        {active ? "ACTIVE ●" : "VIEW →"}
+                      </span>
+                    </button>
                   );
                 })}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Controls & CTA Bar below Scattered Perspectives (Matches pricing_10.jpg) */}
-          <div className="mt-8 pt-6 grid grid-cols-1 lg:grid-cols-12 items-center gap-6">
-            <div className="lg:col-start-4 lg:col-span-3 flex items-center gap-6 text-xs font-semibold">
-              <button
-                onClick={() =>
-                  setPerspectiveSlideIdx((p) => (p === 0 ? 1 : 0))
-                }
-                className="inline-flex items-center gap-2 text-[#91908E] hover:text-[#070B16] transition-colors cursor-pointer"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                <span>Previous</span>
-              </button>
-              <button
-                onClick={() =>
-                  setPerspectiveSlideIdx((p) => (p === 0 ? 1 : 0))
-                }
-                className="inline-flex items-center gap-2 text-[#070B16] hover:text-[#2E6BFF] transition-colors cursor-pointer"
-              >
-                <span>Next</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
-              </button>
+              </div>
             </div>
 
-            <div className="lg:col-start-7 lg:col-span-6 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {TEAM_MEMBERS.slice(0, 3).map((m) => (
-                    <TeamAvatar
-                      key={m.id}
-                      initials={m.initials}
-                      name={m.name}
-                      size="xs"
-                    />
-                  ))}
-                </div>
-                <span className="font-display text-sm font-semibold text-[#070B16]">
-                  06<sup className="text-[#2E6BFF]">+</sup>
-                </span>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => openContactWith("Book Discovery Call")}
-                className="h-[47px] w-[237px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
-              >
-                <span>Book a Discovery Call</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                  <span className="w-2 h-2 rounded-full bg-white" />
-                </span>
-              </motion.button>
-            </div>
-          </div>
-
-          {/* -----------------------------------------------------------------
-              DASHBOARD GRAPHS (Matches y: 11588 in steps/2243/output.txt 1:1)
-          ----------------------------------------------------------------- */}
-          <div className="mt-28 sm:mt-36 grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Graph 1: Projects by Field */}
-            <div>
-              <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16] pb-3 border-b border-[#070B16]/20">
-                Capabilities by Field
-              </div>
-              <div className="mt-7 flex items-center gap-8 h-[190px]">
-                <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
-                  <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="14"
-                      fill="none"
-                      stroke="#E5E7EB"
-                      strokeWidth="4.8"
-                    />
-                    <motion.circle
-                      cx="18"
-                      cy="18"
-                      r="14"
-                      fill="none"
-                      stroke="#070B16"
-                      strokeWidth="4.8"
-                      initial={{ strokeDasharray: "0 100" }}
-                      whileInView={{ strokeDasharray: "58 100" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.1, ease: EASE_OUT_EXPO }}
-                    />
-                    <motion.circle
-                      cx="18"
-                      cy="18"
-                      r="14"
-                      fill="none"
-                      stroke="#2E6BFF"
-                      strokeWidth="4.8"
-                      strokeDashoffset="-58"
-                      initial={{ strokeDasharray: "0 100" }}
-                      whileInView={{ strokeDasharray: "26 100" }}
-                      viewport={{ once: true }}
-                      transition={{
-                        delay: 0.2,
-                        duration: 0.9,
-                        ease: EASE_OUT_EXPO,
-                      }}
-                    />
-                  </svg>
-                  <span className="absolute font-display text-2xl font-bold text-[#070B16]">
-                    06
-                  </span>
-                </div>
-
-                <div className="space-y-2 text-[13px]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#070B16]" />
-                    <span className="font-semibold text-[#070B16]">Web Apps</span>
-                    <span className="text-[#91908E]">Next.js</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#2E6BFF]" />
-                    <span className="font-semibold text-[#070B16]">Branding</span>
-                    <span className="text-[#91908E]">Identity</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#686963]" />
-                    <span className="font-semibold text-[#070B16]">UI/UX</span>
-                    <span className="text-[#91908E]">Figma</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#D1D5DB]" />
-                    <span className="font-semibold text-[#070B16]">AI Ops</span>
-                    <span className="text-[#91908E]">Workflows</span>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-[13px] text-[#686963]">
-                The breakdown is based on the primary discipline of our studio packages.
-              </p>
-            </div>
-
-            {/* Graph 2: Delivery Cadence Bar Chart */}
-            <div>
-              <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16] pb-3 border-b border-[#070B16]/20">
-                Delivery Milestones
-              </div>
-              <div className="mt-7 h-[190px] flex items-end gap-3 pt-4">
-                {[
-                  { yr: "Call", val: "30m", pct: 32, active: true },
-                  { yr: "Scope", val: "24h", pct: 52, active: false },
-                  { yr: "UI/UX", val: "Wk 1", pct: 74, active: false },
-                  { yr: "Code", val: "Wk 2", pct: 62, active: false },
-                  { yr: "Care", val: "30d", pct: 96, active: false },
-                ].map((bar, i) => (
-                  <div
-                    key={bar.yr}
-                    className="flex-1 h-full flex flex-col justify-end items-center"
-                  >
-                    <motion.div
-                      initial={{ height: 0 }}
-                      whileInView={{ height: `${bar.pct}%` }}
-                      viewport={{ once: true }}
-                      transition={{
-                        delay: 0.1 + i * 0.08,
-                        duration: 0.8,
-                        ease: EASE_OUT_EXPO,
-                      }}
-                      className={`w-full ${
-                        bar.active
-                          ? "bg-[#1E3A8A] text-white"
-                          : "bg-[#0B1B46]/20 text-[#0A1633]"
-                      } flex items-start justify-center pt-2 text-[11px] font-semibold`}
-                    >
-                      {bar.val}
-                    </motion.div>
-                    <span className="text-[11px] font-semibold text-[#070B16] mt-2">
-                      {bar.yr}
+            {/* Right 7 Columns: Live Stage Specification + 2x2 Hairline Benchmark Matrix */}
+            <div className="lg:col-span-7">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeStage.num}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -14 }}
+                  transition={{ duration: 0.32, ease: EASE_OUT_EXPO }}
+                  className="border border-[#0A1633]/15 bg-white p-6 sm:p-10"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#0A1633]/12">
+                    <span className="font-mono-tech text-[11px] tracking-[0.16em] text-[#1E3A8A]">
+                      {activeStage.code}
                     </span>
+                    <span className="font-mono-tech text-[10px] px-2.5 py-1 bg-[#EFF4FF] text-[#1E3A8A] border border-[#1E3A8A]/20">
+                      {activeStage.duration}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 font-display text-2xl sm:text-3xl font-semibold tracking-[-0.03em] text-[#0A1633]">
+                    {activeStage.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-[1.7] text-[#525D73]">
+                    {activeStage.summary}
+                  </p>
+
+                  {/* Stage Artifacts Grid */}
+                  <div className="mt-8 pt-6 border-t border-[#0A1633]/12">
+                    <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#525D73] mb-4">
+                      STAGE DELIVERABLES &amp; VERIFICATION ARTIFACTS
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {activeStage.artifacts.map((art, i) => (
+                        <div
+                          key={i}
+                          className="p-3.5 bg-[#F8FAFF] border border-[#0A1633]/10 flex items-start gap-2.5 text-xs text-[#0A1633]"
+                        >
+                          <span className="font-mono-tech text-[10px] text-[#1E3A8A] mt-0.5">
+                            0{i + 1}
+                          </span>
+                          <span className="font-medium">{art}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Stage Lead Attribution */}
+                  <div className="mt-8 pt-5 border-t border-[#0A1633]/12 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <TeamAvatar
+                        initials={activeStage.leadInitials}
+                        name={activeStage.lead}
+                        size="sm"
+                      />
+                      <div>
+                        <div className="text-xs font-semibold text-[#0A1633]">
+                          Stage Lead: {activeStage.lead}
+                        </div>
+                        <div className="text-[11px] text-[#525D73]">
+                          {activeStage.leadRole}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openContactWith(
+                          `Discovery Call — ${activeStage.title}`
+                        )
+                      }
+                      className="px-5 py-2.5 bg-[#0A1633] hover:bg-[#1E3A8A] text-white font-mono-tech text-[10px] tracking-[0.14em] transition-colors cursor-pointer"
+                    >
+                      BOOK 15–30M DISCOVERY CALL →
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* 2x2 1px Hairline Matrix: In-House Product Benchmarks */}
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 border border-[#0A1633]/15 divide-y sm:divide-x divide-[#0A1633]/15 bg-white">
+                {[
+                  {
+                    code: "BENCHMARK 01 / ORBYN",
+                    metric: "06+",
+                    title: "Real-Time Modules in Live Beta",
+                    note: "Presence, daily reflection, voice notes, shared memories, AI date planner, and two-person photobooth on Next.js & Supabase.",
+                  },
+                  {
+                    code: "BENCHMARK 02 / SNOWVAYN & SUNVAYN",
+                    metric: "02×",
+                    title: "Dual-Season Commerce Engine",
+                    note: "Tokenized storefront architecture that shifts identity and catalog styling between winter and summer seasons.",
+                  },
+                  {
+                    code: "BENCHMARK 03 / CONTINUUM",
+                    metric: "27",
+                    title: "Production Brand Asset Pack",
+                    note: "Every brand identity ships with 27 production files across SVG, PNG, JPG, and print-ready PDF with dark/light surface rules.",
+                  },
+                  {
+                    code: "BENCHMARK 04 / CARE STANDARD",
+                    metric: "30d",
+                    title: "Included Post-Launch Support",
+                    note: "Every website and web app includes a structured launch checklist, full code handover, and 30 days of engineering care.",
+                  },
+                ].map((bm) => (
+                  <div key={bm.code} className="p-6">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-mono-tech text-[10px] tracking-[0.14em] text-[#1E3A8A]">
+                        {bm.code}
+                      </span>
+                      <span className="font-display text-2xl font-semibold text-[#0A1633]">
+                        {bm.metric}
+                      </span>
+                    </div>
+                    <div className="mt-2 text-xs font-semibold text-[#0A1633]">
+                      {bm.title}
+                    </div>
+                    <p className="mt-1 text-xs leading-[1.55] text-[#525D73]">
+                      {bm.note}
+                    </p>
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-[13px] text-[#686963]">
-                Structured weekly milestones from discovery call to 30-day post-launch support.
-              </p>
-            </div>
-
-            {/* Graph 3: People Making a Project (6x3 Dot Matrix) */}
-            <div>
-              <div className="text-[14.08px] font-semibold tracking-[-0.704px] text-[#070B16] pb-3 border-b border-[#070B16]/20">
-                People making a Project
-              </div>
-              <div className="mt-7 h-[190px] flex items-center gap-8">
-                <div className="grid grid-cols-6 gap-2.5">
-                  {Array.from({ length: 18 }).map((_, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.025, duration: 0.35 }}
-                      className={`w-4 h-4 rounded-full ${
-                        i < 11 ? "bg-[#1E3A8A]" : "bg-[#CBD5E1]"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="space-y-2 text-[13px]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#1E3A8A]" />
-                    <span className="font-semibold text-[#0A1633]">Involved</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#CBD5E1]" />
-                    <span className="text-[#525D73]">Advisory</span>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-[13px] text-[#686963]">
-                Dedicated product, brand, and full-stack Next.js specialists assigned to every build.
-              </p>
-            </div>
-          </div>
-
-          {/* USER CASES / PRODUCT BENCHMARKS (Matches y: 12040 in steps/2243/output.txt) */}
-          <div className="mt-24 sm:mt-32">
-            <div className="grid grid-cols-1 lg:grid-cols-12 mb-12">
-              <div className="lg:col-start-5 lg:col-span-8">
-                <h3 className="font-display text-[48px] sm:text-[64px] font-semibold leading-none tracking-[-0.04em] text-[#070B16]">
-                  Product cases:
-                </h3>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              {[
-                {
-                  logo: "ORBYN®",
-                  num: "06",
-                  sup: "+",
-                  statDesc: "Real-time modules live in beta on Next.js 15 & Supabase",
-                  person: "Ryan Zannah",
-                  role: "Founder & CEO, QORVAYN",
-                  initials: "RZ",
-                  quote:
-                    "Live presence, daily reflection, voice notes, shared memories, AI date planner, and an on-device two-person photobooth.",
-                },
-                {
-                  logo: "SNOWVAYN®",
-                  num: "02",
-                  sup: "×",
-                  statDesc: "Seasonal brand & storefront engines in one unified store",
-                  person: "Shoyetur Rahman Sayel",
-                  role: "Lead Software Engineer",
-                  initials: "SS",
-                  quote:
-                    "Tokenized e-commerce architecture that switches visual identity automatically between winter (SnowVayn) and summer (SunVayn).",
-                },
-                {
-                  logo: "CONTINUUM®",
-                  num: "30",
-                  sup: "d",
-                  statDesc: "Post-launch engineering care included on every project",
-                  person: "Adelia Maharani",
-                  role: "Co-Founder & Creative Director",
-                  initials: "AM",
-                  quote:
-                    "Every project starts with clear discovery and ships with a launch checklist, full code handover, and 30 days of support.",
-                },
-              ].map((uc) => (
-                <div key={uc.logo}>
-                  <div className="font-display text-sm font-bold tracking-tight text-[#686963] pb-3 border-b border-[#070B16]/20">
-                    {uc.logo}
-                  </div>
-                  <div className="mt-5 flex items-start justify-between gap-4">
-                    <div className="font-display text-[56px] sm:text-[64px] font-semibold leading-none tracking-[-0.045em] text-[#070B16]">
-                      {uc.num}
-                      <sup className="text-2xl text-[#2E6BFF] ml-0.5">
-                        {uc.sup}
-                      </sup>
-                    </div>
-                    <p className="text-[14px] font-medium leading-[19.5px] text-[#686963] max-w-[165px]">
-                      {uc.statDesc}
-                    </p>
-                  </div>
-
-                  <div className="mt-8 flex items-center gap-3">
-                    <TeamAvatar
-                      initials={uc.initials}
-                      name={uc.person}
-                      size="sm"
-                    />
-                    <div>
-                      <div className="text-[13px] font-semibold text-[#070B16]">
-                        {uc.person}
-                      </div>
-                      <div className="text-[12px] text-[#91908E]">{uc.role}</div>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-[13px] leading-[18.5px] text-[#070B16]/80 max-w-[280px]">
-                    {uc.quote}
-                  </p>
-                </div>
-              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 07: TEAM STICKY SCROLL-DRIVEN ORBITAL PARADE (9 Moons/Portraits)
-          Matches [data-framer-name="Team"] (y: 12655, h: 3167) 1:1
+          SECTION 06: LEADERSHIP & ENGINEERING POD
+          Geometry: Sticky Orbital Stage + 6-Cell 1px Hairline Roster Matrix
       ===================================================================== */}
       <div
         ref={teamScrollRef}
         id="team"
-        className="relative bg-[#03050C] text-white lg:h-[240vh]"
+        className="relative bg-[#03050C] text-white py-24 sm:py-32 border-b border-white/10"
       >
-        {/* Sticky 100vh Universe Stage */}
-        <div className="lg:sticky lg:top-0 lg:h-screen w-full overflow-hidden flex flex-col justify-center py-20 lg:py-0">
-          {/* Universe Starfield Background */}
-          <img
-            src="/astra/section-stars-bg.png"
-            alt=""
-            className="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-85"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_65%_50%_at_65%_45%,rgba(30,58,138,0.32),rgba(3,5,12,0.68)_75%)]"
-          />
+        <img
+          src="/astra/section-stars-bg.png"
+          alt=""
+          className="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-80"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_65%_50%_at_65%_45%,rgba(30,58,138,0.38),rgba(3,5,12,0.78)_75%)]"
+        />
 
-          <div className="relative z-10 max-w-[1354px] w-full mx-auto px-5 sm:px-9">
-            {/* Monumental 128px "Team" Heading at col-start-5 */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 mb-6 sm:mb-10">
-              <div className="lg:col-start-5 lg:col-span-8">
-                <SectionIndex num="06" label="TEAM" tone="light" />
-                <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-white">
-                  Team
-                </h2>
-              </div>
+        <div className="relative z-10 max-w-[1354px] w-full mx-auto px-5 sm:px-9">
+          {/* Header + Active Orbital Inspector */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-12">
+            <div className="lg:col-span-6">
+              <SectionIndex
+                num="06"
+                label="LEADERSHIP &amp; ENGINEERING POD"
+                tone="light"
+              />
+              <h2 className="font-display text-[clamp(2.6rem,6vw,84px)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
+                Six builders behind QORVAYN &amp; Qorvaynology.
+              </h2>
             </div>
+            <div className="lg:col-span-6 flex lg:justify-end">
+              <p className="text-xs sm:text-sm text-white/65 max-w-[420px] lg:text-right">
+                Select any team member in the orbital stage or the 1px roster
+                matrix below to inspect their role, division, and direct quote.
+              </p>
+            </div>
+          </div>
 
-            {/* Active Member Name & Role at col-start-5 */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 mb-4">
-              <div className="lg:col-start-5 lg:col-span-8 min-h-[54px]">
+          {/* Interactive Orbital Spotlight Bar */}
+          <div className="border border-white/15 bg-[#050B1C]/80 backdrop-blur-md p-6 sm:p-10 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Left 5 Cols: Active Portrait + Orbital Satellites */}
+              <div className="lg:col-span-5 flex items-center justify-between sm:justify-start gap-6">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeMember.id}
+                    initial={{ scale: 0.88, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.88, opacity: 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 260,
+                      damping: 26,
+                    }}
+                    className="shrink-0"
+                  >
+                    <TeamAvatar
+                      initials={activeMember.initials}
+                      name={activeMember.name}
+                      tone={activeMember.tone}
+                      size="lg"
+                      active
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                <div>
+                  <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                    0{activeTeamIdx + 1} / 0{TEAM_MEMBERS.length} ·{" "}
+                    {activeMember.location.toUpperCase()}
+                  </div>
+                  <h3 className="mt-1 font-display text-2xl sm:text-3xl font-semibold text-white">
+                    {activeMember.name}
+                  </h3>
+                  <div className="text-xs text-white/70 mt-0.5">
+                    {activeMember.role} · {activeMember.division}
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveTeamIdx((prev) =>
+                          prev === 0 ? TEAM_MEMBERS.length - 1 : prev - 1
+                        )
+                      }
+                      className="px-3 py-1.5 border border-white/20 hover:border-white font-mono-tech text-[10px] text-white/80 hover:text-white transition-colors cursor-pointer"
+                    >
+                      ← PREV.
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveTeamIdx((prev) =>
+                          prev === TEAM_MEMBERS.length - 1 ? 0 : prev + 1
+                        )
+                      }
+                      className="px-3 py-1.5 border border-white/20 hover:border-white font-mono-tech text-[10px] text-white/80 hover:text-white transition-colors cursor-pointer"
+                    >
+                      NEXT →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right 7 Cols: Direct Quote & Focus Tags */}
+              <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-white/12 pt-6 lg:pt-0 lg:pl-8">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeMember.id}
@@ -1980,351 +2095,237 @@ export default function QorvaynologyHomePage() {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <div className="text-[18px] font-semibold tracking-[-0.8px] text-white">
-                      {activeMember.name}
-                    </div>
-                    <div className="w-8 h-[1px] bg-white/35 my-1.5" />
-                    <div className="text-[13px] text-white/60">
-                      {activeMember.role}
+                    <p className="font-display text-lg sm:text-xl font-medium leading-[1.5] text-white/90">
+                      &ldquo;{activeMember.quote}&rdquo;
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {activeMember.focusAreas.map((area) => (
+                        <span
+                          key={area}
+                          className="font-mono-tech text-[10px] px-2.5 py-1 bg-[#1E3A8A]/35 border border-[#2E6BFF]/35 text-[#93C5FD]"
+                        >
+                          {area}
+                        </span>
+                      ))}
                     </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
             </div>
+          </div>
 
-            {/* 9-OBJECT ORBITAL PARADE ROW (Matches "Parade row" in steps/2247/output.txt 1:1) */}
-            <div className="relative flex items-center justify-between gap-4 py-4">
-              {/* Left "• Prev." button */}
-              <button
-                onClick={() =>
-                  setActiveTeamIdx((prev) =>
-                    prev === 0 ? TEAM_MEMBERS.length - 1 : prev - 1
-                  )
-                }
-                className="relative z-10 inline-flex items-center gap-2 text-xs font-medium text-white/80 hover:text-[#60A5FA] transition-colors cursor-pointer shrink-0"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                <span>Prev.</span>
-              </button>
-
-              {/* Left 4 Distant Moons / Avatars (14px, 21px, 13px, 9px) */}
-              <div className="hidden md:flex items-center gap-4 lg:gap-6">
-                <span className="w-[14px] h-[14px] rounded-full bg-white/30" />
+          {/* 6-Cell 1px Hairline Roster Matrix */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-white/15 divide-y sm:divide-x divide-white/15 bg-[#050B1C]/75">
+            {TEAM_MEMBERS.map((member, idx) => {
+              const isSelected = idx === activeTeamIdx;
+              return (
                 <button
-                  onClick={() =>
-                    setActiveTeamIdx(
-                      (activeTeamIdx + TEAM_MEMBERS.length - 2) %
-                        TEAM_MEMBERS.length
-                    )
-                  }
-                  className="w-[24px] h-[24px] rounded-full overflow-hidden opacity-65 hover:opacity-100 transition-opacity cursor-pointer"
+                  key={member.id}
+                  type="button"
+                  onClick={() => setActiveTeamIdx(idx)}
+                  className={`p-6 text-left transition-colors cursor-pointer relative ${
+                    isSelected
+                      ? "bg-[#0F2557]/75"
+                      : "hover:bg-white/[0.04]"
+                  }`}
                 >
-                  <TeamAvatar
-                    initials={
-                      TEAM_MEMBERS[
-                        (activeTeamIdx + TEAM_MEMBERS.length - 2) %
-                          TEAM_MEMBERS.length
-                      ].initials
-                    }
-                    name=""
-                    size="xs"
-                  />
-                </button>
-                <button
-                  onClick={() =>
-                    setActiveTeamIdx(
-                      (activeTeamIdx + TEAM_MEMBERS.length - 1) %
-                        TEAM_MEMBERS.length
-                    )
-                  }
-                  className="w-[16px] h-[16px] rounded-full bg-[#2E6BFF]/60 hover:scale-125 transition-transform cursor-pointer"
-                />
-                <span className="w-[9px] h-[9px] rounded-full bg-white/40" />
-              </div>
-
-              {/* Center Active 255x255 Portrait + Right Graduated Portraits (95px, 61px, 29px, 29px) */}
-              <div className="flex items-center justify-center gap-5 sm:gap-8 lg:gap-10">
-                {/* Active 255px Portrait */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeMember.id}
-                    initial={{ scale: 0.86, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.86, opacity: 0 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 260,
-                      damping: 26,
-                    }}
-                    className="relative"
-                  >
-                    <TeamAvatar
-                      initials={activeMember.initials}
-                      name={activeMember.name}
-                      tone={activeMember.tone}
-                      size="xl"
-                      active
-                    />
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Next 4 Graduated Orbital Portraits on the right (95px, 61px, 29px, 29px) */}
-                {[1, 2, 3, 4].map((offset) => {
-                  const m =
-                    TEAM_MEMBERS[(activeTeamIdx + offset) % TEAM_MEMBERS.length];
-                  const sizeMap: Record<number, string> = {
-                    1: "w-[76px] h-[76px] sm:w-[95px] sm:h-[95px]",
-                    2: "hidden sm:flex w-[61px] h-[61px]",
-                    3: "hidden lg:flex w-[32px] h-[32px]",
-                    4: "hidden lg:flex w-[29px] h-[29px]",
-                  };
-                  return (
-                    <button
-                      key={`${m.id}-${offset}`}
-                      onClick={() =>
-                        setActiveTeamIdx(
-                          (activeTeamIdx + offset) % TEAM_MEMBERS.length
-                        )
-                      }
-                      className={`${sizeMap[offset]} rounded-full overflow-hidden opacity-75 hover:opacity-100 hover:scale-105 transition-all cursor-pointer shrink-0`}
-                    >
+                  {isSelected && (
+                    <span className="absolute top-0 left-0 right-0 h-[2px] bg-[#2E6BFF]" />
+                  )}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
                       <TeamAvatar
-                        initials={m.initials}
-                        name={m.name}
-                        tone={m.tone}
-                        size={offset === 1 ? "lg" : offset === 2 ? "md" : "xs"}
+                        initials={member.initials}
+                        name={member.name}
+                        tone={member.tone}
+                        size="sm"
                       />
-                    </button>
-                  );
-                })}
-              </div>
+                      <div>
+                        <div className="font-display text-base font-semibold text-white">
+                          {member.name}
+                        </div>
+                        <div className="text-xs text-[#60A5FA]">
+                          {member.role}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="font-mono-tech text-[10px] text-white/45">
+                      /0{idx + 1}
+                    </span>
+                  </div>
 
-              {/* Right "Next •" button */}
-              <button
-                onClick={() =>
-                  setActiveTeamIdx((prev) =>
-                    prev === TEAM_MEMBERS.length - 1 ? 0 : prev + 1
-                  )
-                }
-                className="relative z-10 inline-flex items-center gap-2 text-xs font-medium text-white/80 hover:text-[#60A5FA] transition-colors cursor-pointer shrink-0"
-              >
-                <span>Next</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              </button>
-            </div>
-
-            {/* Bottom Quote Line (Matches "Message line" at y: 13883) */}
-            <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <div className="lg:col-start-5 lg:col-span-2 flex items-center justify-between pt-4">
-                <AstraStarLogo className="w-3.5 h-3.5 text-white/80" />
-                <span className="font-display text-5xl text-white/35 leading-none select-none">
-                  &rdquo;
-                </span>
-              </div>
-              <div className="lg:col-start-7 lg:col-span-5 min-h-[96px]">
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={activeMember.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                    className="text-[14.08px] font-medium leading-[20px] tracking-[-0.704px] text-white/85 max-w-[300px]"
-                  >
-                    {activeMember.quote}
-                  </motion.p>
-                </AnimatePresence>
-              </div>
-            </div>
+                  <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60">
+                    <span>{member.division}</span>
+                    <span className="font-mono-tech text-[10px] text-white/45">
+                      {member.location}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* =====================================================================
-          SECTION 08: INSIGHTS (Crisp White + 128x128 Circular Apertures)
-          Matches [data-framer-name="Insights"] (y: 15821) 1:1
+          SECTION 07: STUDIO NOTES (INSIGHTS)
+          Geometry: Structured 12-Column Editorial Index Rows (divide-y)
       ===================================================================== */}
       <section
         id="insights"
-        className="paper-surface text-[#070B16] py-24 sm:py-36"
+        className="paper-surface text-[#0A1633] py-24 sm:py-32 border-b border-[#0A1633]/10"
       >
         <div className="max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* Monumental 128px "Insights" Heading at col-start-5 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 mb-14">
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-              className="lg:col-start-5 lg:col-span-8"
-            >
-              <SectionIndex num="07" label="NOTES" />
-              <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
-                Insights
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-14">
+            <div className="lg:col-span-7">
+              <SectionIndex num="07" label="STUDIO NOTES &amp; ARCHITECTURE" />
+              <h2 className="font-display text-[clamp(2.5rem,5.5vw,76px)] font-semibold leading-[0.98] tracking-[-0.038em] text-[#0A1633]">
+                Notes on shipping software and enduring brand systems.
               </h2>
-            </motion.div>
-          </div>
-
-          {/* Founder Message Row at col-start-5 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-20">
-            <div className="lg:col-start-5 lg:col-span-2">
-              <div className="w-[42px] h-[42px] mb-2">
-                <TeamAvatar
-                  initials="RZ"
-                  name="Ryan Zannah"
-                  tone="from-[#2E6BFF] to-[#0B1020]"
-                  size="sm"
-                />
-              </div>
-              <div className="text-[13px] font-semibold text-[#070B16]">
-                Ryan Zannah
-              </div>
-              <div className="text-[12px] text-[#91908E]">Founder &amp; CEO</div>
             </div>
-
-            <div className="lg:col-start-7 lg:col-span-6">
-              <p className="font-display text-[20px] sm:text-[24px] font-medium leading-[33.12px] tracking-[-1.44px] text-[#070B16] max-w-[512px]">
-                We have a lot to say about how we design, architect, and ship digital products at QORVAYN — and the nuances of our process. We made it practical for you.
+            <div className="lg:col-span-5 flex lg:justify-end">
+              <p className="text-xs sm:text-sm text-[#525D73] max-w-[380px] lg:text-right">
+                Written by our founders and engineers from real product work on
+                Orbyn, SnowVayn, and Qorvaynology.
               </p>
             </div>
           </div>
 
-          {/* 3 Insight Columns (w: 431 each, 128x128 circular image on right half of column) */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Structured Editorial Table Rows */}
+          <div className="divide-y divide-[#0A1633]/12 border-t border-b border-[#0A1633]/15">
             {INSIGHTS_LIST.map((article, idx) => (
               <motion.article
                 key={article.id}
-                initial={{ opacity: 0, y: 32 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  delay: idx * 0.1,
-                  duration: 0.65,
+                  delay: idx * 0.08,
+                  duration: 0.55,
                   ease: EASE_OUT_EXPO,
                 }}
                 onClick={() => setActiveInsight(article)}
-                className="group cursor-pointer"
+                className="py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center cursor-pointer group hover:bg-[#EFF4FF]/50 px-3 -mx-3 transition-colors"
               >
-                {/* 128x128 Circular Image aligned with right sub-column (matches x: 267, 728, 1190) */}
-                <div className="grid grid-cols-2 mb-8">
-                  <div />
-                  <div>
-                    <motion.img
-                      whileHover={{ scale: 1.06 }}
-                      src={INSIGHT_IMAGES[idx % INSIGHT_IMAGES.length]}
-                      alt={article.title}
-                      className="w-[112px] h-[112px] sm:w-[128px] sm:h-[128px] rounded-full object-cover shadow-md"
-                    />
+                {/* Col 1-2: Number + Date + Read time */}
+                <div className="lg:col-span-2 flex lg:flex-col justify-between gap-2">
+                  <span className="font-mono-tech text-[10px] tracking-[0.16em] text-[#1E3A8A]">
+                    /0{idx + 1} · {article.category.toUpperCase()}
+                  </span>
+                  <div className="font-mono-tech text-[11px] text-[#525D73]">
+                    {article.day} {article.month} {article.year} ·{" "}
+                    {article.readTime}
                   </div>
                 </div>
 
-                {/* 1px Top Rule + Date on left, Title on right */}
-                <div className="pt-5 border-t border-[#070B16]/20 grid grid-cols-2 gap-4 items-start">
-                  <div className="flex items-start gap-1">
-                    <span className="font-display text-[32px] sm:text-[36px] font-semibold leading-none tracking-[-1.8px] text-[#070B16]">
-                      {article.day}
-                    </span>
-                    <span className="text-[12px] font-medium text-[#686963] mt-0.5">
-                      {article.month}
-                    </span>
-                  </div>
+                {/* Col 3-4: 88px Circular Visual Aperture */}
+                <div className="lg:col-span-2 flex items-center">
+                  <img
+                    src={INSIGHT_IMAGES[idx % INSIGHT_IMAGES.length]}
+                    alt={article.title}
+                    className="w-[76px] h-[76px] sm:w-[88px] sm:h-[88px] rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform"
+                  />
+                </div>
 
-                  <div>
-                    <h3 className="text-[14.08px] font-semibold leading-[19.7px] tracking-[-0.704px] text-[#070B16] group-hover:text-[#2E6BFF] transition-colors">
-                      {article.title}
-                    </h3>
+                {/* Col 5-9: Title & Excerpt */}
+                <div className="lg:col-span-6">
+                  <h3 className="font-display text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-[#0A1633] group-hover:text-[#1E3A8A] transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="mt-2 text-xs sm:text-sm text-[#525D73] leading-relaxed">
+                    {article.excerpt}
+                  </p>
+                </div>
+
+                {/* Col 10-12: Author + Open Trigger */}
+                <div className="lg:col-span-2 flex lg:flex-col items-center lg:items-end justify-between gap-2">
+                  <div className="text-xs font-medium text-[#0A1633]">
+                    {article.author}
                   </div>
+                  <span className="inline-flex items-center gap-1 font-mono-tech text-[10px] tracking-[0.14em] text-[#1E3A8A] group-hover:translate-x-1 transition-transform">
+                    <span>READ NOTE</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </span>
                 </div>
               </motion.article>
             ))}
-          </div>
-
-          {/* CTA Block: ++ on left, "All Insights •●" black pill at col-start-7 */}
-          <div className="mt-20 grid grid-cols-1 lg:grid-cols-12 items-center gap-6">
-            <div className="lg:col-start-5 lg:col-span-2 flex items-center gap-1 text-[#070B16]">
-              <Plus className="w-4 h-4" />
-              <Plus className="w-4 h-4" />
-            </div>
-            <div className="lg:col-start-7 lg:col-span-6">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveInsight(INSIGHTS_LIST[0])}
-                className="h-[47px] w-[233px] px-6 rounded-[32px] bg-[#070B16] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
-              >
-                <span>All Insights</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
-                  <span className="w-2 h-2 rounded-full bg-white" />
-                </span>
-              </motion.button>
-            </div>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 09: FAQ ACCORDION (Crisp White + Noise Overlay)
-          Matches [data-framer-name="FAQ"] (y: 16991) 1:1
+          SECTION 08: FAQ ACCORDION
+          Geometry: Asymmetric 4/8 Split + 1px Hairline Accordion
       ===================================================================== */}
       <section
         id="faq"
-        className="paper-surface text-[#070B16] py-24 sm:py-36 relative overflow-hidden"
+        className="paper-surface text-[#0A1633] py-24 sm:py-32 relative overflow-hidden"
       >
         <div className="noise-overlay absolute inset-0" />
 
         <div className="relative z-10 max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* Monumental 128px "FAQ" Heading at col-start-5 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-              className="lg:col-start-5 lg:col-span-8"
-            >
-              <SectionIndex num="08" label="QUESTIONS" />
-              <h2 className="font-display text-[clamp(3.8rem,9vw,128px)] font-semibold leading-[0.9] tracking-[-0.04em] text-[#070B16]">
-                FAQ
-              </h2>
-            </motion.div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* Left Col (w: 445): Founder Persona */}
+            {/* Left 4 Cols: Section Index + Heading + Direct Founder Contact */}
             <div className="lg:col-span-4">
-              <div className="w-[42px] h-[42px] mb-2.5">
-                <TeamAvatar
-                  initials="RZ"
-                  name="Ryan Zannah"
-                  tone="from-[#2E6BFF] to-[#0B1020]"
-                  size="sm"
-                />
-              </div>
-              <div className="text-[13px] font-semibold text-[#070B16]">
-                Ryan Zannah
-              </div>
-              <div className="text-[12px] text-[#91908E]">Founder &amp; CEO</div>
-              <p className="mt-5 text-[14.08px] font-semibold leading-[19.7px] tracking-[-0.704px] text-[#070B16] max-w-[210px]">
-                Questions we get on almost every discovery call, answered by Ryan.
+              <SectionIndex num="08" label="QUESTIONS &amp; TERMS" />
+              <h2 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.02] tracking-[-0.038em] text-[#0A1633]">
+                Answers before we talk.
+              </h2>
+              <p className="mt-4 text-xs sm:text-sm leading-[1.65] text-[#525D73]">
+                Questions we get on almost every discovery call regarding
+                timelines, milestone payments, code ownership, and post-launch
+                support.
               </p>
+
+              <div className="mt-8 p-5 border border-[#0A1633]/15 bg-white">
+                <div className="flex items-center gap-3">
+                  <TeamAvatar
+                    initials="RZ"
+                    name="Ryan Zannah"
+                    tone="from-[#2E6BFF] to-[#0B1020]"
+                    size="sm"
+                  />
+                  <div>
+                    <div className="text-xs font-semibold text-[#0A1633]">
+                      Ryan Zannah
+                    </div>
+                    <div className="text-[11px] text-[#525D73]">
+                      Founder &amp; CEO · Replies within 24h
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openContactWith("Direct Question from FAQ")}
+                  className="mt-4 w-full py-2.5 px-4 bg-[#0B1B46] hover:bg-[#1E3A8A] text-white font-mono-tech text-[10px] tracking-[0.14em] flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <span>ASK A DIRECT QUESTION</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
-            {/* Right Col (col-start-5, w: 890): Accordion + Ask your Question CTA */}
+            {/* Right 8 Cols: 1px Hairline FAQ Accordion */}
             <div className="lg:col-span-8">
-              <div className="divide-y divide-[#070B16]/15 border-t border-b border-[#070B16]/15">
-                {FAQ_ITEMS.map((faq) => {
+              <div className="divide-y divide-[#0A1633]/15 border-t border-b border-[#0A1633]/15">
+                {FAQ_ITEMS.map((faq, idx) => {
                   const isOpen = !!openFaqIds[faq.id];
                   return (
                     <div key={faq.id} className="py-6">
                       <button
+                        type="button"
                         onClick={() => toggleFaq(faq.id)}
                         className="w-full flex items-center justify-between gap-6 text-left cursor-pointer group"
                       >
-                        <span className="font-display text-[18px] sm:text-[20px] font-semibold tracking-[-0.8px] text-[#070B16] group-hover:text-[#2E6BFF] transition-colors">
-                          {faq.question}
-                        </span>
-                        <span className="text-[#070B16] shrink-0">
+                        <div className="flex items-baseline gap-3.5">
+                          <span className="font-mono-tech text-[10px] text-[#1E3A8A]">
+                            /0{idx + 1}
+                          </span>
+                          <span className="font-display text-lg sm:text-xl font-semibold tracking-[-0.025em] text-[#0A1633] group-hover:text-[#2E6BFF] transition-colors">
+                            {faq.question}
+                          </span>
+                        </div>
+                        <span className="text-[#0A1633] shrink-0">
                           {isOpen ? (
                             <Minus className="w-4 h-4 stroke-[2.2]" />
                           ) : (
@@ -2342,7 +2343,7 @@ export default function QorvaynologyHomePage() {
                             transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                             className="overflow-hidden"
                           >
-                            <p className="pt-3 text-[14.08px] font-medium leading-[20px] tracking-[-0.5px] text-[#686963] max-w-[618px]">
+                            <p className="pt-3 pl-8 text-xs sm:text-sm leading-[1.65] text-[#525D73] max-w-[650px]">
                               {faq.answer}
                             </p>
                           </motion.div>
@@ -2352,44 +2353,18 @@ export default function QorvaynologyHomePage() {
                   );
                 })}
               </div>
-
-              {/* Bottom "Didn't find the answer? Ask your Question •●" */}
-              <div className="mt-12 grid grid-cols-1 sm:grid-cols-12 items-center gap-6">
-                <div className="sm:col-span-4">
-                  <p className="text-[14.08px] font-semibold leading-[19.7px] tracking-[-0.704px] text-[#070B16]">
-                    Didn’t find the answer?
-                    <br />
-                    Ask us about our services!
-                  </p>
-                </div>
-                <div className="sm:col-span-8">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => openContactWith("Question from FAQ")}
-                    className="h-[47px] w-[239px] px-6 rounded-[32px] bg-[#0B1B46] hover:bg-[#1E3A8A] text-white flex items-center justify-between text-xs font-medium cursor-pointer transition-colors"
-                  >
-                    <span>Ask your Question</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-                      <span className="w-2 h-2 rounded-full bg-white" />
-                    </span>
-                  </motion.button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 10: FOOTER WITH LIVE UNIVERSE SKY VIDEO (Matches y: 18036 1:1)
+          SECTION 09: FOOTER WITH LIVE UNIVERSE SKY VIDEO & CONTINUUM MONOGRAM
       ===================================================================== */}
       <footer
         id="contact"
         className="relative bg-[#03050C] text-white pt-24 sm:pt-32 pb-12 overflow-hidden"
       >
-        {/* Live Universe Sky Video Background (Same video as Hero, darkened by Overlay black) */}
         <video
           src="/astra/sky-universe.mp4"
           poster="/astra/section-stars-bg.png"
@@ -2405,17 +2380,31 @@ export default function QorvaynologyHomePage() {
         />
 
         <div className="relative z-10 max-w-[1354px] mx-auto px-5 sm:px-9">
-          {/* Top Manifesto & Persona Row (Matches y: 18108) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-24">
-            <div className="lg:col-span-4">
-              <AstraStarLogo className="w-6 h-6 text-white" />
+          {/* Top Manifesto & Persona Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-20 border-b border-white/12">
+            <div className="lg:col-span-4 flex items-center gap-3">
+              <ContinuumMark
+                className="w-8 h-8"
+                strokeColor="#FFFFFF"
+                accentColor="#2E6BFF"
+              />
+              <div>
+                <div className="font-mono-tech text-[10px] tracking-[0.16em] text-[#60A5FA]">
+                  09 / INITIATE PROJECT BRIEF
+                </div>
+                <div className="text-xs text-white/65">
+                  Qorvaynology® · Built by QORVAYN
+                </div>
+              </div>
             </div>
 
-            <div className="lg:col-span-4">
-              <p className="font-display text-[20px] sm:text-[22px] font-medium leading-[30px] tracking-[-1.1px] text-white/90 max-w-[381px]">
-                Qorvaynology designs brands and builds websites and web apps for businesses in Bangladesh and abroad.{" "}
+            <div className="lg:col-span-5">
+              <p className="font-display text-xl sm:text-2xl font-medium leading-[1.4] tracking-[-0.03em] text-white/95 max-w-[440px]">
+                Qorvaynology designs brands and builds websites and web apps for
+                businesses in Bangladesh and abroad.{" "}
                 <span className="text-white/55">
-                  Every build ships with full code handover and 30 days of support.
+                  Every build ships with full code handover and 30 days of
+                  support.
                 </span>
               </p>
 
@@ -2430,36 +2419,50 @@ export default function QorvaynologyHomePage() {
                   <div className="text-[13px] font-semibold text-white">
                     Ryan Zannah
                   </div>
-                  <div className="text-[12px] text-white/50">Founder &amp; CEO</div>
+                  <div className="text-[12px] text-white/50">
+                    Founder &amp; CEO · QORVAYN
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-4">
-              <p className="text-[14.08px] font-medium leading-[19.7px] tracking-[-0.704px] text-white/85">
+            <div className="lg:col-span-3 lg:text-right">
+              <p className="text-xs font-medium leading-[1.6] text-white/85">
                 Kushtia &amp; Dhaka, Bangladesh
                 <br />
                 Remote worldwide · QORVAYN
               </p>
+              <a
+                href="https://cal.com/qorvaynology"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#2E6BFF] hover:bg-white text-white hover:text-[#0A1633] font-mono-tech text-[10px] tracking-[0.14em] transition-colors"
+              >
+                <span>BOOK ON CAL.COM</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
 
-          {/* Middle Contacts, Navigation, Social & Subscribe Row (Matches y: 18444) */}
-          <div className="py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 items-start">
-            {/* Col 1-4: Phone & Email */}
-            <div className="lg:col-span-4 space-y-1.5">
-              <div className="text-[14.08px] font-medium tracking-[-0.704px] text-white/70">
-                +880 1410-831205
+          {/* Middle Contacts, Navigation, Social & Direct Brief Row */}
+          <div className="py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 items-start">
+            {/* Col 1-4: Direct Channels */}
+            <div className="lg:col-span-4 space-y-2">
+              <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/45 mb-3">
+                DIRECT CHANNELS
+              </div>
+              <div className="text-sm font-medium text-white/75">
+                +880 1410-831205 (WhatsApp / Call)
               </div>
               <div>
                 <a
                   href="mailto:qorvaynology@gmail.com"
-                  className="font-display text-[18px] sm:text-[20px] font-semibold tracking-[-0.8px] text-white hover:text-[#60A5FA] transition-colors"
+                  className="font-display text-lg sm:text-xl font-semibold tracking-[-0.03em] text-white hover:text-[#60A5FA] transition-colors"
                 >
                   qorvaynology@gmail.com
                 </a>
               </div>
-              <div className="pt-3">
+              <div className="pt-2">
                 <a
                   href="https://cal.com/qorvaynology"
                   target="_blank"
@@ -2472,80 +2475,110 @@ export default function QorvaynologyHomePage() {
               </div>
             </div>
 
-            {/* Col 5-6: Navigation */}
+            {/* Col 5-6: Section Directory */}
             <div className="lg:col-span-2">
-              <div className="text-[12px] font-medium text-white/45 mb-4">
-                Navigation
+              <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/45 mb-4">
+                DIRECTORY
               </div>
-              <ul className="space-y-1.5 font-display text-[20px] font-semibold tracking-[-0.8px]">
+              <ul className="space-y-2.5 text-sm font-semibold text-white">
                 <li>
                   <a
                     href="#top"
-                    className="text-white/50 hover:text-white transition-colors"
+                    className="text-white/55 hover:text-white transition-colors"
                   >
-                    Home
+                    Overview
                   </a>
                 </li>
                 <li>
                   <a
                     href="#studio"
-                    className="text-white hover:text-[#60A5FA] transition-colors"
+                    className="hover:text-[#60A5FA] transition-colors"
                   >
                     Studio
                   </a>
                 </li>
                 <li>
                   <a
-                    href="#projects"
-                    className="text-white hover:text-[#60A5FA] transition-colors"
+                    href="#services"
+                    className="hover:text-[#60A5FA] transition-colors"
                   >
-                    Projects
+                    Capabilities
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#projects"
+                    className="hover:text-[#60A5FA] transition-colors"
+                  >
+                    Selected Work
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#pricing"
+                    className="hover:text-[#60A5FA] transition-colors"
+                  >
+                    Scope Architect
                   </a>
                 </li>
                 <li>
                   <a
                     href="#insights"
-                    className="text-white hover:text-[#60A5FA] transition-colors"
+                    className="hover:text-[#60A5FA] transition-colors"
                   >
-                    Insights
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#contact"
-                    className="text-white hover:text-[#60A5FA] transition-colors"
-                  >
-                    Contact
+                    Notes
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Col 7-8: Social */}
+            {/* Col 7-8: Verified Social Profiles */}
             <div className="lg:col-span-2">
-              <div className="text-[12px] font-medium text-white/45 mb-4 opacity-0 select-none">
-                Social
+              <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/45 mb-4">
+                PROFILES
               </div>
-              <ul className="space-y-2 text-[13px] font-medium text-white/80">
-                {VERIFIED_SOCIALS.slice(0, 6).map((s) => (
-                  <li key={s.label}>
+              <ul className="space-y-2 text-xs font-medium text-white/85">
+                {[
+                  {
+                    label: "LinkedIn",
+                    url: "https://www.linkedin.com/company/qorvaynology/",
+                  },
+                  {
+                    label: "Instagram",
+                    url: "https://www.instagram.com/qorvaynology",
+                  },
+                  { label: "X (Twitter)", url: "https://x.com/qorvaynology" },
+                  {
+                    label: "Facebook",
+                    url: "https://www.facebook.com/qorvaynology",
+                  },
+                  {
+                    label: "YouTube",
+                    url: "https://www.youtube.com/@Qorvaynology",
+                  },
+                  {
+                    label: "TikTok",
+                    url: "https://www.tiktok.com/@qorvaynology",
+                  },
+                ].map((soc) => (
+                  <li key={soc.label}>
                     <a
-                      href={s.url}
+                      href={soc.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-[#60A5FA] transition-colors"
                     >
-                      {s.label}
+                      {soc.label}
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Col 9-12: Subscribe / Start Brief */}
+            {/* Col 9-12: Quick Project Brief Form */}
             <div className="lg:col-span-4">
-              <div className="text-[12px] font-medium text-white/45 mb-4">
-                Start a Project Brief
+              <div className="font-mono-tech text-[10px] tracking-[0.16em] text-white/45 mb-4">
+                START A PROJECT BRIEF
               </div>
               {footerSent ? (
                 <div className="p-4 border border-[#2E6BFF]/40 bg-[#2E6BFF]/10 text-xs text-white">
@@ -2588,16 +2621,13 @@ export default function QorvaynologyHomePage() {
                   />
                   <div className="pt-2">
                     <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="h-[42px] w-[195px] px-5 rounded-[32px] border-2 border-white/25 hover:border-white hover:bg-white hover:text-[#070B16] flex items-center justify-between text-xs font-medium transition-colors cursor-pointer"
+                      className="h-[42px] w-[195px] px-5 bg-[#0F2557] border border-[#2E6BFF]/60 hover:bg-white hover:text-[#070B16] flex items-center justify-between font-mono-tech text-[10px] tracking-[0.14em] transition-colors cursor-pointer"
                     >
-                      <span>Start Brief</span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#91908E]" />
-                        <span className="w-2 h-2 rounded-full bg-current" />
-                      </span>
+                      <span>INITIATE BRIEF</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
                     </motion.button>
                   </div>
                 </form>
@@ -2605,8 +2635,8 @@ export default function QorvaynologyHomePage() {
             </div>
           </div>
 
-          {/* Bottom Monumental Wordmark at col-start-5 (Matches y: 18820 in steps/2247/output.txt) */}
-          <div className="pt-14 pb-14 grid grid-cols-1 lg:grid-cols-12 items-center">
+          {/* Bottom Monumental Wordmark */}
+          <div className="pt-10 pb-12 grid grid-cols-1 lg:grid-cols-12 items-center">
             <div className="lg:col-start-5 lg:col-span-8">
               <div className="inline-flex items-start select-none">
                 <span className="font-display font-semibold text-white text-[clamp(2.8rem,7.8vw,108px)] leading-none tracking-[-0.045em]">
@@ -2619,7 +2649,7 @@ export default function QorvaynologyHomePage() {
             </div>
           </div>
 
-          {/* Bottom Copyrights & Attribution Bar (Matches y: 19024) */}
+          {/* Bottom Copyrights & Attribution Bar */}
           <div className="pt-6 border-t border-white/15 grid grid-cols-2 lg:grid-cols-12 gap-6 text-[12px] text-white/50">
             <div className="lg:col-span-4">
               <div>© 2026</div>
@@ -2632,15 +2662,15 @@ export default function QorvaynologyHomePage() {
               <div className="mt-0.5">Bangladesh</div>
             </div>
             <div className="lg:col-span-2">
-              <div>Built in</div>
+              <div>Stack</div>
               <div className="text-white font-medium mt-0.5">
-                Next.js 15 &amp; Framer Motion
+                Next.js 16 &amp; Framer Motion
               </div>
             </div>
             <div className="lg:col-span-4">
-              <div>Created by</div>
+              <div>Parent Company</div>
               <div className="text-white font-medium mt-0.5">
-                QORVAYN Team (Ryan Zannah)
+                QORVAYN (Founded 10 March 2026 · Ryan Zannah)
               </div>
             </div>
           </div>
