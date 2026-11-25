@@ -657,7 +657,7 @@ export default function QorvaynologyHomePage() {
           {/* Layer 2: Orbiting Planet (80x80) + Satellite (17x17) */}
           <motion.div
             style={{ y: heroPlanetY }}
-            className="pointer-events-none absolute left-[78%] top-[18%] sm:left-[34.5%] sm:top-[27.6%] -translate-x-1/2 -translate-y-1/2 z-[2] w-[88px] h-[88px] sm:w-[101px] sm:h-[93px]"
+            className="pointer-events-none absolute left-[76%] top-[28%] sm:left-[34.5%] sm:top-[27.6%] -translate-x-1/2 -translate-y-1/2 z-[2] w-[88px] h-[88px] sm:w-[101px] sm:h-[93px]"
           >
             <Image
               src="/astra/hero-planet.png"
@@ -682,8 +682,10 @@ export default function QorvaynologyHomePage() {
             />
           </motion.div>
 
-          {/* Layer 2b: Distressed Ink & Asteroid Streaks */}
-          <HeroAsteroidStreaks />
+          {/* Layer 2b: Distressed Ink & Asteroid Streaks (Desktop/Tablet) */}
+          <div className="hidden sm:block">
+            <HeroAsteroidStreaks />
+          </div>
 
           {/* Layer 3: Architectural Topblock with mix-blend-mode: difference */}
           <div className="relative z-[3] h-full max-w-[1426px] mx-auto px-5 sm:px-9 flex flex-col justify-between mix-blend-difference text-white">
