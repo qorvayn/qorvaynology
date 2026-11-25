@@ -128,16 +128,16 @@ export function ProjectArtwork({
               </div>
             </div>
           ) : (
-            <div className="relative z-10 grid grid-cols-3 gap-3 max-w-2xl px-6 w-full">
+            <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 max-w-2xl px-5 sm:px-6 w-full">
               {[
                 { s: "01", t: "Department", d: "Specialty Finder" },
                 { s: "02", t: "Live Schedule", d: "Instant Slots" },
                 { s: "03", t: "WhatsApp / SMS", d: "Zero Call Queue" },
               ].map((card) => (
-                <div key={card.s} className="p-4 bg-[#0B1020]/90 border border-white/15 rounded-lg">
+                <div key={card.s} className="p-3 sm:p-4 bg-[#0B1020]/90 border border-white/15 rounded-lg flex sm:block items-center justify-between gap-3">
                   <div className="font-mono-tech text-[10px] text-[#60A5FA]">STEP {card.s}</div>
-                  <div className="font-display text-sm sm:text-base font-semibold mt-1">{card.t}</div>
-                  <div className="text-[11px] text-white/60 mt-0.5">{card.d}</div>
+                  <div className="font-display text-xs sm:text-base font-semibold sm:mt-1">{card.t}</div>
+                  <div className="text-[11px] text-white/60 sm:mt-0.5">{card.d}</div>
                 </div>
               ))}
             </div>

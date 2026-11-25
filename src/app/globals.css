@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  --font-display: "Inter", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
   --bg-cosmos: #040711;
   --bg-navy: #0b1020;
   --bg-white: #ffffff;
@@ -17,7 +14,7 @@ html {
   scroll-behavior: auto;
   background-color: var(--bg-cosmos);
   color: #ffffff;
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.03em;
   overflow-x: clip;
 }
@@ -35,12 +32,12 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-display);
+  font-family: var(--font-display), var(--font-sans), "Plus Jakarta Sans", "Inter", sans-serif;
   letter-spacing: -0.042em;
 }
 
 .font-mono-tech {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
