@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import {
+  BING_VERIFICATION_TOKEN,
   BRAND_NAME,
   GSC_VERIFICATION_TOKEN,
   PAGE_SEO,
@@ -63,9 +64,9 @@ export const metadata: Metadata = {
   publisher: "Qorvaynology Studio (QORVAYN)",
   verification: {
     google: GSC_VERIFICATION_TOKEN,
-    ...(process.env.NEXT_PUBLIC_BING_VERIFICATION
-      ? { other: { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } }
-      : {}),
+    other: {
+      "msvalidate.01": BING_VERIFICATION_TOKEN,
+    },
   },
   alternates: {
     canonical: SITE_URL,

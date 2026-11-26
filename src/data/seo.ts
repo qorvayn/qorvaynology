@@ -12,6 +12,10 @@ export const GSC_VERIFICATION_TOKEN =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
   "_1nW4wEcrGLfURhRakCT1V47hKVvfewMreZnfsA1XA0";
 
+export const BING_VERIFICATION_TOKEN =
+  process.env.NEXT_PUBLIC_BING_VERIFICATION ||
+  "CB5A781FB570BB9604C1A9D515D923A6";
+
 export interface PageSeoEntry {
   path: string;
   title: string;
