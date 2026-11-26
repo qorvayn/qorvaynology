@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const SITE_URL = "https://www.qorvaynology.com";
+import { SITE_URL } from "@/data/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/thank-you", "/admin"],
+        disallow: ["/api/", "/admin/", "/thank-you"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
