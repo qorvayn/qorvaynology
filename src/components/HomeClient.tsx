@@ -158,9 +158,9 @@ const DELIVERY_STAGES = [
     code: "STAGE 02 · WEEK 01–02",
     title: "Visual Architecture & Interactive Figma Prototype",
     duration: "1–2 weeks · Full UI approval before code",
-    lead: "Adelia Maharani & Siyami Muntaha Saba",
-    leadRole: "Creative Direction & Design Systems",
-    leadInitials: "AM",
+    lead: "Siyami Muntaha Saba",
+    leadRole: "Co-Founder & Head of Design",
+    leadInitials: "SM",
     summary:
       "Before writing production frontend code, we design your visual system and clickable Figma prototype. You review real screens on desktop and mobile, test user flows, and approve the interface direction so engineering runs with zero guesswork.",
     artifacts: [
@@ -814,9 +814,9 @@ export default function QorvaynologyHomePage() {
 
                 <p className="mt-4 text-sm leading-[1.65] text-[#525D73]">
                   QORVAYN was founded on 10 March 2026 in Bangladesh by Ryan
-                  Zannah with co-founders Adelia Maharani and Siyami Muntaha
-                  Saba. Qorvaynology brings our internal product design and
-                  engineering pod directly to client builds.
+                  Zannah alongside co-founder Siyami Muntaha Saba. Qorvaynology
+                  brings our internal product design and engineering pod
+                  directly to client builds.
                 </p>
 
                 {/* Founder Attribution Block */}
@@ -866,7 +866,7 @@ export default function QorvaynologyHomePage() {
                     ))}
                   </div>
                   <span className="font-mono-tech text-[10px] tracking-[0.14em] text-[#0A1633]">
-                    06 CORE BUILDERS
+                    05 CORE BUILDERS
                   </span>
                 </div>
               </div>
@@ -922,7 +922,7 @@ export default function QorvaynologyHomePage() {
                     beta, and SnowVayn / SunVayn, a seasonal clothing brand and
                     storefront engine.{" "}
                     <span className="text-[#525D73]">
-                      Qorvaynology applies that exact six-person product team
+                      Qorvaynology applies that exact five-person product team
                       and Next.js + Supabase architecture to client businesses.
                     </span>
                   </p>
@@ -2116,7 +2116,7 @@ export default function QorvaynologyHomePage() {
                   Team
                 </h2>
                 <p className="mt-3 font-display text-lg sm:text-xl font-medium text-white/85">
-                  Six builders behind QORVAYN &amp; Qorvaynology.
+                  Five builders behind QORVAYN &amp; Qorvaynology.
                 </p>
               </div>
               <div className="lg:col-span-5 flex lg:justify-end">
@@ -2261,55 +2261,110 @@ export default function QorvaynologyHomePage() {
               </div>
             </div>
 
-            {/* 6-Cell 1px Hairline Roster Matrix */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-white/15 divide-y sm:divide-x divide-white/15 bg-[#050B1C]/75">
-              {TEAM_MEMBERS.map((member, idx) => {
-                const isSelected = idx === activeTeamIdx;
-                return (
-                  <button
-                    key={member.id}
-                    type="button"
-                    onClick={() => setActiveTeamIdx(idx)}
-                    className={`p-6 text-left transition-colors cursor-pointer relative ${
-                      isSelected
-                        ? "bg-[#0F2557]/75"
-                        : "hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    {isSelected && (
-                      <span className="absolute top-0 left-0 right-0 h-[2px] bg-[#2E6BFF]" />
-                    )}
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <TeamAvatar
-                          initials={member.initials}
-                          name={member.name}
-                          tone={member.tone}
-                          size="sm"
-                        />
-                        <div>
-                          <div className="font-display text-base font-semibold text-white">
-                            {member.name}
-                          </div>
-                          <div className="text-xs text-[#60A5FA]">
-                            {member.role}
+            {/* Balanced 5-Member 1px Hairline Roster: 2-Column Leadership + 3-Column Core Team */}
+            <div className="border border-white/15 bg-[#050B1C]/75">
+              {/* Row 1: Leadership (2 Balanced Columns — Founder & Co-Founder) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-white/15 border-b border-white/15">
+                {TEAM_MEMBERS.slice(0, 2).map((member, idx) => {
+                  const isSelected = idx === activeTeamIdx;
+                  return (
+                    <button
+                      key={member.id}
+                      type="button"
+                      onClick={() => setActiveTeamIdx(idx)}
+                      className={`p-6 text-left transition-colors cursor-pointer relative ${
+                        isSelected
+                          ? "bg-[#0F2557]/75"
+                          : "hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {isSelected && (
+                        <span className="absolute top-0 left-0 right-0 h-[2px] bg-[#2E6BFF]" />
+                      )}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <TeamAvatar
+                            initials={member.initials}
+                            name={member.name}
+                            tone={member.tone}
+                            size="sm"
+                          />
+                          <div>
+                            <div className="font-display text-base font-semibold text-white">
+                              {member.name}
+                            </div>
+                            <div className="text-xs text-[#60A5FA]">
+                              {member.role}
+                            </div>
                           </div>
                         </div>
+                        <span className="font-mono-tech text-[10px] text-white/45">
+                          /0{idx + 1} · LEADERSHIP
+                        </span>
                       </div>
-                      <span className="font-mono-tech text-[10px] text-white/45">
-                        /0{idx + 1}
-                      </span>
-                    </div>
 
-                    <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60">
-                      <span>{member.division}</span>
-                      <span className="font-mono-tech text-[10px] text-white/45">
-                        {member.location}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60">
+                        <span>{member.division}</span>
+                        <span className="font-mono-tech text-[10px] text-white/45">
+                          {member.location}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Row 2: Core Team (3 Balanced Columns) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/15">
+                {TEAM_MEMBERS.slice(2).map((member, offset) => {
+                  const idx = offset + 2;
+                  const isSelected = idx === activeTeamIdx;
+                  return (
+                    <button
+                      key={member.id}
+                      type="button"
+                      onClick={() => setActiveTeamIdx(idx)}
+                      className={`p-6 text-left transition-colors cursor-pointer relative ${
+                        isSelected
+                          ? "bg-[#0F2557]/75"
+                          : "hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {isSelected && (
+                        <span className="absolute top-0 left-0 right-0 h-[2px] bg-[#2E6BFF]" />
+                      )}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <TeamAvatar
+                            initials={member.initials}
+                            name={member.name}
+                            tone={member.tone}
+                            size="sm"
+                          />
+                          <div>
+                            <div className="font-display text-base font-semibold text-white">
+                              {member.name}
+                            </div>
+                            <div className="text-xs text-[#60A5FA]">
+                              {member.role}
+                            </div>
+                          </div>
+                        </div>
+                        <span className="font-mono-tech text-[10px] text-white/45">
+                          /0{idx + 1}
+                        </span>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/60">
+                        <span>{member.division}</span>
+                        <span className="font-mono-tech text-[10px] text-white/45">
+                          {member.location}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>

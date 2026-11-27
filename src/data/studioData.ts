@@ -275,7 +275,7 @@ export const PROJECTS_LIST: ProjectCaseStudy[] = [
     stack: "Next.js, TypeScript, Tailwind CSS, Figma Design System",
     liveUrl: "https://qorvaynology.com",
     summary:
-      "Founded on 10 March 2026 in Bangladesh by Ryan Zannah with co-founders Adelia Maharani and Siyami Muntaha Saba, QORVAYN is the parent technology company behind Orbyn, SnowVayn, and Qorvaynology.",
+      "Founded on 10 March 2026 in Bangladesh by Ryan Zannah alongside co-founder Siyami Muntaha Saba, QORVAYN is the parent technology company behind Orbyn, SnowVayn, and Qorvaynology.",
     problemAndGoal:
       "As a multi-product venture builder launching consumer web apps, seasonal apparel commerce, and a client-facing studio, QORVAYN needed a cohesive parent identity that unifies diverse products under one disciplined standard of craft.",
     architectureAndExecution: [
@@ -286,7 +286,7 @@ export const PROJECTS_LIST: ProjectCaseStudy[] = [
     metrics: [
       { label: "Founded", value: "10 Mar", note: "Established in Bangladesh in March 2026" },
       { label: "Brands in the group", value: "04", note: "QORVAYN, Orbyn, SnowVayn/SunVayn, Qorvaynology" },
-      { label: "Core Leadership", value: "06", note: "Cross-functional product, design & engineering leads" },
+      { label: "Core Team", value: "05", note: "Cross-functional leadership, design & engineering pod" },
     ],
     palette: {
       bg: "#090D16",
@@ -582,7 +582,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     id: "ryan-zannah",
     name: "Ryan Zannah",
     role: "Founder & CEO",
-    division: "QORVAYN & Qorvaynology Studio Lead",
+    division: "QORVAYN & Qorvaynology Leadership",
     location: "Kushtia & Dhaka, Bangladesh",
     quote:
       "Every product we launch at QORVAYN teaches us how to design for real people and ship without cutting corners. When you work with Qorvaynology, you get the exact method behind our own products.",
@@ -591,35 +591,23 @@ export const TEAM_MEMBERS: TeamMember[] = [
     tone: "from-[#2E6BFF]/55 via-[#1E3A8A] to-[#050B1C]",
   },
   {
-    id: "shoyetur-rahman-sayel",
-    name: "Shoyetur Rahman Sayel",
-    role: "Lead Software Engineer",
-    division: "Websites, Web Apps & E-Commerce",
-    location: "Bangladesh",
-    quote:
-      "Fast load times, clean TypeScript architecture, and database schemas that don't break under real traffic — good engineering should feel effortless to the end user.",
-    focusAreas: ["Next.js & React 19", "TypeScript", "Supabase & Databases", "E-Commerce Systems"],
-    initials: "SS",
-    tone: "from-[#60A5FA]/45 via-[#0F2557] to-[#050B1C]",
-  },
-  {
-    id: "adelia-maharani",
-    name: "Adelia Maharani",
-    role: "Co-Founder & Creative Director",
-    division: "Brand Identity, UI/UX & Growth",
+    id: "siyami-muntaha-saba",
+    name: "Siyami Muntaha Saba",
+    role: "Co-Founder & Head of Design",
+    division: "QORVAYN Brand & Design Systems",
     location: "QORVAYN Leadership",
     quote:
-      "A strong brand starts with clarity — knowing who you are, how you speak, and how every screen makes your customer feel within the first three seconds.",
-    focusAreas: ["Brand Systems", "Creative Direction", "UI/UX Narrative", "Social Growth"],
-    initials: "AM",
-    tone: "from-[#3B82F6]/45 via-[#172554] to-[#050B1C]",
+      "Restraint is what separates enduring design from trend-chasing templates. Every border, typeface, and transition should earn its place on the screen.",
+    focusAreas: ["Brand Identity", "Design Systems", "UI/UX Craft", "Visual Direction"],
+    initials: "SM",
+    tone: "from-[#93C5FD]/35 via-[#1E3A8A] to-[#050B1C]",
   },
   {
     id: "tam-zayn",
     name: "Tam Zayn",
     role: "Head of Technology & Product",
     division: "QORVAYN Core Ecosystem",
-    location: "QORVAYN Leadership",
+    location: "QORVAYN Core Team",
     quote:
       "We architect systems so that design tokens, API contracts, and edge deployments work as one continuous pipeline from day one.",
     focusAreas: ["System Architecture", "Product Engineering", "Performance & Security"],
@@ -627,28 +615,28 @@ export const TEAM_MEMBERS: TeamMember[] = [
     tone: "from-[#1D4ED8]/50 via-[#0B1B46] to-[#040711]",
   },
   {
-    id: "siyami-muntaha-saba",
-    name: "Siyami Muntaha Saba",
-    role: "Co-Founder & Head of Design",
-    division: "QORVAYN Design Systems",
-    location: "QORVAYN Leadership",
-    quote:
-      "Restraint is what separates enduring design from trend-chasing templates. Every border, typeface, and transition should earn its place on the screen.",
-    focusAreas: ["Design Systems", "Visual Craft", "Apparel & Digital Aesthetics"],
-    initials: "SM",
-    tone: "from-[#93C5FD]/35 via-[#1E3A8A] to-[#050B1C]",
-  },
-  {
     id: "rahat-ehsan-sufi",
     name: "Rahat Ehsan Sufi",
     role: "Operations & Business",
     division: "QORVAYN Operations",
-    location: "QORVAYN Leadership",
+    location: "QORVAYN Core Team",
     quote:
       "Clear milestones, Friday progress updates, and structured launch checklists keep every build predictable from kickoff to handover.",
     focusAreas: ["Delivery Operations", "Milestone Governance", "Client Handover"],
     initials: "RS",
     tone: "from-[#2563EB]/45 via-[#0F2557] to-[#040711]",
+  },
+  {
+    id: "shoyetur-rahman-sayel",
+    name: "Shoyetur Rahman Sayel",
+    role: "Software / Product Development",
+    division: "Websites, Web Apps & E-Commerce",
+    location: "Bangladesh",
+    quote:
+      "Fast load times, clean TypeScript architecture, and database schemas that don't break under real traffic — good engineering should feel effortless to the end user.",
+    focusAreas: ["Next.js & React 19", "TypeScript", "Supabase & Databases", "E-Commerce Systems"],
+    initials: "SS",
+    tone: "from-[#60A5FA]/45 via-[#0F2557] to-[#050B1C]",
   },
 ];
 
@@ -709,8 +697,8 @@ export const INSIGHTS_LIST: InsightArticle[] = [
     title: "The 'Continuum' Monogram: Designing an Identity System That Works at 16px and 16ft",
     excerpt:
       "Behind Concept 2 ('Continuum') — why we drew q and y as one unbroken line and paired Cosmic Navy with Warm Editorial Paper.",
-    author: "Adelia Maharani",
-    authorRole: "Co-Founder & Creative Director",
+    author: "Siyami Muntaha Saba",
+    authorRole: "Co-Founder & Head of Design",
     body: [
       "When designing Qorvaynology's own visual identity, we rejected the neon cyan-and-purple clichés that dominate tech agency websites. A studio that values permanence needed a calmer, more architectural palette.",
       "Our monogram — Concept 2, 'Continuum' — connects the first letter 'q' and final letter 'y' of qorvaynology in a single continuous path. A single Continuum Gold (#F5B83D) stroke marks the exact inflection point where an idea becomes a tangible product.",

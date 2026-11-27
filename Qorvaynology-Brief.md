@@ -9,7 +9,7 @@
 
 Qorvaynology is a design and technology agency (a "studio") run by members of the **QORVAYN** team. It designs, builds and grows digital products for other businesses: brands, websites, web apps, e-commerce stores, AI automation and social media growth.
 
-- **Parent company:** QORVAYN, a technology company founded on 10 March 2026 in Bangladesh by Ryan Zannah (Founder & CEO), with co-founders Adelia Maharani and Siyami Muntaha Saba.
+- **Parent company:** QORVAYN, a technology company founded on 10 March 2026 in Bangladesh by Ryan Zannah (Founder & CEO) alongside co-founder Siyami Muntaha Saba.
 - **Status:** brand new, being set up in November 2026. No clients yet.
 - **Location:** Bangladesh (Dhaka). Remote-first, no physical office.
 - **Markets:** local Bangladeshi businesses and international clients (via Upwork, Contra, Fiverr, LinkedIn and direct outreach).
@@ -46,13 +46,13 @@ What makes it believable:
 
 ## 4. Team
 
-| Person | Role in Qorvaynology |
+| Person | Role in QORVAYN / Qorvaynology |
 | --- | --- |
-| Ryan Zannah | Founder & CEO of QORVAYN; agency lead, sales, strategy, web apps, AI automation |
-| Shoyetur Rahman Sayel (Sayel) | Software / product development: websites, web apps, e-commerce |
-| Adelia Maharani | Brand & creative direction, marketing, social media |
-
-The wider QORVAYN team (Tam Zayn, Head of Technology & Product; Siyami Muntaha Saba, Head of Design; Rahat Ehsan Sufi, Operations & Business) is currently focused on the SnowVayn clothing launch, but can support agency projects.
+| Ryan Zannah | Founder & CEO — strategy, web apps, AI automation, agency lead |
+| Siyami Muntaha Saba | Co-Founder & Head of Design — brand identity, UI/UX, design systems |
+| Tam Zayn | Head of Technology & Product — core architecture & engineering |
+| Rahat Ehsan Sufi | Operations & Business — delivery operations & milestones |
+| Shoyetur Rahman Sayel (Sayel) | Software / Product Development — websites, web apps, e-commerce |
 
 ## 5. Services (packages)
 

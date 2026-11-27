@@ -25,7 +25,7 @@ What the word "QORVAYN" itself means: **[TBD]**. Don't invent it.
 
 ### A3. Parent company and status
 
-- **Parent:** QORVAYN, a technology company founded on 10 March 2026 in Bangladesh by Ryan Zannah (Founder & CEO), with co-founders Adelia Maharani and Siyami Muntaha Saba.
+- **Parent:** QORVAYN, a technology company founded on 10 March 2026 in Bangladesh by Ryan Zannah (Founder & CEO) alongside co-founder Siyami Muntaha Saba.
 - **QORVAYN products:** Orbyn (live beta web app), SnowVayn (clothing brand, launching), RYNEKA (AI operating system, idea stage), SkyPics (AI visual and social platform, idea stage), GoalWear (football apparel brand).
 - **Qorvaynology status:** launched November 2026. No clients yet.
 - **Base:** Kushtia, Bangladesh. Remote-first, no office; we work with clients anywhere in Bangladesh and worldwide. Never publish a private address.
@@ -36,9 +36,10 @@ What the word "QORVAYN" itself means: **[TBD]**. Don't invent it.
 | Person | Role |
 | --- | --- |
 | **Ryan Zannah** | Founder & CEO of QORVAYN. Leads Qorvaynology: sales, strategy, product, web apps, AI automation |
-| **Shoyetur Rahman Sayel** (Sayel) | Software and product development: websites, web apps, e-commerce |
-| **Adelia Maharani** | Brand and creative direction, marketing, social media |
-| Support from QORVAYN | Tam Zayn (technology & product), Siyami Muntaha Saba (design), Rahat Ehsan Sufi (operations & business) |
+| **Siyami Muntaha Saba** | Co-Founder & Head of Design — brand identity, design systems, UI/UX direction |
+| **Tam Zayn** | Head of Technology & Product — core system architecture & engineering |
+| **Rahat Ehsan Sufi** | Operations & Business — delivery operations, milestones, client handover |
+| **Shoyetur Rahman Sayel** (Sayel) | Software / Product Development — websites, web apps, e-commerce |
 
 ### A5. Positioning (what makes us different)
 

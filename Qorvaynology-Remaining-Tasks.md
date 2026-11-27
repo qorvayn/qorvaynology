@@ -12,7 +12,7 @@
 - [ ] **Fiverr** — Complete personal ID verification + non-U.S. tax status, then create the remaining 2 gigs:
   - [ ] **Gig 2:** Modern Business Website Design & Development ($200 / $450 / $850)
   - [ ] **Gig 3:** Complete Brand Identity & Figma UI/UX System ($150 / $350 / $700)
-- [ ] **Upwork** *(deferred earlier)* — Create individual freelancer profile (`Ryan Zannah`, Kushtia, Bangladesh, personal headshot, `$25.00/hr`), then optionally open the `Qorvaynology` agency and invite Shoyetur Rahman Sayel & Adelia Maharani.
+- [ ] **Upwork** *(deferred earlier)* — Create individual freelancer profile (`Ryan Zannah`, Kushtia, Bangladesh, personal headshot, `$25.00/hr`), then optionally open the `Qorvaynology` agency and invite the core team (Siyami Muntaha Saba, Tam Zayn, Rahat Ehsan Sufi, and Shoyetur Rahman Sayel).
 - [ ] **Freelancer.com** *(low priority)* — Enter personal birthdate for verification if you want to keep it active.
 - [ ] **Guru** *(low priority)* — Upload the service thumbnail on the Add Service page.
 
